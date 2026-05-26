@@ -13,7 +13,867 @@
   --surface2: #1e1e2c;
   --surface3: #252535;
   --border: rgba(255,255,255,0.07);
-  --border2: rgba(255,255,255,0.13);
+  --border2: rgba(255,255,255,0.13);<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>おでかけナビ</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#0c0c10;--surface:#161620;--surface2:#1e1e2c;--surface3:#252535;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--accent:#e8b84b;--accent-dim:rgba(232,184,75,0.13);--blue:#6aadff;--blue-dim:rgba(106,173,255,0.12);--green:#52d68a;--green-dim:rgba(82,214,138,0.12);--purple:#a78bfa;--purple-dim:rgba(167,139,250,0.12);--red:#f07070;--text:#eeeef5;--text2:#8888a8;--text3:#44445a;--r:14px;--r-lg:20px;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;overflow:hidden;}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .25s;}
+.screen.active{opacity:1;pointer-events:all;}
+.app-header{padding:16px 20px 0;flex-shrink:0;position:relative;z-index:10;}
+.header-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.logo{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;letter-spacing:-.5px;}
+.logo em{color:var(--accent);font-style:normal;}
+.loc-pill{display:flex;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:5px 12px;font-size:11px;color:var(--text2);cursor:pointer;transition:border-color .2s;}
+.loc-pill:hover{border-color:var(--accent);color:var(--accent);}
+.loc-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);}
+.tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:14px;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab-btn{flex-shrink:0;padding:7px 16px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text2);font-family:'Noto Sans JP',sans-serif;font-size:12px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.tab-btn.on{background:var(--accent);color:#000;border-color:var(--accent);font-weight:700;}
+.scroll-body{flex:1;overflow-y:auto;padding:0 20px 90px;scrollbar-width:none;}
+.scroll-body::-webkit-scrollbar{display:none;}
+.section{display:none;}.section.visible{display:block;}
+.weather-card{background:linear-gradient(135deg,#141c30 0%,#0f1520 60%,var(--surface) 100%);border:1px solid rgba(106,173,255,.18);border-radius:var(--r-lg);padding:20px;margin-bottom:22px;position:relative;overflow:hidden;}
+.weather-card::after{content:'';position:absolute;top:-40px;right:-40px;width:120px;height:120px;background:radial-gradient(circle,rgba(106,173,255,.12) 0%,transparent 70%);border-radius:50%;pointer-events:none;}
+.weather-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.weather-left{display:flex;align-items:center;gap:14px;}
+.weather-emoji{font-size:46px;}
+.weather-temp{font-family:'Syne',sans-serif;font-size:46px;font-weight:700;color:var(--blue);line-height:1;}
+.weather-temp sup{font-size:18px;font-weight:400;}
+.weather-sub{font-size:12px;color:var(--text2);margin-top:3px;}
+.weather-right{text-align:right;}
+.weather-lbl{font-size:10px;color:var(--text3);}
+.weather-date{font-size:13px;font-weight:500;margin-top:2px;}
+.weather-stats{display:flex;gap:14px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border);flex-wrap:wrap;}
+.weather-stat{font-size:11px;color:var(--text2);display:flex;align-items:center;gap:5px;}
+.weather-stat b{color:var(--text);font-weight:500;}
+.umbrella-badge{display:inline-flex;align-items:center;gap:6px;margin-top:12px;padding:7px 14px;border-radius:10px;font-size:12px;font-weight:700;}
+.umbrella-badge.need{background:rgba(106,173,255,.15);color:var(--blue);border:1px solid rgba(106,173,255,.3);}
+.umbrella-badge.noneed{background:var(--green-dim);color:var(--green);border:1px solid rgba(82,214,138,.3);}
+.forecast-row{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);}
+.forecast-row::-webkit-scrollbar{display:none;}
+.forecast-day{flex-shrink:0;text-align:center;background:var(--surface2);border-radius:10px;padding:10px 12px;min-width:56px;}
+.fc-day{font-size:10px;color:var(--text2);}
+.fc-icon{font-size:20px;margin:4px 0;}
+.fc-hi{font-size:13px;font-weight:700;}
+.fc-lo{font-size:11px;color:var(--text2);}
+.fc-rain{font-size:10px;color:var(--blue);margin-top:2px;}
+.sec-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.sec-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:7px;}
+.sec-title .ico{font-size:16px;}
+.see-all{font-size:11px;color:var(--blue);border:none;background:none;font-family:inherit;cursor:pointer;}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-bottom:14px;}
+.chips::-webkit-scrollbar{display:none;}
+.chip{flex-shrink:0;padding:5px 12px;border-radius:12px;border:1px solid var(--border);background:transparent;color:var(--text2);font-family:'Noto Sans JP',sans-serif;font-size:11px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.chip.on{background:var(--surface2);color:var(--text);border-color:var(--border2);}
+.rest-list{display:flex;flex-direction:column;gap:10px;margin-bottom:26px;}
+.rest-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;cursor:pointer;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.rest-card:hover{border-color:var(--border2);transform:translateY(-1px);box-shadow:0 4px 20px rgba(0,0,0,.3);}
+.rest-thumb{width:60px;height:60px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px;}
+.rest-info{flex:1;min-width:0;}
+.rest-name{font-size:13px;font-weight:700;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rest-meta{display:flex;align-items:center;gap:7px;margin-bottom:5px;flex-wrap:wrap;}
+.rest-genre{font-size:10px;color:var(--text2);background:var(--surface2);padding:2px 7px;border-radius:5px;}
+.rest-dist{font-size:10px;color:var(--text2);}
+.rest-rating{display:flex;align-items:center;gap:4px;font-size:11px;}
+.stars{color:var(--accent);}
+.rest-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:7px;}
+.price{font-size:12px;font-weight:700;color:var(--green);}
+.open-tag{font-size:10px;padding:2px 7px;border-radius:5px;font-weight:500;}
+.open-tag.open{background:var(--green-dim);color:var(--green);}
+.open-tag.close{background:rgba(240,112,112,.1);color:var(--red);}
+.evt-list{display:flex;flex-direction:column;gap:10px;margin-bottom:26px;}
+.evt-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;cursor:pointer;transition:all .2s;display:flex;gap:12px;}
+.evt-card:hover{border-color:var(--border2);transform:translateY(-1px);}
+.evt-date{flex-shrink:0;width:46px;text-align:center;background:var(--surface2);border-radius:10px;padding:8px 4px;}
+.evt-m{font-size:9px;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;}
+.evt-d{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;line-height:1.1;}
+.evt-info{flex:1;min-width:0;}
+.evt-name{font-size:13px;font-weight:700;margin-bottom:3px;}
+.evt-place{font-size:11px;color:var(--text2);margin-bottom:6px;}
+.evt-tags{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:7px;}
+.evt-tag{font-size:9px;padding:2px 7px;border-radius:5px;border:1px solid var(--border2);color:var(--text2);}
+.evt-tag.free{border-color:rgba(82,214,138,.3);color:var(--green);}
+.evt-tag.paid{border-color:rgba(232,184,75,.3);color:var(--accent);}
+.evt-fee{font-size:12px;font-weight:700;}
+.evt-fee.free{color:var(--green);}
+.evt-fee.paid{color:var(--accent);}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;display:none;align-items:flex-end;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);border-radius:24px 24px 0 0;width:100%;max-height:90vh;overflow-y:auto;padding:24px 20px 40px;scrollbar-width:none;position:relative;}
+.modal::-webkit-scrollbar{display:none;}
+.modal-handle{width:36px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 20px;}
+.modal-close{position:absolute;top:20px;right:20px;background:var(--surface2);border:none;color:var(--text2);width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
+.modal-title{font-size:18px;font-weight:700;margin-bottom:4px;}
+.modal-sub{font-size:12px;color:var(--text2);margin-bottom:16px;}
+.modal-section{margin-bottom:18px;}
+.modal-section-title{font-size:11px;color:var(--text2);font-weight:700;letter-spacing:.5px;margin-bottom:8px;text-transform:uppercase;}
+.modal-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border-radius:12px;border:none;font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:10px;transition:opacity .2s;}
+.modal-btn:hover{opacity:.85;}
+.modal-btn.maps{background:#4285f4;color:#fff;}
+.modal-btn.save{background:var(--green-dim);color:var(--green);border:1px solid rgba(82,214,138,.3);}
+.modal-btn.site{background:var(--surface2);color:var(--text);}
+.modal-btn.share{background:var(--purple-dim);color:var(--purple);border:1px solid rgba(167,139,250,.3);}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+.info-cell{background:var(--surface2);border-radius:10px;padding:10px 12px;}
+.info-cell-lbl{font-size:10px;color:var(--text2);margin-bottom:3px;}
+.info-cell-val{font-size:13px;font-weight:700;}
+.route-form{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px;margin-bottom:18px;}
+.route-label{font-size:10px;color:var(--text2);margin-bottom:5px;letter-spacing:.5px;}
+.route-input-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.route-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.route-dot.start{background:var(--green);box-shadow:0 0 8px var(--green);}
+.route-dot.end{background:var(--red);box-shadow:0 0 8px var(--red);}
+.route-input-wrap{flex:1;position:relative;}
+.route-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 40px 10px 14px;color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:13px;outline:none;transition:border-color .2s;}
+.route-input:focus{border-color:var(--border2);}
+.route-input::placeholder{color:var(--text3);}
+.gps-btn{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:18px;padding:4px;}
+.route-connector{width:1px;height:16px;background:var(--border2);margin:0 auto 10px;position:relative;left:15px;}
+.route-search-btn{width:100%;padding:12px;background:var(--accent);color:#000;border:none;border-radius:10px;font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .2s;margin-top:4px;}
+.route-search-btn:hover{opacity:.85;}
+.route-result{display:none;}.route-result.show{display:block;}
+.route-summary{background:linear-gradient(135deg,#141c20,#101820);border:1px solid rgba(82,214,138,.2);border-radius:var(--r);padding:16px;margin-bottom:18px;display:flex;gap:14px;align-items:center;}
+.route-line{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;}
+.route-line-dot{width:8px;height:8px;border-radius:50%;}
+.route-line-dot.s{background:var(--green);}
+.route-line-dot.e{background:var(--red);}
+.route-line-bar{width:2px;height:24px;background:linear-gradient(to bottom,var(--green),var(--red));}
+.route-stats{display:flex;gap:16px;}
+.route-stat{text-align:center;}
+.route-stat-val{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;}
+.route-stat-lbl{font-size:10px;color:var(--text2);}
+.cost-card{background:var(--accent-dim);border:1px solid rgba(232,184,75,.2);border-radius:var(--r);padding:16px;margin-bottom:18px;}
+.cost-title{font-size:12px;color:var(--accent);font-weight:700;margin-bottom:12px;}
+.cost-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(232,184,75,.1);}
+.cost-row:last-child{border-bottom:none;}
+.cost-lbl{font-size:12px;color:var(--text2);}
+.cost-val{font-size:13px;font-weight:700;}
+.cost-total{color:var(--accent);font-size:16px !important;}
+.stop-section-title{font-size:13px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.stop-num{width:22px;height:22px;border-radius:50%;background:var(--surface2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
+.ai-card{background:linear-gradient(135deg,rgba(167,139,250,.1),rgba(106,173,255,.08));border:1px solid rgba(167,139,250,.25);border-radius:var(--r-lg);padding:18px;margin-bottom:18px;}
+.ai-title{font-size:13px;font-weight:700;color:var(--purple);margin-bottom:12px;}
+.ai-loading{font-size:12px;color:var(--text2);text-align:center;padding:20px 0;}
+.ai-plan-step{display:flex;gap:10px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+.ai-plan-step:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.ai-step-time{flex-shrink:0;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--accent);min-width:48px;}
+.ai-step-title{font-size:13px;font-weight:700;margin-bottom:2px;}
+.ai-step-desc{font-size:11px;color:var(--text2);line-height:1.6;}
+.ai-step-cost{font-size:11px;color:var(--green);margin-top:3px;}
+.ai-gen-btn{width:100%;padding:11px;background:var(--purple-dim);color:var(--purple);border:1px solid rgba(167,139,250,.3);border-radius:10px;font-family:'Noto Sans JP',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:opacity .2s;margin-top:4px;}
+.hist-list{display:flex;flex-direction:column;gap:10px;margin-bottom:26px;}
+.hist-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;}
+.hist-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;}
+.hist-date{font-size:11px;color:var(--text2);}
+.hist-cost{font-size:14px;font-weight:700;color:var(--accent);}
+.hist-route{font-size:13px;font-weight:700;margin-bottom:6px;}
+.hist-spots{display:flex;gap:5px;flex-wrap:wrap;}
+.hist-spot{font-size:10px;background:var(--surface2);padding:2px 8px;border-radius:5px;color:var(--text2);}
+.add-hist-btn{width:100%;padding:12px;background:var(--surface);border:1px dashed var(--border2);border-radius:var(--r);color:var(--text2);font-family:'Noto Sans JP',sans-serif;font-size:13px;cursor:pointer;transition:all .2s;margin-bottom:20px;}
+.add-hist-btn:hover{border-color:var(--accent);color:var(--accent);}
+.bm-list{display:flex;flex-direction:column;gap:10px;margin-bottom:26px;}
+.bm-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all .2s;}
+.bm-card:hover{border-color:var(--border2);}
+.bm-name{font-size:13px;font-weight:700;margin-bottom:3px;}
+.bm-meta{font-size:11px;color:var(--text2);}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(12,12,16,.96);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;justify-content:space-around;padding:10px 0 22px;z-index:200;}
+.nav-btn{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:5px 20px;border-radius:12px;transition:all .2s;border:none;background:none;}
+.nav-ico{font-size:20px;color:var(--text2);transition:color .2s;}
+.nav-lbl{font-size:9px;color:var(--text2);transition:color .2s;letter-spacing:.3px;}
+.nav-btn.on .nav-ico,.nav-btn.on .nav-lbl{color:var(--accent);}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface2);border:1px solid var(--border2);border-radius:20px;padding:10px 20px;font-size:12px;z-index:999;opacity:0;transition:all .3s;white-space:nowrap;max-width:90vw;text-align:center;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.hist-form-group{margin-bottom:14px;}
+.hist-form-label{font-size:11px;color:var(--text2);margin-bottom:5px;display:block;}
+.hist-form-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:13px;outline:none;}
+.hist-form-input:focus{border-color:var(--border2);}
+.hist-form-btn{width:100%;padding:12px;background:var(--accent);color:#000;border:none;border-radius:10px;font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-top:4px;}
+.loading-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;text-align:center;color:var(--text2);font-size:12px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{width:20px;height:20px;border:2px solid var(--border2);border-top-color:var(--purple);border-radius:50%;animation:spin .8s linear infinite;display:inline-block;vertical-align:middle;margin-right:8px;}
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div class="screen active" id="screen-home">
+  <div class="app-header">
+    <div class="header-row">
+      <div class="logo">おでかけ<em>ナビ</em></div>
+      <div class="loc-pill" onclick="getCurrentLocation('home')">
+        <div class="loc-dot"></div>
+        <span id="home-loc-label">現在地を取得</span>
+      </div>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn on" onclick="homeTab('all',this)">すべて</button>
+      <button class="tab-btn" onclick="homeTab('food',this)">🍜 グルメ</button>
+      <button class="tab-btn" onclick="homeTab('event',this)">🎪 イベント</button>
+      <button class="tab-btn" onclick="homeTab('weather',this)">🌤 天気</button>
+    </div>
+  </div>
+  <div class="scroll-body">
+    <div class="section visible" id="h-weather">
+      <div id="weather-container"><div class="loading-card">📍 現在地を取得すると天気が表示されます</div></div>
+    </div>
+    <div class="section visible" id="h-food">
+      <div class="sec-head">
+        <div class="sec-title"><span class="ico">🍜</span>近くのご飯屋さん</div>
+        <button class="see-all" onclick="loadNearbyPlaces(currentFoodType)">更新</button>
+      </div>
+      <div class="chips">
+        <button class="chip on" onclick="filterFood(this,'restaurant')">🍽 レストラン</button>
+        <button class="chip" onclick="filterFood(this,'cafe')">☕ カフェ</button>
+        <button class="chip" onclick="filterFood(this,'bar')">🍺 バー</button>
+        <button class="chip" onclick="filterFood(this,'fast_food')">🍔 ファスト系</button>
+      </div>
+      <div class="rest-list" id="home-rest-list">
+        <div class="loading-card">📍 現在地を取得するとお店が表示されます</div>
+      </div>
+    </div>
+    <div class="section visible" id="h-event">
+      <div class="sec-head">
+        <div class="sec-title"><span class="ico">🎪</span>今週末のイベント</div>
+      </div>
+      <div class="evt-list" id="home-evt-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ROUTE -->
+<div class="screen" id="screen-route">
+  <div class="app-header">
+    <div class="header-row">
+      <div class="logo">おでかけ<em>ナビ</em></div>
+      <div style="font-size:11px;color:var(--text2);">ルート検索</div>
+    </div>
+  </div>
+  <div class="scroll-body">
+    <div class="route-form">
+      <div style="margin-bottom:6px;">
+        <div class="route-label">出発地</div>
+        <div class="route-input-row">
+          <div class="route-dot start"></div>
+          <div class="route-input-wrap">
+            <input class="route-input" id="inp-start" type="text" placeholder="例）渋谷駅、自宅">
+            <button class="gps-btn" onclick="getCurrentLocation('route')">📍</button>
+          </div>
+        </div>
+      </div>
+      <div class="route-connector"></div>
+      <div style="margin-bottom:12px;">
+        <div class="route-label">目的地</div>
+        <div class="route-input-row">
+          <div class="route-dot end"></div>
+          <div class="route-input-wrap">
+            <input class="route-input" id="inp-end" type="text" placeholder="例）鎌倉駅、横浜">
+          </div>
+        </div>
+      </div>
+      <div class="chips" style="margin-bottom:12px;">
+        <button class="chip on" onclick="chipToggle(this)">🍜 グルメ</button>
+        <button class="chip on" onclick="chipToggle(this)">🎪 イベント</button>
+        <button class="chip on" onclick="chipToggle(this)">🌤 天気</button>
+        <button class="chip" onclick="chipToggle(this)">🏛 観光</button>
+        <button class="chip" onclick="chipToggle(this)">☕ カフェ</button>
+      </div>
+      <button class="route-search-btn" onclick="searchRoute()">🔍 ルート沿いを探す</button>
+    </div>
+    <div class="route-result" id="route-result">
+      <div class="ai-card">
+        <div class="ai-title">✨ AI 1日プラン提案</div>
+        <div id="ai-plan-content">
+          <button class="ai-gen-btn" onclick="generateAIPlan()">🤖 AIにプランを提案してもらう</button>
+        </div>
+      </div>
+      <div class="route-summary">
+        <div class="route-line">
+          <div class="route-line-dot s"></div>
+          <div class="route-line-bar"></div>
+          <div class="route-line-dot e"></div>
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:6px;" id="route-title-text">—</div>
+          <div class="route-stats">
+            <div class="route-stat"><div class="route-stat-val" style="color:var(--blue)" id="route-time">—</div><div class="route-stat-lbl">所要時間</div></div>
+            <div class="route-stat"><div class="route-stat-val" style="color:var(--green)" id="route-dist">—</div><div class="route-stat-lbl">距離</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="cost-card" id="route-cost-card"></div>
+      <div class="sec-head" style="margin-bottom:10px;">
+        <div class="sec-title"><span class="ico">🌤</span>ルート沿いの天気</div>
+      </div>
+      <div id="route-weather-row" style="display:flex;gap:8px;margin-bottom:22px;overflow-x:auto;scrollbar-width:none;"></div>
+      <div class="sec-head" style="margin-bottom:10px;">
+        <div class="sec-title"><span class="ico">📍</span>目的地周辺のスポット</div>
+      </div>
+      <div style="margin-bottom:10px;">
+        <div class="stop-section-title"><div class="stop-num">1</div>目的地周辺のご飯</div>
+        <div class="rest-list" id="route-rest-list"><div class="loading-card">ルート検索後に表示されます</div></div>
+      </div>
+      <div>
+        <div class="stop-section-title"><div class="stop-num">2</div>週末のイベント</div>
+        <div class="evt-list" id="route-evt-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY -->
+<div class="screen" id="screen-history">
+  <div class="app-header">
+    <div class="header-row">
+      <div class="logo">おでかけ<em>ナビ</em></div>
+      <div style="font-size:11px;color:var(--text2);">履歴・家計簿</div>
+    </div>
+  </div>
+  <div class="scroll-body">
+    <button class="add-hist-btn" onclick="openModal('hist-modal')">＋ 今日のおでかけを記録する</button>
+    <div class="sec-head">
+      <div class="sec-title"><span class="ico">📊</span>今月のサマリー</div>
+    </div>
+    <div class="cost-card" style="margin-bottom:22px;">
+      <div class="cost-title">💴 今月の合計</div>
+      <div class="cost-row"><div class="cost-lbl">おでかけ回数</div><div class="cost-val" id="trip-count">—</div></div>
+      <div class="cost-row"><div class="cost-lbl">合計支出</div><div class="cost-val cost-total" id="total-spend">—</div></div>
+      <div class="cost-row"><div class="cost-lbl">平均支出/回</div><div class="cost-val" id="avg-spend">—</div></div>
+    </div>
+    <div class="sec-head"><div class="sec-title"><span class="ico">🗓</span>おでかけ履歴</div></div>
+    <div class="hist-list" id="hist-list"><div style="text-align:center;color:var(--text2);font-size:12px;padding:20px 0;">履歴がありません</div></div>
+    <div class="sec-head" style="margin-top:8px;"><div class="sec-title"><span class="ico">🔖</span>保存済みスポット</div></div>
+    <div class="bm-list" id="bm-list"><div style="text-align:center;color:var(--text2);font-size:12px;padding:20px 0;">保存済みスポットがありません</div></div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="nav-btn on" onclick="gotoScreen('home',this)"><div class="nav-ico">🏠</div><div class="nav-lbl">ホーム</div></button>
+  <button class="nav-btn" onclick="gotoScreen('route',this)"><div class="nav-ico">🗺</div><div class="nav-lbl">ルート</div></button>
+  <button class="nav-btn" onclick="gotoScreen('history',this)"><div class="nav-ico">📖</div><div class="nav-lbl">履歴</div></button>
+  <button class="nav-btn" onclick="alert('設定（実装予定）')"><div class="nav-ico">⚙️</div><div class="nav-lbl">設定</div></button>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="rest-modal" onclick="closeModal('rest-modal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeModal('rest-modal')">✕</button>
+    <div id="rest-modal-content"></div>
+  </div>
+</div>
+<div class="modal-overlay" id="evt-modal" onclick="closeModal('evt-modal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeModal('evt-modal')">✕</button>
+    <div id="evt-modal-content"></div>
+  </div>
+</div>
+<div class="modal-overlay" id="hist-modal" onclick="closeModal('hist-modal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeModal('hist-modal')">✕</button>
+    <div style="font-size:16px;font-weight:700;margin-bottom:16px;">おでかけを記録</div>
+    <div class="hist-form-group"><label class="hist-form-label">出発地</label><input class="hist-form-input" id="h-start" placeholder="例）自宅、渋谷駅"></div>
+    <div class="hist-form-group"><label class="hist-form-label">目的地</label><input class="hist-form-input" id="h-end" placeholder="例）鎌倉"></div>
+    <div class="hist-form-group"><label class="hist-form-label">立ち寄った場所（カンマ区切り）</label><input class="hist-form-input" id="h-spots" placeholder="例）鶴岡八幡宮, 鎌倉ビール"></div>
+    <div class="hist-form-group"><label class="hist-form-label">合計支出（円）</label><input class="hist-form-input" id="h-cost" type="number" placeholder="例）5800"></div>
+    <div class="hist-form-group"><label class="hist-form-label">メモ</label><input class="hist-form-input" id="h-memo" placeholder="例）天気よくて最高だった"></div>
+    <button class="hist-form-btn" onclick="saveHistory()">💾 保存する</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// CONFIG
+const SUPA_URL='https://hcwyuxrsyvhffdspiipz.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhjd3l1eHJzeXZoZmZkc3BpaXB6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3NTY3NzksImV4cCI6MjA5NTMzMjc3OX0.WMS1Q4wJ5f2vnBqUpk7p96_TrsdidTOOQUiohsl5e9U';
+const WEATHER_KEY='80794671a5885cfca96929620e89a5da';
+const {createClient}=supabase;
+const db=createClient(SUPA_URL,SUPA_KEY);
+let USER_ID=localStorage.getItem('outing_uid');
+if(!USER_ID){USER_ID='u_'+Math.random().toString(36).slice(2,10);localStorage.setItem('outing_uid',USER_ID);}
+let currentLat=null,currentLng=null,currentFoodType='restaurant';
+const placeCache={};
+
+// OSM CATEGORY MAP
+const OSM_TAGS={
+  restaurant:{amenity:'restaurant'},
+  cafe:{amenity:'cafe'},
+  bar:{amenity:'bar'},
+  fast_food:{amenity:'fast_food'},
+};
+const EMOJI_MAP={
+  restaurant:'🍽',cafe:'☕',bar:'🍺',fast_food:'🍔',
+  sushi:'🍣',ramen:'🍜',izakaya:'🏮',italian:'🍝',
+  french:'🥐',chinese:'🥢',korean:'🍖',curry:'🍛',
+};
+const CUISINE_EMOJI={sushi:'🍣',ramen:'🍜',izakaya:'🏮',italian:'🍝',french:'🥐',chinese:'🥢',korean:'🍖',curry:'🍛',pizza:'🍕',udon:'🍜',soba:'🍜',yakiniku:'🔥',tempura:'🍤',tonkatsu:'🥩'};
+
+function getEmoji(tags){
+  if(tags.cuisine&&CUISINE_EMOJI[tags.cuisine])return CUISINE_EMOJI[tags.cuisine];
+  return EMOJI_MAP[tags.amenity]||'🍽';
+}
+
+// DISTANCE
+function calcDist(lat1,lng1,lat2,lng2){
+  const R=6371000;
+  const dLat=(lat2-lat1)*Math.PI/180;
+  const dLng=(lng2-lng1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return Math.round(R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)));
+}
+
+function distLabel(m){return m<1000?m+'m':(m/1000).toFixed(1)+'km';}
+
+// OVERPASS API - 実際の近くのお店を取得
+async function fetchOverpassPlaces(lat,lng,type,radius=800){
+  const tag=OSM_TAGS[type]||{amenity:type};
+  const key=Object.keys(tag)[0];
+  const val=tag[key];
+  const query=`[out:json][timeout:10];node["${key}"="${val}"](around:${radius},${lat},${lng});out body 20;`;
+  try{
+    const res=await fetch('https://overpass-api.de/api/interpreter',{
+      method:'POST',
+      body:'data='+encodeURIComponent(query),
+    });
+    const data=await res.json();
+    return data.elements||[];
+  }catch(e){console.log('overpass error',e);return[];}
+}
+
+function osmToPlace(el,lat,lng,type){
+  const tags=el.tags||{};
+  const dist=calcDist(lat,lng,el.lat,el.lon);
+  const name=tags.name||tags['name:ja']||'名称不明';
+  const cuisine=tags.cuisine||'';
+  const emoji=getEmoji({...tags,amenity:type});
+  const mapsUrl=`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name+' '+( tags['addr:city']||tags['addr:suburb']||''))}`;
+  const isOpen=tags.opening_hours?null:null; // OSMの営業時間は複雑なのでnull
+  return {
+    place_id:'osm_'+el.id,
+    name,cuisine,emoji,
+    vicinity:distLabel(dist),
+    dist,
+    lat:el.lat,lng:el.lon,
+    tags,
+    maps_url:mapsUrl,
+    type,
+    phone:tags.phone||tags['contact:phone']||null,
+    website:tags.website||tags['contact:website']||null,
+    opening_hours:tags.opening_hours||null,
+  };
+}
+
+// RENDER
+function starsHtml(r){if(!r)return'';const f=Math.floor(r);return'★'.repeat(f)+'☆'.repeat(5-f);}
+
+function renderRestCard(p,idx){
+  const colors=['rgba(232,184,75,.12)','rgba(106,173,255,.12)','rgba(82,214,138,.12)','rgba(240,112,112,.12)','rgba(167,139,250,.12)'];
+  const bg=colors[idx%colors.length];
+  return`<div class="rest-card" onclick="openPlaceModal('${p.place_id}')">
+    <div class="rest-thumb" style="background:${bg}">${p.emoji}</div>
+    <div class="rest-info">
+      <div class="rest-name">${p.name}</div>
+      <div class="rest-meta">
+        ${p.cuisine?`<span class="rest-genre">${p.cuisine}</span>`:`<span class="rest-genre">${p.type||'飲食店'}</span>`}
+        <span class="rest-dist">📍 ${p.vicinity}</span>
+      </div>
+      <div class="rest-bottom">
+        <div class="price">${p.opening_hours||'営業時間不明'}</div>
+        <div class="open-tag open">Google Mapで確認</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+async function openPlaceModal(placeId){
+  const p=placeCache[placeId];
+  if(!p)return;
+  document.getElementById('rest-modal-content').innerHTML=`
+    <div style="font-size:28px;margin-bottom:8px;">${p.emoji}</div>
+    <div class="modal-title">${p.name}</div>
+    <div class="modal-sub">📍 現在地から${p.vicinity}</div>
+    <div class="info-grid">
+      <div class="info-cell"><div class="info-cell-lbl">ジャンル</div><div class="info-cell-val" style="font-size:12px;">${p.cuisine||p.type||'飲食店'}</div></div>
+      <div class="info-cell"><div class="info-cell-lbl">距離</div><div class="info-cell-val" style="color:var(--green);">${p.vicinity}</div></div>
+      <div class="info-cell"><div class="info-cell-lbl">営業時間</div><div class="info-cell-val" style="font-size:11px;">${p.opening_hours||'要確認'}</div></div>
+      <div class="info-cell"><div class="info-cell-lbl">電話</div><div class="info-cell-val" style="font-size:11px;">${p.phone||'—'}</div></div>
+    </div>
+    <button class="modal-btn maps" onclick="window.open('${p.maps_url}','_blank')">🗺 Google Mapで見る・ナビ</button>
+    <button class="modal-btn save" onclick="saveBookmark(${JSON.stringify({place_id:p.place_id,name:p.name,genre:p.cuisine||p.type,address:p.vicinity,maps_url:p.maps_url,rating:0}).replace(/"/g,'&quot;')})">🔖 保存リストに追加</button>
+    ${p.website?`<button class="modal-btn site" onclick="window.open('${p.website}','_blank')">🔗 公式サイトへ</button>`:''}
+    <button class="modal-btn site" onclick="window.open('https://www.google.com/search?q=${encodeURIComponent(p.name)}','_blank')">🔍 Google検索で詳細を見る</button>
+  `;
+  openModal('rest-modal');
+}
+
+// LOAD NEARBY
+async function loadNearbyPlaces(type){
+  if(!currentLat){showToast('📍 まず現在地を取得してください');return;}
+  currentFoodType=type||currentFoodType;
+  const list=document.getElementById('home-rest-list');
+  list.innerHTML=`<div class="loading-card"><span class="spinner"></span>周辺のお店を検索中...</div>`;
+  const elements=await fetchOverpassPlaces(currentLat,currentLng,currentFoodType);
+  if(!elements.length){
+    list.innerHTML=`<div class="loading-card">近くにお店が見つかりませんでした<br><button style="margin-top:8px;padding:6px 14px;border-radius:8px;border:1px solid var(--border2);background:none;color:var(--text2);cursor:pointer;" onclick="loadNearbyPlaces('${currentFoodType}')">再試行</button></div>`;
+    return;
+  }
+  const places=elements
+    .map(el=>osmToPlace(el,currentLat,currentLng,currentFoodType))
+    .filter(p=>p.name!=='名称不明'||elements.length<=5)
+    .sort((a,b)=>a.dist-b.dist)
+    .slice(0,10);
+  places.forEach(p=>placeCache[p.place_id]=p);
+  list.innerHTML=places.map((p,i)=>renderRestCard(p,i)).join('');
+}
+
+async function loadRouteAreaPlaces(lat,lng,label){
+  const list=document.getElementById('route-rest-list');
+  list.innerHTML=`<div class="loading-card"><span class="spinner"></span>${label}周辺を検索中...</div>`;
+  const elements=await fetchOverpassPlaces(lat,lng,'restaurant',1000);
+  if(!elements.length){list.innerHTML=`<div class="loading-card">周辺にお店が見つかりませんでした</div>`;return;}
+  const places=elements
+    .map(el=>osmToPlace(el,lat,lng,'restaurant'))
+    .filter(p=>p.name!=='名称不明')
+    .sort((a,b)=>a.dist-b.dist)
+    .slice(0,5);
+  places.forEach(p=>placeCache[p.place_id]=p);
+  list.innerHTML=places.map((p,i)=>renderRestCard(p,i)).join('');
+}
+
+function filterFood(btn,type){
+  document.querySelectorAll('#h-food .chip').forEach(c=>c.classList.remove('on'));
+  btn.classList.add('on');
+  loadNearbyPlaces(type);
+}
+
+// WEATHER
+function weatherIcon(code){
+  if(code>=200&&code<300)return'⛈';if(code>=300&&code<400)return'🌦';
+  if(code>=500&&code<600)return'🌧';if(code>=600&&code<700)return'🌨';
+  if(code>=700&&code<800)return'🌫';if(code===800)return'☀️';
+  if(code===801)return'🌤';if(code===802)return'⛅';return'☁️';
+}
+
+async function fetchWeather(lat,lng){
+  try{
+    const res=await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lng}&appid=${WEATHER_KEY}&units=metric&lang=ja&cnt=40`);
+    const data=await res.json();
+    if(data.cod!=='200')throw new Error('weather error');
+    return data;
+  }catch(e){return null;}
+}
+
+async function renderHomeWeather(lat,lng,locationName){
+  const container=document.getElementById('weather-container');
+  const data=await fetchWeather(lat,lng);
+  if(!data){container.innerHTML=`<div class="loading-card">天気の取得に失敗しました</div>`;return;}
+  const cur=data.list[0];
+  const temp=Math.round(cur.main.temp);
+  const desc=cur.weather[0].description;
+  const icon=weatherIcon(cur.weather[0].id);
+  const pop=Math.round((cur.pop||0)*100);
+  const wind=cur.wind.speed.toFixed(1);
+  const humidity=cur.main.humidity;
+  const umbrella=pop>=40;
+  const days={};
+  const DN=['日','月','火','水','木','金','土'];
+  data.list.forEach(item=>{
+    const d=new Date(item.dt*1000);
+    const key=d.toLocaleDateString('ja-JP');
+    if(!days[key])days[key]={icon:weatherIcon(item.weather[0].id),hi:item.main.temp_max,lo:item.main.temp_min,pop:Math.round((item.pop||0)*100),dow:DN[d.getDay()]};
+    else{days[key].hi=Math.max(days[key].hi,item.main.temp_max);days[key].lo=Math.min(days[key].lo,item.main.temp_min);}
+  });
+  const fc=Object.values(days).slice(1,6);
+  const now=new Date();
+  const dateStr=`${now.getMonth()+1}月${now.getDate()}日（${DN[now.getDay()]}）`;
+  container.innerHTML=`
+    <div class="weather-card">
+      <div class="weather-top">
+        <div class="weather-left">
+          <div class="weather-emoji">${icon}</div>
+          <div><div class="weather-temp">${temp}<sup>°C</sup></div><div class="weather-sub">${desc}</div></div>
+        </div>
+        <div class="weather-right">
+          <div class="weather-lbl">今日</div>
+          <div class="weather-date">${dateStr}</div>
+          <div style="font-size:11px;color:var(--text2);margin-top:2px;">${locationName}</div>
+        </div>
+      </div>
+      <div class="umbrella-badge ${umbrella?'need':'noneed'}">${umbrella?'☂️ 傘を持っていこう':'☀️ 傘いらない'} — 降水確率${pop}%</div>
+      <div class="weather-stats">
+        <div class="weather-stat">☔ 降水 <b>${pop}%</b></div>
+        <div class="weather-stat">💨 風速 <b>${wind}m/s</b></div>
+        <div class="weather-stat">💧 湿度 <b>${humidity}%</b></div>
+      </div>
+      <div class="forecast-row">
+        ${fc.map(d=>`<div class="forecast-day"><div class="fc-day">${d.dow}</div><div class="fc-icon">${d.icon}</div><div class="fc-hi">${Math.round(d.hi)}°</div><div class="fc-lo">${Math.round(d.lo)}°</div><div class="fc-rain">${d.pop}%</div></div>`).join('')}
+      </div>
+    </div>`;
+}
+
+// EVENTS (demo)
+const EVENTS=[
+  {id:1,month:'MAY',day:'26',dow:'土',name:'代々木公園 クラフトビールフェス',place:'代々木公園イベント広場',tags:['フード','屋外'],free:true,fee:'入場無料',time:'11:00〜20:00',desc:'全国30以上のブルワリーが集結！クラフトビールを飲み比べながらフードや音楽も楽しめる都内最大級のビアフェス。',site:'https://example.com',share_text:'代々木公園クラフトビールフェスに行くよ！一緒にどう？🍺'},
+  {id:2,month:'MAY',day:'26',dow:'土',name:'渋谷ジャズフェスティバル2026',place:'渋谷複数会場',tags:['音楽'],free:true,fee:'無料〜¥3,000',time:'12:00〜22:00',desc:'渋谷の各ライブハウス・カフェを舞台に国内外のジャズミュージシャンが集結。',site:'https://example.com',share_text:'渋谷ジャズフェスに行くよ！🎷'},
+  {id:3,month:'MAY',day:'27',dow:'日',name:'東京蚤の市',place:'東京オーヴァル京王閣',tags:['マーケット'],free:false,fee:'¥800',time:'9:00〜16:00',desc:'全国から400以上の出店者が集まる蚤の市。アンティーク雑貨・古着など幅広いジャンルが揃う。',site:'https://example.com',share_text:'東京蚤の市に行くよ！'},
+  {id:4,month:'MAY',day:'27',dow:'日',name:'六本木アートナイト プレイベント',place:'六本木ヒルズ周辺',tags:['アート','屋外'],free:true,fee:'無料',time:'10:00〜22:00',desc:'国内外アーティストによるインスタレーション作品が屋外展示。',site:'https://example.com',share_text:'六本木アートナイト行かない？🎨'},
+];
+
+function renderEvtCard(e){
+  return`<div class="evt-card" onclick="openEvtModal(${e.id})">
+    <div class="evt-date"><div class="evt-m">${e.month}</div><div class="evt-d">${e.day}</div><div class="evt-m">${e.dow}</div></div>
+    <div class="evt-info">
+      <div class="evt-name">${e.name}</div>
+      <div class="evt-place">📍 ${e.place}</div>
+      <div class="evt-tags">${e.tags.map(t=>`<span class="evt-tag">${t}</span>`).join('')}<span class="evt-tag ${e.free?'free':'paid'}">${e.free?'無料':'有料'}</span></div>
+      <div class="evt-fee ${e.free?'free':'paid'}">${e.fee}</div>
+    </div>
+  </div>`;
+}
+
+function openEvtModal(id){
+  const e=EVENTS.find(x=>x.id===id);if(!e)return;
+  document.getElementById('evt-modal-content').innerHTML=`
+    <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;">
+      <div class="evt-date" style="flex-shrink:0;"><div class="evt-m">${e.month}</div><div class="evt-d">${e.day}</div><div class="evt-m">${e.dow}</div></div>
+      <div><div class="modal-title">${e.name}</div><div class="modal-sub">📍 ${e.place}</div></div>
+    </div>
+    <div class="info-grid">
+      <div class="info-cell"><div class="info-cell-lbl">時間</div><div class="info-cell-val" style="font-size:12px;">${e.time}</div></div>
+      <div class="info-cell"><div class="info-cell-lbl">費用</div><div class="info-cell-val" style="color:${e.free?'var(--green)':'var(--accent)'};">${e.fee}</div></div>
+    </div>
+    <div class="modal-section">
+      <div class="modal-section-title">イベント詳細</div>
+      <div style="font-size:13px;line-height:1.8;color:var(--text2);">${e.desc}</div>
+    </div>
+    <button class="modal-btn site" onclick="window.open('${e.site}','_blank')">🔗 公式サイト・詳細を見る</button>
+    <button class="modal-btn share" onclick="shareEvent('${e.share_text.replace(/'/g,"\\'")}','${e.name}')">📤 友達・彼女に共有する</button>
+    <button class="modal-btn maps" onclick="window.open('https://maps.google.com/?q=${encodeURIComponent(e.place)}','_blank')">🗺 Google Mapで場所を見る</button>
+  `;
+  openModal('evt-modal');
+}
+
+function shareEvent(text,title){
+  if(navigator.share){navigator.share({title,text,url:location.href});}
+  else{navigator.clipboard.writeText(text).then(()=>showToast('📋 コピーしました！'));}
+}
+
+// BOOKMARK
+async function saveBookmark(b){
+  try{
+    await db.from('bookmarks').insert({user_id:USER_ID,name:b.name,genre:b.genre,address:b.address,maps_url:b.maps_url,cost_min:0,cost_max:0,rating:b.rating});
+    showToast('🔖 保存しました！');
+  }catch(e){showToast('🔖 保存しました（ローカル）');}
+  window.open(b.maps_url,'_blank');
+  closeModal('rest-modal');
+}
+
+// HISTORY
+async function loadHistory(){
+  try{
+    const{data}=await db.from('histories').select('*').eq('user_id',USER_ID).order('created_at',{ascending:false});
+    if(!data||!data.length)return;
+    document.getElementById('hist-list').innerHTML=data.map(h=>`
+      <div class="hist-card">
+        <div class="hist-top"><div class="hist-date">${h.date}</div><div class="hist-cost">¥${Number(h.total_cost).toLocaleString()}</div></div>
+        <div class="hist-route">${h.route_start} → ${h.route_end}</div>
+        <div class="hist-spots">${(h.spots||[]).map(s=>`<span class="hist-spot">${s}</span>`).join('')}</div>
+        ${h.memo?`<div style="font-size:11px;color:var(--text2);margin-top:6px;">💬 ${h.memo}</div>`:''}
+      </div>`).join('');
+    const total=data.reduce((s,h)=>s+Number(h.total_cost),0);
+    document.getElementById('trip-count').textContent=`${data.length}回`;
+    document.getElementById('total-spend').textContent=`¥${total.toLocaleString()}`;
+    document.getElementById('avg-spend').textContent=`¥${Math.round(total/data.length).toLocaleString()}`;
+  }catch(e){console.log(e);}
+}
+
+async function loadBookmarks(){
+  try{
+    const{data}=await db.from('bookmarks').select('*').eq('user_id',USER_ID).order('created_at',{ascending:false});
+    if(!data||!data.length)return;
+    document.getElementById('bm-list').innerHTML=data.map(b=>`
+      <div class="bm-card" onclick="window.open('${b.maps_url}','_blank')">
+        <div><div class="bm-name">${b.name}</div><div class="bm-meta">${b.genre||''} · ${b.address||''}</div></div>
+        <div style="font-size:20px;">🗺</div>
+      </div>`).join('');
+  }catch(e){console.log(e);}
+}
+
+async function saveHistory(){
+  const start=document.getElementById('h-start').value;
+  const end=document.getElementById('h-end').value;
+  if(!start||!end){showToast('⚠️ 出発地と目的地を入力してね');return;}
+  const spots=document.getElementById('h-spots').value.split(',').map(s=>s.trim()).filter(Boolean);
+  const cost=parseInt(document.getElementById('h-cost').value)||0;
+  const memo=document.getElementById('h-memo').value;
+  const today=new Date().toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric'});
+  try{
+    await db.from('histories').insert({user_id:USER_ID,date:today,route_start:start,route_end:end,spots,total_cost:cost,memo});
+    showToast('✅ 記録しました！');
+    closeModal('hist-modal');
+    ['h-start','h-end','h-spots','h-cost','h-memo'].forEach(id=>document.getElementById(id).value='');
+    loadHistory();
+  }catch(e){showToast('❌ 保存に失敗しました');}
+}
+
+// GPS
+function getCurrentLocation(target){
+  if(!navigator.geolocation){showToast('⚠️ 位置情報が使えません');return;}
+  showToast('📍 位置情報取得中...');
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    const{latitude:lat,longitude:lng}=pos.coords;
+    currentLat=lat;currentLng=lng;
+    try{
+      const res=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=ja`);
+      const data=await res.json();
+      const addr=data.address;
+      const label=addr.suburb||addr.neighbourhood||addr.city_district||addr.city||'現在地';
+      document.getElementById('home-loc-label').textContent=label;
+      if(target==='route')document.getElementById('inp-start').value=label;
+      showToast(`📍 ${label}`);
+      if(target==='home'){renderHomeWeather(lat,lng,label);loadNearbyPlaces(currentFoodType);}
+    }catch(e){
+      document.getElementById('home-loc-label').textContent='現在地';
+      if(target==='route')document.getElementById('inp-start').value='現在地';
+      if(target==='home'){renderHomeWeather(lat,lng,'現在地');loadNearbyPlaces(currentFoodType);}
+    }
+  },()=>{showToast('⚠️ 位置情報の取得に失敗しました');});
+}
+
+// ROUTE SEARCH
+async function searchRoute(){
+  const s=document.getElementById('inp-start').value||'出発地';
+  const e=document.getElementById('inp-end').value||'目的地';
+  document.getElementById('route-title-text').textContent=`${s} → ${e}`;
+  document.getElementById('route-time').innerHTML='—';
+  document.getElementById('route-dist').innerHTML='—';
+  document.getElementById('route-cost-card').innerHTML=`
+    <div class="cost-title">💴 ざっくり費用まとめ</div>
+    <div class="cost-row"><div class="cost-lbl">🚃 交通費（往復目安）</div><div class="cost-val">¥1,000〜3,000</div></div>
+    <div class="cost-row"><div class="cost-lbl">🍣 昼食（相場）</div><div class="cost-val">¥1,000〜3,000</div></div>
+    <div class="cost-row"><div class="cost-lbl">🎪 イベント・観光</div><div class="cost-val">無料〜¥2,000</div></div>
+    <div class="cost-row"><div class="cost-lbl">☕ カフェ・軽食</div><div class="cost-val">〜¥1,000</div></div>
+    <div class="cost-row"><div class="cost-lbl" style="font-weight:700;color:var(--text)">合計目安（1人）</div><div class="cost-val cost-total">¥4,000〜10,000</div></div>`;
+
+  // Weather
+  const wrow=document.getElementById('route-weather-row');
+  if(currentLat){
+    const wdata=await fetchWeather(currentLat,currentLng);
+    if(wdata){
+      const cur=wdata.list[0];
+      const pop=Math.round((cur.pop||0)*100);
+      const umbrella=pop>=40;
+      wrow.innerHTML=`
+        <div style="flex-shrink:0;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;min-width:120px;">
+          <div style="font-size:10px;color:var(--text2)">${s}</div>
+          <div style="font-size:22px;margin:4px 0;">${weatherIcon(cur.weather[0].id)}</div>
+          <div class="umbrella-badge ${umbrella?'need':'noneed'}" style="font-size:10px;padding:4px 8px;margin:4px 0;">${umbrella?'☂️ 傘必要':'☀️ 傘いらない'}</div>
+          <div style="font-weight:700;">${Math.round(cur.main.temp)}°C</div>
+          <div style="font-size:10px;color:var(--text2);">降水 ${pop}%</div>
+        </div>`;
+    }
+  }else{
+    wrow.innerHTML=`<div style="font-size:12px;color:var(--text2);padding:12px;">📍 現在地を取得してから検索すると天気も表示されます</div>`;
+  }
+
+  // Places at destination - geocode the destination
+  document.getElementById('route-rest-list').innerHTML=`<div class="loading-card"><span class="spinner"></span>${e}周辺を検索中...</div>`;
+  try{
+    const geoRes=await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(e)}&format=json&limit=1&accept-language=ja`);
+    const geoData=await geoRes.json();
+    if(geoData&&geoData.length){
+      const destLat=parseFloat(geoData[0].lat);
+      const destLng=parseFloat(geoData[0].lon);
+      await loadRouteAreaPlaces(destLat,destLng,e);
+    }else{
+      document.getElementById('route-rest-list').innerHTML=`<div class="loading-card">目的地が見つかりませんでした</div>`;
+    }
+  }catch(err){
+    document.getElementById('route-rest-list').innerHTML=`<div class="loading-card">検索に失敗しました</div>`;
+  }
+
+  document.getElementById('route-evt-list').innerHTML=EVENTS.slice(0,2).map(renderEvtCard).join('');
+  document.getElementById('route-result').classList.add('show');
+  setTimeout(()=>document.getElementById('route-result').scrollIntoView({behavior:'smooth',block:'start'}),100);
+}
+
+// AI PLAN
+async function generateAIPlan(){
+  const s=document.getElementById('inp-start').value||'渋谷';
+  const e=document.getElementById('inp-end').value||'鎌倉';
+  const el=document.getElementById('ai-plan-content');
+  el.innerHTML=`<div class="ai-loading"><span class="spinner"></span>AIがプランを考え中...</div>`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        messages:[{role:'user',content:`出発地「${s}」から目的地「${e}」への1日おでかけプランを提案。イベント・昼食・観光・夕食の流れで4〜5ステップ。JSONのみ返してください: {"steps":[{"time":"10:00","title":"タイトル","desc":"説明1〜2文","cost":"¥XXX〜"}]}`}]
+      })
+    });
+    const data=await res.json();
+    const text=data.content?.find(c=>c.type==='text')?.text||'';
+    const plan=JSON.parse(text.replace(/```json|```/g,'').trim());
+    el.innerHTML=`<div>${plan.steps.map(s=>`
+      <div class="ai-plan-step">
+        <div class="ai-step-time">${s.time}</div>
+        <div><div class="ai-step-title">${s.title}</div><div class="ai-step-desc">${s.desc}</div><div class="ai-step-cost">💴 ${s.cost}</div></div>
+      </div>`).join('')}</div>
+      <button class="ai-gen-btn" onclick="generateAIPlan()" style="margin-top:8px;">🔄 別のプランを提案</button>`;
+  }catch(e){
+    el.innerHTML=`<div style="font-size:12px;color:var(--text2);text-align:center;padding:12px;">生成に失敗しました<br><button class="ai-gen-btn" onclick="generateAIPlan()" style="margin-top:8px;">再試行</button></div>`;
+  }
+}
+
+// NAV
+function gotoScreen(name,btn){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  if(name==='history'){loadHistory();loadBookmarks();}
+}
+
+function homeTab(tab,btn){
+  document.querySelectorAll('.app-header .tab-btn').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+  const ids=['h-weather','h-food','h-event'];
+  const map={all:ids,weather:['h-weather'],food:['h-food'],event:['h-event']};
+  ids.forEach(id=>document.getElementById(id).classList.remove('visible'));
+  (map[tab]||ids).forEach(id=>document.getElementById(id).classList.add('visible'));
+}
+
+function chipToggle(btn){btn.classList.toggle('on');}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// INIT
+document.getElementById('home-evt-list').innerHTML=EVENTS.map(renderEvtCard).join('');
+document.getElementById('route-evt-list').innerHTML=EVENTS.slice(0,2).map(renderEvtCard).join('');
+getCurrentLocation('home');
+</script>
+</body>
+</html>
+
   --accent: #e8b84b;
   --accent-dim: rgba(232,184,75,0.13);
   --blue: #6aadff;
