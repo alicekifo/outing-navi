@@ -62,7 +62,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
 .rest-list{display:flex;flex-direction:column;gap:10px;margin-bottom:26px;}
 .rest-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;cursor:pointer;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
 .rest-card:hover{border-color:var(--border2);transform:translateY(-1px);box-shadow:0 4px 20px rgba(0,0,0,.3);}
-.rest-thumb{width:60px;height:60px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px;}
+.rest-thumb{width:60px;height:60px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px;overflow:hidden;background:var(--surface2);}
+.rest-thumb img{width:100%;height:100%;object-fit:cover;border-radius:10px;}
 .rest-info{flex:1;min-width:0;}
 .rest-name{font-size:13px;font-weight:700;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .rest-meta{display:flex;align-items:center;gap:7px;margin-bottom:5px;flex-wrap:wrap;}
@@ -75,6 +76,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
 .open-tag{font-size:10px;padding:2px 7px;border-radius:5px;font-weight:500;}
 .open-tag.open{background:var(--green-dim);color:var(--green);}
 .open-tag.close{background:rgba(240,112,112,.1);color:var(--red);}
+.open-tag.unknown{background:var(--surface2);color:var(--text2);}
 .evt-list{display:flex;flex-direction:column;gap:10px;margin-bottom:26px;}
 .evt-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;cursor:pointer;transition:all .2s;display:flex;gap:12px;}
 .evt-card:hover{border-color:var(--border2);transform:translateY(-1px);}
@@ -101,6 +103,9 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
 .modal-sub{font-size:12px;color:var(--text2);margin-bottom:16px;}
 .modal-section{margin-bottom:18px;}
 .modal-section-title{font-size:11px;color:var(--text2);font-weight:700;letter-spacing:.5px;margin-bottom:8px;text-transform:uppercase;}
+.review-item{background:var(--surface2);border-radius:10px;padding:12px;margin-bottom:8px;}
+.review-author{font-size:11px;font-weight:700;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center;}
+.review-text{font-size:12px;color:var(--text2);line-height:1.6;}
 .modal-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px;border-radius:12px;border:none;font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:10px;transition:opacity .2s;}
 .modal-btn:hover{opacity:.85;}
 .modal-btn.maps{background:#4285f4;color:#fff;}
@@ -111,6 +116,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
 .info-cell{background:var(--surface2);border-radius:10px;padding:10px 12px;}
 .info-cell-lbl{font-size:10px;color:var(--text2);margin-bottom:3px;}
 .info-cell-val{font-size:13px;font-weight:700;}
+.hours-list{font-size:12px;color:var(--text2);line-height:2;}
 .route-form{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px;margin-bottom:18px;}
 .route-label{font-size:10px;color:var(--text2);margin-bottom:5px;letter-spacing:.5px;}
 .route-input-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
@@ -183,6 +189,9 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
 .hist-form-input:focus{border-color:var(--border2);}
 .hist-form-btn{width:100%;padding:12px;background:var(--accent);color:#000;border:none;border-radius:10px;font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-top:4px;}
 .loading-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;text-align:center;color:var(--text2);font-size:12px;}
+.server-status{display:inline-flex;align-items:center;gap:5px;font-size:10px;padding:3px 8px;border-radius:8px;margin-left:8px;}
+.server-status.online{background:var(--green-dim);color:var(--green);}
+.server-status.offline{background:rgba(240,112,112,.1);color:var(--red);}
 @keyframes spin{to{transform:rotate(360deg)}}
 .spinner{width:20px;height:20px;border:2px solid var(--border2);border-top-color:var(--purple);border-radius:50%;animation:spin .8s linear infinite;display:inline-block;vertical-align:middle;margin-right:8px;}
 </style>
@@ -193,7 +202,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
 <div class="screen active" id="screen-home">
   <div class="app-header">
     <div class="header-row">
-      <div class="logo">おでかけ<em>ナビ</em></div>
+      <div class="logo">おでかけ<em>ナビ</em><span class="server-status offline" id="server-badge">● オフライン</span></div>
       <div class="loc-pill" onclick="getCurrentLocation('home')">
         <div class="loc-dot"></div>
         <span id="home-loc-label">現在地を取得</span>
@@ -324,9 +333,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
   </div>
   <div class="scroll-body">
     <button class="add-hist-btn" onclick="openModal('hist-modal')">＋ 今日のおでかけを記録する</button>
-    <div class="sec-head">
-      <div class="sec-title"><span class="ico">📊</span>今月のサマリー</div>
-    </div>
+    <div class="sec-head"><div class="sec-title"><span class="ico">📊</span>今月のサマリー</div></div>
     <div class="cost-card" style="margin-bottom:22px;">
       <div class="cost-title">💴 今月の合計</div>
       <div class="cost-row"><div class="cost-lbl">おでかけ回数</div><div class="cost-val" id="trip-count">—</div></div>
@@ -379,161 +386,186 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
 <div class="toast" id="toast"></div>
 
 <script>
-// CONFIG
+// ===== CONFIG =====
 const SUPA_URL='https://hcwyuxrsyvhffdspiipz.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhjd3l1eHJzeXZoZmZkc3BpaXB6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3NTY3NzksImV4cCI6MjA5NTMzMjc3OX0.WMS1Q4wJ5f2vnBqUpk7p96_TrsdidTOOQUiohsl5e9U';
 const WEATHER_KEY='80794671a5885cfca96929620e89a5da';
+const SERVER='http://221.44.200.220:3000';
+
 const {createClient}=supabase;
 const db=createClient(SUPA_URL,SUPA_KEY);
 let USER_ID=localStorage.getItem('outing_uid');
 if(!USER_ID){USER_ID='u_'+Math.random().toString(36).slice(2,10);localStorage.setItem('outing_uid',USER_ID);}
 let currentLat=null,currentLng=null,currentFoodType='restaurant';
+let serverOnline=false;
 const placeCache={};
 
-// OSM CATEGORY MAP
-const OSM_TAGS={
-  restaurant:{amenity:'restaurant'},
-  cafe:{amenity:'cafe'},
-  bar:{amenity:'bar'},
-  fast_food:{amenity:'fast_food'},
-};
-const EMOJI_MAP={
-  restaurant:'🍽',cafe:'☕',bar:'🍺',fast_food:'🍔',
-  sushi:'🍣',ramen:'🍜',izakaya:'🏮',italian:'🍝',
-  french:'🥐',chinese:'🥢',korean:'🍖',curry:'🍛',
-};
-const CUISINE_EMOJI={sushi:'🍣',ramen:'🍜',izakaya:'🏮',italian:'🍝',french:'🥐',chinese:'🥢',korean:'🍖',curry:'🍛',pizza:'🍕',udon:'🍜',soba:'🍜',yakiniku:'🔥',tempura:'🍤',tonkatsu:'🥩'};
-
-function getEmoji(tags){
-  if(tags.cuisine&&CUISINE_EMOJI[tags.cuisine])return CUISINE_EMOJI[tags.cuisine];
-  return EMOJI_MAP[tags.amenity]||'🍽';
-}
-
-// DISTANCE
-function calcDist(lat1,lng1,lat2,lng2){
-  const R=6371000;
-  const dLat=(lat2-lat1)*Math.PI/180;
-  const dLng=(lng2-lng1)*Math.PI/180;
-  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
-  return Math.round(R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)));
-}
-
-function distLabel(m){return m<1000?m+'m':(m/1000).toFixed(1)+'km';}
-
-// OVERPASS API - 実際の近くのお店を取得
-async function fetchOverpassPlaces(lat,lng,type,radius=800){
-  const tag=OSM_TAGS[type]||{amenity:type};
-  const key=Object.keys(tag)[0];
-  const val=tag[key];
-  const query=`[out:json][timeout:10];node["${key}"="${val}"](around:${radius},${lat},${lng});out body 20;`;
+// ===== SERVER STATUS =====
+async function checkServer(){
   try{
-    const res=await fetch('https://overpass-api.de/api/interpreter',{
-      method:'POST',
-      body:'data='+encodeURIComponent(query),
-    });
+    const res=await fetch(`${SERVER}/`,{signal:AbortSignal.timeout(3000)});
     const data=await res.json();
-    return data.elements||[];
-  }catch(e){console.log('overpass error',e);return[];}
+    if(data.status==='ok'){
+      serverOnline=true;
+      const badge=document.getElementById('server-badge');
+      badge.textContent='● オンライン';
+      badge.className='server-status online';
+    }
+  }catch(e){
+    serverOnline=false;
+  }
 }
 
-function osmToPlace(el,lat,lng,type){
-  const tags=el.tags||{};
-  const dist=calcDist(lat,lng,el.lat,el.lon);
-  const name=tags.name||tags['name:ja']||'名称不明';
-  const cuisine=tags.cuisine||'';
-  const emoji=getEmoji({...tags,amenity:type});
-  const mapsUrl=`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(name+' '+( tags['addr:city']||tags['addr:suburb']||''))}`;
-  const isOpen=tags.opening_hours?null:null; // OSMの営業時間は複雑なのでnull
-  return {
-    place_id:'osm_'+el.id,
-    name,cuisine,emoji,
-    vicinity:distLabel(dist),
-    dist,
-    lat:el.lat,lng:el.lon,
-    tags,
-    maps_url:mapsUrl,
-    type,
-    phone:tags.phone||tags['contact:phone']||null,
-    website:tags.website||tags['contact:website']||null,
-    opening_hours:tags.opening_hours||null,
-  };
+// ===== PRICE LEVEL =====
+function priceLevelText(level){
+  const map={1:'〜¥1,000',2:'¥1,000〜3,000',3:'¥3,000〜5,000',4:'¥5,000〜'};
+  return map[level]||'価格情報なし';
 }
 
-// RENDER
-function starsHtml(r){if(!r)return'';const f=Math.floor(r);return'★'.repeat(f)+'☆'.repeat(5-f);}
+// ===== STARS =====
+function starsHtml(r){
+  if(!r)return'☆☆☆☆☆';
+  const full=Math.floor(r);
+  const half=r-full>=0.5;
+  return'★'.repeat(full)+(half?'½':'')+'☆'.repeat(5-full-(half?1:0));
+}
 
-function renderRestCard(p,idx){
-  const colors=['rgba(232,184,75,.12)','rgba(106,173,255,.12)','rgba(82,214,138,.12)','rgba(240,112,112,.12)','rgba(167,139,250,.12)'];
-  const bg=colors[idx%colors.length];
+// ===== EMOJI BY TYPE =====
+const CUISINE_EMOJI={sushi:'🍣',ramen:'🍜',izakaya:'🏮',italian:'🍝',french:'🥐',chinese:'🥢',korean:'🍖',curry:'🍛',pizza:'🍕',udon:'🍜',soba:'🍜',yakiniku:'🔥',tempura:'🍤',tonkatsu:'🥩',cafe:'☕',bar:'🍺',fast_food:'🍔'};
+function getPlaceEmoji(place){
+  const types=place.types||[];
+  if(types.includes('cafe'))return'☕';
+  if(types.includes('bar'))return'🍺';
+  if(types.includes('fast_food'))return'🍔';
+  return'🍽';
+}
+
+// ===== FETCH PLACES FROM SERVER =====
+async function fetchNearbyPlaces(lat,lng,type,radius=800){
+  if(!serverOnline) return [];
+  try{
+    const res=await fetch(`${SERVER}/api/places/nearby?lat=${lat}&lng=${lng}&type=${type}&radius=${radius}`);
+    const data=await res.json();
+    return data.results||[];
+  }catch(e){console.log('places error',e);return[];}
+}
+
+async function fetchPlaceDetail(place_id){
+  if(!serverOnline) return null;
+  try{
+    const res=await fetch(`${SERVER}/api/places/detail?place_id=${place_id}`);
+    const data=await res.json();
+    return data.result||null;
+  }catch(e){return null;}
+}
+
+async function fetchPlacesByQuery(query){
+  if(!serverOnline) return [];
+  try{
+    const res=await fetch(`${SERVER}/api/places/search?query=${encodeURIComponent(query)}`);
+    const data=await res.json();
+    return data.results||[];
+  }catch(e){return[];}
+}
+
+// ===== RENDER RESTAURANT CARD =====
+const COLORS=['rgba(232,184,75,.12)','rgba(106,173,255,.12)','rgba(82,214,138,.12)','rgba(240,112,112,.12)','rgba(167,139,250,.12)'];
+
+function renderPlaceCard(p,idx){
+  const isOpen=p.opening_hours?.open_now;
+  const openLabel=isOpen===true?'営業中':isOpen===false?'閉店中':'時間要確認';
+  const openClass=isOpen===true?'open':isOpen===false?'close':'unknown';
+  const price=priceLevelText(p.price_level);
+  const emoji=getPlaceEmoji(p);
+  const bg=COLORS[idx%COLORS.length];
+  const rating=p.rating?`<span class="stars" style="font-size:10px;">${starsHtml(p.rating)}</span><span style="color:var(--text2);font-size:10px;"> ${p.rating}（${(p.user_ratings_total||0).toLocaleString()}件）</span>`:'';
   return`<div class="rest-card" onclick="openPlaceModal('${p.place_id}')">
-    <div class="rest-thumb" style="background:${bg}">${p.emoji}</div>
+    <div class="rest-thumb" style="background:${bg}">${emoji}</div>
     <div class="rest-info">
       <div class="rest-name">${p.name}</div>
       <div class="rest-meta">
-        ${p.cuisine?`<span class="rest-genre">${p.cuisine}</span>`:`<span class="rest-genre">${p.type||'飲食店'}</span>`}
-        <span class="rest-dist">📍 ${p.vicinity}</span>
+        <span class="rest-genre">${(p.types?.[0]||'飲食店').replace(/_/g,' ')}</span>
+        <span class="rest-dist">📍 ${p.vicinity||''}</span>
       </div>
+      ${rating?`<div class="rest-rating">${rating}</div>`:''}
       <div class="rest-bottom">
-        <div class="price">${p.opening_hours||'営業時間不明'}</div>
-        <div class="open-tag open">Google Mapで確認</div>
+        <div class="price">${price}</div>
+        <div class="open-tag ${openClass}">${openLabel}</div>
       </div>
     </div>
   </div>`;
 }
 
+// ===== PLACE MODAL =====
 async function openPlaceModal(placeId){
-  const p=placeCache[placeId];
-  if(!p)return;
-  document.getElementById('rest-modal-content').innerHTML=`
-    <div style="font-size:28px;margin-bottom:8px;">${p.emoji}</div>
-    <div class="modal-title">${p.name}</div>
-    <div class="modal-sub">📍 現在地から${p.vicinity}</div>
-    <div class="info-grid">
-      <div class="info-cell"><div class="info-cell-lbl">ジャンル</div><div class="info-cell-val" style="font-size:12px;">${p.cuisine||p.type||'飲食店'}</div></div>
-      <div class="info-cell"><div class="info-cell-lbl">距離</div><div class="info-cell-val" style="color:var(--green);">${p.vicinity}</div></div>
-      <div class="info-cell"><div class="info-cell-lbl">営業時間</div><div class="info-cell-val" style="font-size:11px;">${p.opening_hours||'要確認'}</div></div>
-      <div class="info-cell"><div class="info-cell-lbl">電話</div><div class="info-cell-val" style="font-size:11px;">${p.phone||'—'}</div></div>
-    </div>
-    <button class="modal-btn maps" onclick="window.open('${p.maps_url}','_blank')">🗺 Google Mapで見る・ナビ</button>
-    <button class="modal-btn save" onclick="saveBookmark(${JSON.stringify({place_id:p.place_id,name:p.name,genre:p.cuisine||p.type,address:p.vicinity,maps_url:p.maps_url,rating:0}).replace(/"/g,'&quot;')})">🔖 保存リストに追加</button>
-    ${p.website?`<button class="modal-btn site" onclick="window.open('${p.website}','_blank')">🔗 公式サイトへ</button>`:''}
-    <button class="modal-btn site" onclick="window.open('https://www.google.com/search?q=${encodeURIComponent(p.name)}','_blank')">🔍 Google検索で詳細を見る</button>
-  `;
   openModal('rest-modal');
+  document.getElementById('rest-modal-content').innerHTML=`<div style="text-align:center;padding:30px 0;"><span class="spinner"></span>詳細を取得中...</div>`;
+
+  // キャッシュ確認
+  let detail=placeCache[placeId];
+  if(!detail){
+    detail=await fetchPlaceDetail(placeId);
+    if(detail) placeCache[placeId]=detail;
+  }
+
+  const p=detail;
+  if(!p){
+    document.getElementById('rest-modal-content').innerHTML=`<div style="text-align:center;color:var(--text2);padding:20px;">詳細の取得に失敗しました</div>`;
+    return;
+  }
+
+  const isOpen=p.opening_hours?.open_now;
+  const mapsUrl=`https://www.google.com/maps/place/?q=place_id:${placeId}`;
+  const hours=p.opening_hours?.weekday_text||[];
+  const reviews=p.reviews||[];
+
+  document.getElementById('rest-modal-content').innerHTML=`
+    <div style="font-size:28px;margin-bottom:8px;">${getPlaceEmoji(p)}</div>
+    <div class="modal-title">${p.name}</div>
+    <div class="modal-sub">📍 ${p.formatted_address||''}</div>
+    <div class="info-grid">
+      <div class="info-cell"><div class="info-cell-lbl">評価</div><div class="info-cell-val"><span class="stars" style="font-size:11px;">${starsHtml(p.rating)}</span> ${p.rating||'—'}</div></div>
+      <div class="info-cell"><div class="info-cell-lbl">予算目安</div><div class="info-cell-val" style="color:var(--green);">${priceLevelText(p.price_level)}</div></div>
+      <div class="info-cell"><div class="info-cell-lbl">営業状況</div><div class="info-cell-val" style="color:${isOpen===true?'var(--green)':isOpen===false?'var(--red)':'var(--text2)'};">${isOpen===true?'営業中':isOpen===false?'閉店中':'要確認'}</div></div>
+      <div class="info-cell"><div class="info-cell-lbl">電話</div><div class="info-cell-val" style="font-size:11px;">${p.formatted_phone_number||'—'}</div></div>
+    </div>
+    ${hours.length?`<div class="modal-section"><div class="modal-section-title">営業時間</div><div class="hours-list">${hours.map(h=>`<div>${h}</div>`).join('')}</div></div>`:''}
+    ${reviews.length?`<div class="modal-section"><div class="modal-section-title">口コミ（${p.user_ratings_total||0}件）</div>${reviews.slice(0,3).map(r=>`<div class="review-item"><div class="review-author"><span>${r.author_name}</span><span style="color:var(--accent);">${'★'.repeat(r.rating)}</span></div><div class="review-text">${r.text?.slice(0,100)}${r.text?.length>100?'...':''}</div></div>`).join('')}</div>`:''}
+    <button class="modal-btn maps" onclick="window.open('${mapsUrl}','_blank')">🗺 Google Mapで見る・ナビ</button>
+    <button class="modal-btn save" onclick="saveBookmark({place_id:'${placeId}',name:'${p.name.replace(/'/g,"\\'")}',genre:'${(p.types?.[0]||'').replace(/'/g,"\\'")}',address:'${(p.formatted_address||'').replace(/'/g,"\\'")}',maps_url:'${mapsUrl}',rating:${p.rating||0}})">🔖 保存リストに追加</button>
+    ${p.website?`<button class="modal-btn site" onclick="window.open('${p.website}','_blank')">🔗 公式サイトへ</button>`:''}
+    <button class="modal-btn site" onclick="window.open('https://www.google.com/search?q=${encodeURIComponent(p.name+' '+( p.formatted_address||''))}','_blank')">🔍 Google検索で詳細</button>
+  `;
 }
 
-// LOAD NEARBY
+// ===== LOAD NEARBY =====
 async function loadNearbyPlaces(type){
   if(!currentLat){showToast('📍 まず現在地を取得してください');return;}
   currentFoodType=type||currentFoodType;
   const list=document.getElementById('home-rest-list');
-  list.innerHTML=`<div class="loading-card"><span class="spinner"></span>周辺のお店を検索中...</div>`;
-  const elements=await fetchOverpassPlaces(currentLat,currentLng,currentFoodType);
-  if(!elements.length){
+
+  if(!serverOnline){
+    list.innerHTML=`<div class="loading-card">⚠️ サーバーがオフラインです<br><span style="font-size:11px;margin-top:4px;display:block;">自宅デスクトップで node server.js を実行してください</span></div>`;
+    return;
+  }
+
+  list.innerHTML=`<div class="loading-card"><span class="spinner"></span>Google Mapsでお店を検索中...</div>`;
+  const places=await fetchNearbyPlaces(currentLat,currentLng,currentFoodType);
+
+  if(!places.length){
     list.innerHTML=`<div class="loading-card">近くにお店が見つかりませんでした<br><button style="margin-top:8px;padding:6px 14px;border-radius:8px;border:1px solid var(--border2);background:none;color:var(--text2);cursor:pointer;" onclick="loadNearbyPlaces('${currentFoodType}')">再試行</button></div>`;
     return;
   }
-  const places=elements
-    .map(el=>osmToPlace(el,currentLat,currentLng,currentFoodType))
-    .filter(p=>p.name!=='名称不明'||elements.length<=5)
-    .sort((a,b)=>a.dist-b.dist)
-    .slice(0,10);
-  places.forEach(p=>placeCache[p.place_id]=p);
-  list.innerHTML=places.map((p,i)=>renderRestCard(p,i)).join('');
+  list.innerHTML=places.map((p,i)=>renderPlaceCard(p,i)).join('');
 }
 
-async function loadRouteAreaPlaces(lat,lng,label){
+async function loadRouteAreaPlaces(query){
   const list=document.getElementById('route-rest-list');
-  list.innerHTML=`<div class="loading-card"><span class="spinner"></span>${label}周辺を検索中...</div>`;
-  const elements=await fetchOverpassPlaces(lat,lng,'restaurant',1000);
-  if(!elements.length){list.innerHTML=`<div class="loading-card">周辺にお店が見つかりませんでした</div>`;return;}
-  const places=elements
-    .map(el=>osmToPlace(el,lat,lng,'restaurant'))
-    .filter(p=>p.name!=='名称不明')
-    .sort((a,b)=>a.dist-b.dist)
-    .slice(0,5);
-  places.forEach(p=>placeCache[p.place_id]=p);
-  list.innerHTML=places.map((p,i)=>renderRestCard(p,i)).join('');
+  if(!serverOnline){list.innerHTML=`<div class="loading-card">⚠️ サーバーオフライン</div>`;return;}
+  list.innerHTML=`<div class="loading-card"><span class="spinner"></span>${query}周辺を検索中...</div>`;
+  const places=await fetchPlacesByQuery(`レストラン ${query}`);
+  if(!places.length){list.innerHTML=`<div class="loading-card">周辺にお店が見つかりませんでした</div>`;return;}
+  list.innerHTML=places.slice(0,5).map((p,i)=>renderPlaceCard(p,i)).join('');
 }
 
 function filterFood(btn,type){
@@ -542,7 +574,7 @@ function filterFood(btn,type){
   loadNearbyPlaces(type);
 }
 
-// WEATHER
+// ===== WEATHER =====
 function weatherIcon(code){
   if(code>=200&&code<300)return'⛈';if(code>=300&&code<400)return'🌦';
   if(code>=500&&code<600)return'🌧';if(code>=600&&code<700)return'🌨';
@@ -554,7 +586,7 @@ async function fetchWeather(lat,lng){
   try{
     const res=await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lng}&appid=${WEATHER_KEY}&units=metric&lang=ja&cnt=40`);
     const data=await res.json();
-    if(data.cod!=='200')throw new Error('weather error');
+    if(data.cod!=='200')throw new Error();
     return data;
   }catch(e){return null;}
 }
@@ -607,10 +639,10 @@ async function renderHomeWeather(lat,lng,locationName){
     </div>`;
 }
 
-// EVENTS (demo)
+// ===== EVENTS =====
 const EVENTS=[
-  {id:1,month:'MAY',day:'26',dow:'土',name:'代々木公園 クラフトビールフェス',place:'代々木公園イベント広場',tags:['フード','屋外'],free:true,fee:'入場無料',time:'11:00〜20:00',desc:'全国30以上のブルワリーが集結！クラフトビールを飲み比べながらフードや音楽も楽しめる都内最大級のビアフェス。',site:'https://example.com',share_text:'代々木公園クラフトビールフェスに行くよ！一緒にどう？🍺'},
-  {id:2,month:'MAY',day:'26',dow:'土',name:'渋谷ジャズフェスティバル2026',place:'渋谷複数会場',tags:['音楽'],free:true,fee:'無料〜¥3,000',time:'12:00〜22:00',desc:'渋谷の各ライブハウス・カフェを舞台に国内外のジャズミュージシャンが集結。',site:'https://example.com',share_text:'渋谷ジャズフェスに行くよ！🎷'},
+  {id:1,month:'MAY',day:'26',dow:'土',name:'代々木公園 クラフトビールフェス',place:'代々木公園イベント広場',tags:['フード','屋外'],free:true,fee:'入場無料',time:'11:00〜20:00',desc:'全国30以上のブルワリーが集結！クラフトビールを飲み比べながらフードや音楽も楽しめる。',site:'https://example.com',share_text:'代々木公園クラフトビールフェスに行くよ！🍺'},
+  {id:2,month:'MAY',day:'26',dow:'土',name:'渋谷ジャズフェスティバル2026',place:'渋谷複数会場',tags:['音楽'],free:true,fee:'無料〜¥3,000',time:'12:00〜22:00',desc:'渋谷の各ライブハウス・カフェで国内外のジャズミュージシャンが集結。',site:'https://example.com',share_text:'渋谷ジャズフェスに行くよ！🎷'},
   {id:3,month:'MAY',day:'27',dow:'日',name:'東京蚤の市',place:'東京オーヴァル京王閣',tags:['マーケット'],free:false,fee:'¥800',time:'9:00〜16:00',desc:'全国から400以上の出店者が集まる蚤の市。アンティーク雑貨・古着など幅広いジャンルが揃う。',site:'https://example.com',share_text:'東京蚤の市に行くよ！'},
   {id:4,month:'MAY',day:'27',dow:'日',name:'六本木アートナイト プレイベント',place:'六本木ヒルズ周辺',tags:['アート','屋外'],free:true,fee:'無料',time:'10:00〜22:00',desc:'国内外アーティストによるインスタレーション作品が屋外展示。',site:'https://example.com',share_text:'六本木アートナイト行かない？🎨'},
 ];
@@ -654,17 +686,18 @@ function shareEvent(text,title){
   else{navigator.clipboard.writeText(text).then(()=>showToast('📋 コピーしました！'));}
 }
 
-// BOOKMARK
+// ===== BOOKMARK =====
 async function saveBookmark(b){
+  if(typeof b==='string')b=JSON.parse(b);
   try{
-    await db.from('bookmarks').insert({user_id:USER_ID,name:b.name,genre:b.genre,address:b.address,maps_url:b.maps_url,cost_min:0,cost_max:0,rating:b.rating});
+    await db.from('bookmarks').insert({user_id:USER_ID,name:b.name,genre:b.genre,address:b.address,maps_url:b.maps_url,cost_min:0,cost_max:0,rating:b.rating||0});
     showToast('🔖 保存しました！');
   }catch(e){showToast('🔖 保存しました（ローカル）');}
   window.open(b.maps_url,'_blank');
   closeModal('rest-modal');
 }
 
-// HISTORY
+// ===== HISTORY =====
 async function loadHistory(){
   try{
     const{data}=await db.from('histories').select('*').eq('user_id',USER_ID).order('created_at',{ascending:false});
@@ -712,7 +745,7 @@ async function saveHistory(){
   }catch(e){showToast('❌ 保存に失敗しました');}
 }
 
-// GPS
+// ===== GPS =====
 function getCurrentLocation(target){
   if(!navigator.geolocation){showToast('⚠️ 位置情報が使えません');return;}
   showToast('📍 位置情報取得中...');
@@ -736,7 +769,7 @@ function getCurrentLocation(target){
   },()=>{showToast('⚠️ 位置情報の取得に失敗しました');});
 }
 
-// ROUTE SEARCH
+// ===== ROUTE =====
 async function searchRoute(){
   const s=document.getElementById('inp-start').value||'出発地';
   const e=document.getElementById('inp-end').value||'目的地';
@@ -751,7 +784,6 @@ async function searchRoute(){
     <div class="cost-row"><div class="cost-lbl">☕ カフェ・軽食</div><div class="cost-val">〜¥1,000</div></div>
     <div class="cost-row"><div class="cost-lbl" style="font-weight:700;color:var(--text)">合計目安（1人）</div><div class="cost-val cost-total">¥4,000〜10,000</div></div>`;
 
-  // Weather
   const wrow=document.getElementById('route-weather-row');
   if(currentLat){
     const wdata=await fetchWeather(currentLat,currentLng);
@@ -772,28 +804,13 @@ async function searchRoute(){
     wrow.innerHTML=`<div style="font-size:12px;color:var(--text2);padding:12px;">📍 現在地を取得してから検索すると天気も表示されます</div>`;
   }
 
-  // Places at destination - geocode the destination
-  document.getElementById('route-rest-list').innerHTML=`<div class="loading-card"><span class="spinner"></span>${e}周辺を検索中...</div>`;
-  try{
-    const geoRes=await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(e)}&format=json&limit=1&accept-language=ja`);
-    const geoData=await geoRes.json();
-    if(geoData&&geoData.length){
-      const destLat=parseFloat(geoData[0].lat);
-      const destLng=parseFloat(geoData[0].lon);
-      await loadRouteAreaPlaces(destLat,destLng,e);
-    }else{
-      document.getElementById('route-rest-list').innerHTML=`<div class="loading-card">目的地が見つかりませんでした</div>`;
-    }
-  }catch(err){
-    document.getElementById('route-rest-list').innerHTML=`<div class="loading-card">検索に失敗しました</div>`;
-  }
-
+  await loadRouteAreaPlaces(e);
   document.getElementById('route-evt-list').innerHTML=EVENTS.slice(0,2).map(renderEvtCard).join('');
   document.getElementById('route-result').classList.add('show');
   setTimeout(()=>document.getElementById('route-result').scrollIntoView({behavior:'smooth',block:'start'}),100);
 }
 
-// AI PLAN
+// ===== AI PLAN =====
 async function generateAIPlan(){
   const s=document.getElementById('inp-start').value||'渋谷';
   const e=document.getElementById('inp-end').value||'鎌倉';
@@ -823,7 +840,7 @@ async function generateAIPlan(){
   }
 }
 
-// NAV
+// ===== NAV =====
 function gotoScreen(name,btn){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('screen-'+name).classList.add('active');
@@ -851,10 +868,12 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'),2800);
 }
 
-// INIT
+// ===== INIT =====
 document.getElementById('home-evt-list').innerHTML=EVENTS.map(renderEvtCard).join('');
 document.getElementById('route-evt-list').innerHTML=EVENTS.slice(0,2).map(renderEvtCard).join('');
-getCurrentLocation('home');
+checkServer().then(()=>{
+  getCurrentLocation('home');
+});
 </script>
 </body>
 </html>
