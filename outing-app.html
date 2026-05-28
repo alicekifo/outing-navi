@@ -607,9 +607,9 @@ async function openPlaceModal(placeId){
     <div class="modal-section-title">地図</div>
     <div class="place-map">
       <iframe
-        src="https://maps.google.com/maps?q=${lat},${lng}&z=16&output=embed&hl=ja"
+        src="https://www.openstreetmap.org/export/embed.html?bbox=${lng-0.008},${lat-0.005},${lng+0.008},${lat+0.005}&layer=mapnik&marker=${lat},${lng}"
         width="100%" height="160" style="border:0;border-radius:12px;display:block;"
-        loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade">
+        loading="lazy">
       </iframe>
     </div>
     <div style="font-size:11px;color:var(--text2);margin-top:6px;">📍 ${p.formatted_address||''}</div>
