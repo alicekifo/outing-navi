@@ -706,35 +706,50 @@ const EVENTS=[
 ];
 
 function renderEvtCard(e){
-  return`<div class="evt-card" onclick="openEvtModal(${e.id})">
+  const stars='★'.repeat(Math.min(5,Math.max(1,e.score||3)))+'☆'.repeat(5-Math.min(5,Math.max(1,e.score||3)));
+  return`<div class="evt-card" onclick="openEvtModal('${e.id}')">
     <div class="evt-date"><div class="evt-m">${e.month}</div><div class="evt-d">${e.day}</div><div class="evt-m">${e.dow}</div></div>
     <div class="evt-info">
       <div class="evt-name">${e.name}</div>
       <div class="evt-place">📍 ${e.place}</div>
-      <div class="evt-tags">${e.tags.map(t=>`<span class="evt-tag">${t}</span>`).join('')}<span class="evt-tag ${e.free?'free':'paid'}">${e.free?'無料':'有料'}</span></div>
-      <div class="evt-fee ${e.free?'free':'paid'}">${e.fee}</div>
+      <div class="evt-tags">${(e.tags||[]).map(t=>`<span class="evt-tag">${t}</span>`).join('')}<span class="evt-tag ${e.free?'free':'paid'}">${e.free?'無料':'有料'}</span></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+        <span style="font-size:11px;color:var(--accent);letter-spacing:1px;">${stars}</span>
+        ${e.comment?`<span style="font-size:11px;color:var(--text2);">${e.comment}</span>`:''}
+      </div>
     </div>
   </div>`;
 }
 
 function openEvtModal(id){
-  const e=evtStore.find(x=>x.id===id);if(!e)return;
+  const e=evtStore.find(x=>String(x.id)===String(id));if(!e)return;
+  const stars='★'.repeat(Math.min(5,Math.max(1,e.score||3)))+'☆'.repeat(5-Math.min(5,Math.max(1,e.score||3)));
+  const shareText=(e.share_text||`${e.name}に一緒に行かない？`).replace(/'/g,"\\'");
   document.getElementById('evt-modal-content').innerHTML=`
     <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;">
       <div class="evt-date" style="flex-shrink:0;"><div class="evt-m">${e.month}</div><div class="evt-d">${e.day}</div><div class="evt-m">${e.dow}</div></div>
-      <div><div class="modal-title">${e.name}</div><div class="modal-sub">📍 ${e.place}</div></div>
+      <div style="flex:1;min-width:0;">
+        <div class="modal-title">${e.name}</div>
+        <div class="modal-sub">📍 ${e.place}</div>
+        ${e.comment?`<div style="margin-top:6px;font-size:12px;color:var(--accent);font-weight:600;">${stars} ${e.comment}</div>`:''}
+      </div>
     </div>
     <div class="info-grid">
-      <div class="info-cell"><div class="info-cell-lbl">時間</div><div class="info-cell-val" style="font-size:12px;">${e.time}</div></div>
-      <div class="info-cell"><div class="info-cell-lbl">費用</div><div class="info-cell-val" style="color:${e.free?'var(--green)':'var(--accent)'};">${e.fee}</div></div>
+      <div class="info-cell"><div class="info-cell-lbl">時間</div><div class="info-cell-val" style="font-size:12px;">${e.time||'—'}</div></div>
+      <div class="info-cell"><div class="info-cell-lbl">費用</div><div class="info-cell-val" style="color:${e.free?'var(--green)':'var(--accent)'};">${e.fee||'—'}</div></div>
     </div>
+    ${(e.access||e.address)?`
+    <div class="info-grid" style="margin-top:8px;">
+      ${e.access?`<div class="info-cell" style="grid-column:1/-1;"><div class="info-cell-lbl">アクセス</div><div class="info-cell-val" style="font-size:12px;">🚉 ${e.access}</div></div>`:''}
+      ${e.address?`<div class="info-cell" style="grid-column:1/-1;"><div class="info-cell-lbl">住所</div><div class="info-cell-val" style="font-size:11px;color:var(--text2);">${e.address}</div></div>`:''}
+    </div>`:''}
     <div class="modal-section">
       <div class="modal-section-title">イベント詳細</div>
-      <div style="font-size:13px;line-height:1.8;color:var(--text2);">${e.desc}</div>
+      <div style="font-size:13px;line-height:1.8;color:var(--text2);">${e.desc||'詳細は公式サイトをご確認ください。'}</div>
     </div>
     <button class="modal-btn site" onclick="window.open('${e.site}','_blank')">🔗 公式サイト・詳細を見る</button>
-    <button class="modal-btn share" onclick="shareEvent('${e.share_text.replace(/'/g,"\\'")}','${e.name}')">📤 友達・彼女に共有する</button>
-    <button class="modal-btn maps" onclick="window.open('https://maps.google.com/?q=${encodeURIComponent(e.place)}','_blank')">🗺 Google Mapで場所を見る</button>
+    <button class="modal-btn share" onclick="shareEvent('${shareText}','${e.name.replace(/'/g,"\\'")}')">📤 友達・彼女に共有する</button>
+    <button class="modal-btn maps" onclick="window.open('https://maps.google.com/?q=${encodeURIComponent((e.address||e.place))}','_blank')">🗺 Google Mapで場所を見る</button>
   `;
   openModal('evt-modal');
 }
