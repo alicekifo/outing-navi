@@ -575,7 +575,8 @@ async function openPlaceModal(placeId){
   if(!p){document.getElementById('rest-modal-content').innerHTML=`<div style="text-align:center;color:var(--text2);padding:20px;">詳細の取得に失敗しました</div>`;return;}
 
   const isOpen=p.opening_hours?.open_now;
-  const mapsUrl=`https://www.google.com/maps/place/?q=place_id:${placeId}`;
+  const mapsUrl=`https://www.google.com/maps/search/?api=1&query_place_id=${placeId}&query=${encodeURIComponent(p.name||'')}`;
+  const navUrl=`https://www.google.com/maps/dir/?api=1&destination_place_id=${placeId}&destination=${encodeURIComponent(p.name||'')}`;
   const hours=p.opening_hours?.weekday_text||[];
   const reviews=p.reviews||[];
   const photos=p.photos||[];
@@ -594,9 +595,8 @@ async function openPlaceModal(placeId){
     :`<div class="place-photos" style="display:flex;align-items:center;justify-content:center;font-size:60px;">${getPlaceEmoji(p)}</div>`;
 
   // アクションボタン
-  const bmData=JSON.stringify({place_id:placeId,name:p.name,genre:p.types?.[0]||'',address:p.formatted_address||'',maps_url:mapsUrl,rating:p.rating||0}).replace(/'/g,'&apos;');
   const actionsHtml=`<div class="place-actions">
-    <button class="place-action-btn" onclick="window.open('${mapsUrl}','_blank')"><span class="place-action-ico">🗺</span>ルート</button>
+    <button class="place-action-btn" onclick="location.href='${navUrl}'"><span class="place-action-ico">🗺</span>ルート</button>
     ${p.formatted_phone_number?`<button class="place-action-btn" onclick="window.open('tel:${p.formatted_phone_number}','_self')"><span class="place-action-ico">📞</span>電話</button>`:''}
     <button class="place-action-btn" onclick="saveCurrentPlace()"><span class="place-action-ico">🔖</span>保存</button>
     ${p.website?`<button class="place-action-btn" onclick="window.open('${p.website}','_blank')"><span class="place-action-ico">🔗</span>公式</button>`:''}
@@ -605,7 +605,7 @@ async function openPlaceModal(placeId){
   // 地図
   const mapHtml=(lat&&lng)?`<div class="modal-section">
     <div class="modal-section-title">地図</div>
-    <div class="place-map" onclick="window.open('${mapsUrl}','_blank')">
+    <div class="place-map" onclick="location.href='${mapsUrl}'">
       <img src="${SERVER}/api/places/map?lat=${lat}&lng=${lng}" alt="地図" loading="lazy">
     </div>
     <div style="font-size:11px;color:var(--text2);margin-top:4px;">📍 ${p.formatted_address||''}</div>
