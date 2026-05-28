@@ -393,8 +393,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
       <input class="hist-form-input" id="cfg-server" placeholder="https://xxx.ngrok-free.app">
     </div>
     <div class="hist-form-group">
-      <label class="hist-form-label">Anthropic APIキー</label>
-      <input class="hist-form-input" id="cfg-anthropic" type="password" placeholder="sk-ant-...">
+      <label class="hist-form-label">Gemini APIキー</label>
+      <input class="hist-form-input" id="cfg-anthropic" type="password" placeholder="AIzaSy...">
     </div>
     <button class="hist-form-btn" onclick="saveSettings()">💾 保存する</button>
   </div>
@@ -407,7 +407,7 @@ const SUPA_URL='https://hcwyuxrsyvhffdspiipz.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhjd3l1eHJzeXZoZmZkc3BpaXB6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3NTY3NzksImV4cCI6MjA5NTMzMjc3OX0.WMS1Q4wJ5f2vnBqUpk7p96_TrsdidTOOQUiohsl5e9U';
 const WEATHER_KEY='80794671a5885cfca96929620e89a5da';
 let SERVER=localStorage.getItem('outing_server')||'https://phoney-panoramic-hypocrite.ngrok-free.app';
-let ANTHROPIC_KEY=localStorage.getItem('outing_anthropic')||'';
+let GEMINI_KEY=localStorage.getItem('outing_gemini')||'';
 
 const {createClient}=supabase;
 const db=createClient(SUPA_URL,SUPA_KEY);
@@ -836,23 +836,16 @@ async function generateAIPlan(){
   const el=document.getElementById('ai-plan-content');
   el.innerHTML=`<div class="ai-loading"><span class="spinner"></span>AIがプランを考え中...</div>`;
   try{
-    if(!ANTHROPIC_KEY){showToast('⚙️ 設定からAnthropicキーを入力してください');el.innerHTML='';return;}
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
+    if(!GEMINI_KEY){showToast('⚙️ 設定からGemini APIキーを入力してください');el.innerHTML='';return;}
+    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`,{
       method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'x-api-key':ANTHROPIC_KEY,
-        'anthropic-version':'2023-06-01',
-        'anthropic-dangerous-direct-browser-access':'true'
-      },
+      headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        model:'claude-haiku-4-5-20251001',
-        max_tokens:1000,
-        messages:[{role:'user',content:`出発地「${s}」から目的地「${e}」への1日おでかけプランを提案。イベント・昼食・観光・夕食の流れで4〜5ステップ。JSONのみ返してください: {"steps":[{"time":"10:00","title":"タイトル","desc":"説明1〜2文","cost":"¥XXX〜"}]}`}]
+        contents:[{parts:[{text:`出発地「${s}」から目的地「${e}」への1日おでかけプランを提案。イベント・昼食・観光・夕食の流れで4〜5ステップ。JSONのみ返してください: {"steps":[{"time":"10:00","title":"タイトル","desc":"説明1〜2文","cost":"¥XXX〜"}]}`}]}]
       })
     });
     const data=await res.json();
-    const text=data.content?.find(c=>c.type==='text')?.text||'';
+    const text=data.candidates?.[0]?.content?.parts?.[0]?.text||'';
     const plan=JSON.parse(text.replace(/```json|```/g,'').trim());
     el.innerHTML=`<div>${plan.steps.map(s=>`
       <div class="ai-plan-step">
@@ -891,13 +884,13 @@ function saveSettings(){
   const s=document.getElementById('cfg-server').value.trim();
   const a=document.getElementById('cfg-anthropic').value.trim();
   if(s){localStorage.setItem('outing_server',s);SERVER=s;}
-  if(a){localStorage.setItem('outing_anthropic',a);ANTHROPIC_KEY=a;}
+  if(a){localStorage.setItem('outing_gemini',a);GEMINI_KEY=a;}
   closeModal('settings-modal');
   showToast('✅ 設定を保存しました');
 }
 function openSettingsModal(){
   document.getElementById('cfg-server').value=localStorage.getItem('outing_server')||SERVER;
-  document.getElementById('cfg-anthropic').value=localStorage.getItem('outing_anthropic')||'';
+  document.getElementById('cfg-anthropic').value=localStorage.getItem('outing_gemini')||'';
   openModal('settings-modal');
 }
 function showToast(msg){
