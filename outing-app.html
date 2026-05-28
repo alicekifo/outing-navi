@@ -589,7 +589,7 @@ async function openPlaceModal(placeId){
   // 写真カルーセル
   const photoHtml=photos.length
     ?`<div class="place-photos">
-        <div class="photos-scroll">${photos.slice(0,6).map(ph=>`<img src="${SERVER}/api/places/photo?ref=${ph.photo_reference}&maxwidth=600" loading="lazy">`).join('')}</div>
+        <div class="photos-scroll" id="photos-scroll-${placeId}"></div>
         ${photos.length>1?`<div class="photo-count">📷 ${photos.length}</div>`:''}
       </div>`
     :`<div class="place-photos" style="display:flex;align-items:center;justify-content:center;font-size:60px;">${getPlaceEmoji(p)}</div>`;
@@ -644,10 +644,26 @@ async function openPlaceModal(placeId){
       </div>`).join('')}
     </div>`:''}
   `;
+  if(photos.length) loadPlacePhotos(placeId, photos.map(ph=>ph.photo_reference));
 }
 
 let _currentPlaceBm=null;
 function saveCurrentPlace(){if(_currentPlaceBm)saveBookmark(_currentPlaceBm);}
+
+async function loadPlacePhotos(placeId, refs){
+  const container=document.getElementById('photos-scroll-'+placeId);
+  if(!container)return;
+  for(const ref of refs.slice(0,6)){
+    try{
+      const res=await fetch(`${SERVER}/api/places/photo?ref=${encodeURIComponent(ref)}&maxwidth=600`,{headers:{'ngrok-skip-browser-warning':'true'}});
+      const blob=await res.blob();
+      const url=URL.createObjectURL(blob);
+      const img=document.createElement('img');
+      img.src=url;
+      container.appendChild(img);
+    }catch(e){}
+  }
+}
 
 // ===== LOAD NEARBY =====
 async function loadNearbyPlaces(type){
