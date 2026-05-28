@@ -892,6 +892,9 @@ function saveSettings(){
   if(a){localStorage.setItem('outing_gemini',a);GEMINI_KEY=a;}
   closeModal('settings-modal');
   showToast('✅ 設定を保存しました');
+  checkServer().then(()=>{
+    if(serverOnline&&currentLat)loadNearbyPlaces(currentFoodType);
+  });
 }
 function openSettingsModal(){
   document.getElementById('cfg-server').value=localStorage.getItem('outing_server')||SERVER;
