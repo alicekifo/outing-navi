@@ -420,7 +420,7 @@ const placeCache={};
 // ===== SERVER STATUS =====
 async function checkServer(){
   try{
-    const res=await fetch(`${SERVER}/`,{signal:AbortSignal.timeout(3000)});
+    const res=await fetch(`${SERVER}/`,{signal:AbortSignal.timeout(5000),headers:{'ngrok-skip-browser-warning':'true'}});
     const data=await res.json();
     if(data.status==='ok'){
       serverOnline=true;
@@ -461,7 +461,7 @@ function getPlaceEmoji(place){
 async function fetchNearbyPlaces(lat,lng,type,radius=800){
   if(!serverOnline) return [];
   try{
-    const res=await fetch(`${SERVER}/api/places/nearby?lat=${lat}&lng=${lng}&type=${type}&radius=${radius}`);
+    const res=await fetch(`${SERVER}/api/places/nearby?lat=${lat}&lng=${lng}&type=${type}&radius=${radius}`,{headers:{'ngrok-skip-browser-warning':'true'}});
     const data=await res.json();
     return data.results||[];
   }catch(e){console.log('places error',e);return[];}
@@ -470,7 +470,7 @@ async function fetchNearbyPlaces(lat,lng,type,radius=800){
 async function fetchPlaceDetail(place_id){
   if(!serverOnline) return null;
   try{
-    const res=await fetch(`${SERVER}/api/places/detail?place_id=${place_id}`);
+    const res=await fetch(`${SERVER}/api/places/detail?place_id=${place_id}`,{headers:{'ngrok-skip-browser-warning':'true'}});
     const data=await res.json();
     return data.result||null;
   }catch(e){return null;}
@@ -479,7 +479,7 @@ async function fetchPlaceDetail(place_id){
 async function fetchPlacesByQuery(query){
   if(!serverOnline) return [];
   try{
-    const res=await fetch(`${SERVER}/api/places/search?query=${encodeURIComponent(query)}`);
+    const res=await fetch(`${SERVER}/api/places/search?query=${encodeURIComponent(query)}`,{headers:{'ngrok-skip-browser-warning':'true'}});
     const data=await res.json();
     return data.results||[];
   }catch(e){return[];}
