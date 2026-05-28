@@ -352,7 +352,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
   <button class="nav-btn on" onclick="gotoScreen('home',this)"><div class="nav-ico">🏠</div><div class="nav-lbl">ホーム</div></button>
   <button class="nav-btn" onclick="gotoScreen('route',this)"><div class="nav-ico">🗺</div><div class="nav-lbl">ルート</div></button>
   <button class="nav-btn" onclick="gotoScreen('history',this)"><div class="nav-ico">📖</div><div class="nav-lbl">履歴</div></button>
-  <button class="nav-btn" onclick="alert('設定（実装予定）')"><div class="nav-ico">⚙️</div><div class="nav-lbl">設定</div></button>
+  <button class="nav-btn" onclick="openSettingsModal()"><div class="nav-ico">⚙️</div><div class="nav-lbl">設定</div></button>
 </div>
 
 <!-- MODALS -->
@@ -383,6 +383,22 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
     <button class="hist-form-btn" onclick="saveHistory()">💾 保存する</button>
   </div>
 </div>
+<div class="modal-overlay" id="settings-modal" onclick="closeModal('settings-modal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <button class="modal-close" onclick="closeModal('settings-modal')">✕</button>
+    <div style="font-size:16px;font-weight:700;margin-bottom:16px;">⚙️ 設定</div>
+    <div class="hist-form-group">
+      <label class="hist-form-label">APIサーバーURL</label>
+      <input class="hist-form-input" id="cfg-server" placeholder="https://xxx.ngrok-free.app">
+    </div>
+    <div class="hist-form-group">
+      <label class="hist-form-label">Anthropic APIキー</label>
+      <input class="hist-form-input" id="cfg-anthropic" type="password" placeholder="sk-ant-...">
+    </div>
+    <button class="hist-form-btn" onclick="saveSettings()">💾 保存する</button>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
@@ -390,7 +406,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
 const SUPA_URL='https://hcwyuxrsyvhffdspiipz.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhjd3l1eHJzeXZoZmZkc3BpaXB6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3NTY3NzksImV4cCI6MjA5NTMzMjc3OX0.WMS1Q4wJ5f2vnBqUpk7p96_TrsdidTOOQUiohsl5e9U';
 const WEATHER_KEY='80794671a5885cfca96929620e89a5da';
-const SERVER='https://phoney-panoramic-hypocrite.ngrok-free.dev';
+let SERVER=localStorage.getItem('outing_server')||'https://phoney-panoramic-hypocrite.ngrok-free.app';
+let ANTHROPIC_KEY=localStorage.getItem('outing_anthropic')||'';
 
 const {createClient}=supabase;
 const db=createClient(SUPA_URL,SUPA_KEY);
@@ -403,7 +420,7 @@ const placeCache={};
 // ===== SERVER STATUS =====
 async function checkServer(){
   try{
-    const res=await fetch(`${SERVER}/`,{signal:AbortSignal.timeout(5000),headers:{'ngrok-skip-browser-warning':'true'}});
+    const res=await fetch(`${SERVER}/`,{signal:AbortSignal.timeout(3000)});
     const data=await res.json();
     if(data.status==='ok'){
       serverOnline=true;
@@ -444,7 +461,7 @@ function getPlaceEmoji(place){
 async function fetchNearbyPlaces(lat,lng,type,radius=800){
   if(!serverOnline) return [];
   try{
-    const res=await fetch(`${SERVER}/api/places/nearby?lat=${lat}&lng=${lng}&type=${type}&radius=${radius}`,{headers:{'ngrok-skip-browser-warning':'true'}});
+    const res=await fetch(`${SERVER}/api/places/nearby?lat=${lat}&lng=${lng}&type=${type}&radius=${radius}`);
     const data=await res.json();
     return data.results||[];
   }catch(e){console.log('places error',e);return[];}
@@ -453,7 +470,7 @@ async function fetchNearbyPlaces(lat,lng,type,radius=800){
 async function fetchPlaceDetail(place_id){
   if(!serverOnline) return null;
   try{
-    const res=await fetch(`${SERVER}/api/places/detail?place_id=${place_id}`,{headers:{'ngrok-skip-browser-warning':'true'}});
+    const res=await fetch(`${SERVER}/api/places/detail?place_id=${place_id}`);
     const data=await res.json();
     return data.result||null;
   }catch(e){return null;}
@@ -462,7 +479,7 @@ async function fetchPlaceDetail(place_id){
 async function fetchPlacesByQuery(query){
   if(!serverOnline) return [];
   try{
-    const res=await fetch(`${SERVER}/api/places/search?query=${encodeURIComponent(query)}`,{headers:{'ngrok-skip-browser-warning':'true'}});
+    const res=await fetch(`${SERVER}/api/places/search?query=${encodeURIComponent(query)}`);
     const data=await res.json();
     return data.results||[];
   }catch(e){return[];}
@@ -641,10 +658,12 @@ async function renderHomeWeather(lat,lng,locationName){
 
 // ===== EVENTS =====
 const EVENTS=[
-  {id:1,month:'MAY',day:'26',dow:'土',name:'代々木公園 クラフトビールフェス',place:'代々木公園イベント広場',tags:['フード','屋外'],free:true,fee:'入場無料',time:'11:00〜20:00',desc:'全国30以上のブルワリーが集結！クラフトビールを飲み比べながらフードや音楽も楽しめる。',site:'https://example.com',share_text:'代々木公園クラフトビールフェスに行くよ！🍺'},
-  {id:2,month:'MAY',day:'26',dow:'土',name:'渋谷ジャズフェスティバル2026',place:'渋谷複数会場',tags:['音楽'],free:true,fee:'無料〜¥3,000',time:'12:00〜22:00',desc:'渋谷の各ライブハウス・カフェで国内外のジャズミュージシャンが集結。',site:'https://example.com',share_text:'渋谷ジャズフェスに行くよ！🎷'},
-  {id:3,month:'MAY',day:'27',dow:'日',name:'東京蚤の市',place:'東京オーヴァル京王閣',tags:['マーケット'],free:false,fee:'¥800',time:'9:00〜16:00',desc:'全国から400以上の出店者が集まる蚤の市。アンティーク雑貨・古着など幅広いジャンルが揃う。',site:'https://example.com',share_text:'東京蚤の市に行くよ！'},
-  {id:4,month:'MAY',day:'27',dow:'日',name:'六本木アートナイト プレイベント',place:'六本木ヒルズ周辺',tags:['アート','屋外'],free:true,fee:'無料',time:'10:00〜22:00',desc:'国内外アーティストによるインスタレーション作品が屋外展示。',site:'https://example.com',share_text:'六本木アートナイト行かない？🎨'},
+  {id:1,month:'JUN',day:'7',dow:'土',name:'新宿御苑 クラフトビールサミット',place:'新宿御苑 大芝生広場',tags:['フード','屋外'],free:false,fee:'入園料¥500+飲食代',time:'11:00〜19:00',desc:'国内外50以上のブルワリーが集結。料理ペアリングワークショップや音楽ライブも。新緑の中でビールを楽しめる初夏の定番イベント。',site:'https://www.env.go.jp/garden/shinjukugyoen/',share_text:'新宿御苑でクラフトビールサミット！一緒に行かない？🍺'},
+  {id:2,month:'JUN',day:'8',dow:'日',name:'渋谷ストリートライブFes 2026',place:'渋谷センター街・宮下パーク',tags:['音楽','屋外'],free:true,fee:'無料',time:'12:00〜21:00',desc:'60組以上のアーティストが渋谷の各スポットでストリートライブを披露。ジャンルはJ-Pop・ジャズ・ヒップホップまで多彩。',site:'https://www.shibuya.co.jp',share_text:'渋谷ストリートライブFes行くよ！🎶'},
+  {id:3,month:'JUN',day:'14',dow:'土',name:'東京蚤の市 夏の陣',place:'東京オーヴァル京王閣（調布）',tags:['マーケット'],free:false,fee:'¥800',time:'9:00〜16:00',desc:'全国400以上の出店者が集まる大規模蚤の市。アンティーク・古着・ヴィンテージ雑貨など掘り出し物が必ず見つかる。',site:'https://tokyonominoichi.com',share_text:'東京蚤の市行くよ！一緒にどう？🛍️'},
+  {id:4,month:'JUN',day:'15',dow:'日',name:'上野公園 野外シネマナイト',place:'上野公園 野外ステージ',tags:['エンタメ','屋外'],free:false,fee:'¥1,500',time:'18:30〜21:30（開場17:30）',desc:'夕暮れの上野公園で映画鑑賞。人気邦画を大スクリーンで。飲食持込OK、芝生に座ってピクニック気分で楽しめる。',site:'https://ueno.or.jp',share_text:'上野公園で野外映画！夜空の下で一緒に見ない？🎬'},
+  {id:5,month:'JUN',day:'21',dow:'土',name:'浅草 夏の風鈴市',place:'浅草神社境内',tags:['伝統','屋外'],free:true,fee:'無料（購入任意）',time:'10:00〜17:00',desc:'全国の窯元・職人が手作りの風鈴を展示販売。陶器・ガラス・南部鉄など素材もデザインも様々。夏の涼を感じるひととき。',site:'https://www.asakusajinja.jp',share_text:'浅草の風鈴市！涼しげでいいよ🎐一緒に行こう'},
+  {id:6,month:'JUN',day:'28',dow:'土',name:'お台場 夜景クルーズ＆BBQ',place:'お台場 青海ふ頭',tags:['デート','グルメ'],free:false,fee:'¥4,800〜',time:'17:00〜21:00（3便あり）',desc:'東京湾の夜景を船上から眺めながらBBQを楽しむ90分クルーズ。レインボーブリッジやスカイツリーが輝く絶景スポット。カップルに人気。',site:'https://www.odaiba.ne.jp',share_text:'お台場で夜景クルーズ＆BBQ！一緒に行かない？🚢✨'},
 ];
 
 function renderEvtCard(e){
@@ -817,11 +836,17 @@ async function generateAIPlan(){
   const el=document.getElementById('ai-plan-content');
   el.innerHTML=`<div class="ai-loading"><span class="spinner"></span>AIがプランを考え中...</div>`;
   try{
+    if(!ANTHROPIC_KEY){showToast('⚙️ 設定からAnthropicキーを入力してください');el.innerHTML='';return;}
     const res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':ANTHROPIC_KEY,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
       body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
+        model:'claude-haiku-4-5-20251001',
         max_tokens:1000,
         messages:[{role:'user',content:`出発地「${s}」から目的地「${e}」への1日おでかけプランを提案。イベント・昼食・観光・夕食の流れで4〜5ステップ。JSONのみ返してください: {"steps":[{"time":"10:00","title":"タイトル","desc":"説明1〜2文","cost":"¥XXX〜"}]}`}]
       })
@@ -862,6 +887,19 @@ function chipToggle(btn){btn.classList.toggle('on');}
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 
+function saveSettings(){
+  const s=document.getElementById('cfg-server').value.trim();
+  const a=document.getElementById('cfg-anthropic').value.trim();
+  if(s){localStorage.setItem('outing_server',s);SERVER=s;}
+  if(a){localStorage.setItem('outing_anthropic',a);ANTHROPIC_KEY=a;}
+  closeModal('settings-modal');
+  showToast('✅ 設定を保存しました');
+}
+function openSettingsModal(){
+  document.getElementById('cfg-server').value=localStorage.getItem('outing_server')||SERVER;
+  document.getElementById('cfg-anthropic').value=localStorage.getItem('outing_anthropic')||'';
+  openModal('settings-modal');
+}
 function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
