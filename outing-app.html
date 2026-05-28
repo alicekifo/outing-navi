@@ -657,6 +657,7 @@ async function renderHomeWeather(lat,lng,locationName){
 }
 
 // ===== EVENTS =====
+let evtStore=[];
 const EVENTS=[
   {id:1,month:'JUN',day:'7',dow:'土',name:'新宿御苑 クラフトビールサミット',place:'新宿御苑 大芝生広場',tags:['フード','屋外'],free:false,fee:'入園料¥500+飲食代',time:'11:00〜19:00',desc:'国内外50以上のブルワリーが集結。料理ペアリングワークショップや音楽ライブも。新緑の中でビールを楽しめる初夏の定番イベント。',site:'https://www.env.go.jp/garden/shinjukugyoen/',share_text:'新宿御苑でクラフトビールサミット！一緒に行かない？🍺'},
   {id:2,month:'JUN',day:'8',dow:'日',name:'渋谷ストリートライブFes 2026',place:'渋谷センター街・宮下パーク',tags:['音楽','屋外'],free:true,fee:'無料',time:'12:00〜21:00',desc:'60組以上のアーティストが渋谷の各スポットでストリートライブを披露。ジャンルはJ-Pop・ジャズ・ヒップホップまで多彩。',site:'https://www.shibuya.co.jp',share_text:'渋谷ストリートライブFes行くよ！🎶'},
@@ -679,7 +680,7 @@ function renderEvtCard(e){
 }
 
 function openEvtModal(id){
-  const e=EVENTS.find(x=>x.id===id);if(!e)return;
+  const e=evtStore.find(x=>x.id===id);if(!e)return;
   document.getElementById('evt-modal-content').innerHTML=`
     <div style="display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;">
       <div class="evt-date" style="flex-shrink:0;"><div class="evt-m">${e.month}</div><div class="evt-d">${e.day}</div><div class="evt-m">${e.dow}</div></div>
@@ -771,21 +772,66 @@ function getCurrentLocation(target){
   navigator.geolocation.getCurrentPosition(async pos=>{
     const{latitude:lat,longitude:lng}=pos.coords;
     currentLat=lat;currentLng=lng;
+    let label='現在地';
     try{
-      const res=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=ja`);
-      const data=await res.json();
-      const addr=data.address;
-      const label=addr.suburb||addr.neighbourhood||addr.city_district||addr.city||'現在地';
-      document.getElementById('home-loc-label').textContent=label;
-      if(target==='route')document.getElementById('inp-start').value=label;
-      showToast(`📍 ${label}`);
-      if(target==='home'){renderHomeWeather(lat,lng,label);loadNearbyPlaces(currentFoodType);}
-    }catch(e){
-      document.getElementById('home-loc-label').textContent='現在地';
-      if(target==='route')document.getElementById('inp-start').value='現在地';
-      if(target==='home'){renderHomeWeather(lat,lng,'現在地');loadNearbyPlaces(currentFoodType);}
+      const stations=await fetchNearbyPlaces(lat,lng,'train_station',1000);
+      if(stations.length){
+        label=stations[0].name;
+      } else {
+        const res=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=ja`);
+        const data=await res.json();
+        const addr=data.address;
+        label=addr.suburb||addr.neighbourhood||addr.city_district||addr.city||'現在地';
+      }
+    }catch(e){}
+    document.getElementById('home-loc-label').textContent=label;
+    if(target==='route')document.getElementById('inp-start').value=label;
+    showToast(`📍 ${label}`);
+    if(target==='home'){
+      renderHomeWeather(lat,lng,label);
+      loadNearbyPlaces(currentFoodType);
+      loadLocationEvents(lat,lng,label);
     }
   },()=>{showToast('⚠️ 位置情報の取得に失敗しました');});
+}
+
+async function loadLocationEvents(lat,lng,areaName){
+  const evtList=document.getElementById('home-evt-list');
+  evtList.innerHTML='<div class="loading-card"><span class="spinner"></span>周辺イベントを検索中...</div>';
+  if(!GROQ_KEY){evtStore=EVENTS;evtList.innerHTML=evtStore.map(renderEvtCard).join('');return;}
+  try{
+    const stations=await fetchNearbyPlaces(lat,lng,'train_station',25000);
+    const stationNames=stations.slice(0,12).map(s=>s.name).join('、');
+    const now=new Date();
+    const mn=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    const mAbbr=mn[now.getMonth()];
+    const mNum=now.getMonth()+1;
+    const year=now.getFullYear();
+    const days=['日','月','火','水','木','金','土'];
+    const res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${GROQ_KEY}`},
+      body:JSON.stringify({
+        model:'llama-3.1-8b-instant',
+        max_tokens:2500,
+        messages:[{role:'user',content:`現在地は${areaName}（緯度${lat.toFixed(2)},経度${lng.toFixed(2)}）です。電車で30分以内に行ける駅は${stationNames||areaName+'周辺'}です。${year}年${mNum}月の週末に開催される実在しそうなイベント・お出かけスポットを6件提案してください。必ずこのJSON形式のみで返してください: {"events":[{"id":1,"month":"${mAbbr}","day":"日にち数字のみ","dow":"曜日漢字1文字","name":"イベント名","place":"具体的な場所名","tags":["タグ1","タグ2"],"free":true,"fee":"無料","time":"10:00〜17:00","desc":"場所の特徴と楽しみ方を2文で","site":"https://example.com","share_text":"友達への誘い文"}]}`}]
+      })
+    });
+    const data=await res.json();
+    if(data.error)throw new Error(data.error.message);
+    const text=data.choices?.[0]?.message?.content||'';
+    const match=text.replace(/```json|```/g,'').match(/\{[\s\S]*\}/);
+    if(!match)throw new Error('no JSON');
+    const result=JSON.parse(match[0]);
+    if(result.events?.length){
+      evtStore=result.events;
+      evtList.innerHTML=evtStore.map(renderEvtCard).join('');
+      document.getElementById('route-evt-list').innerHTML=evtStore.slice(0,2).map(renderEvtCard).join('');
+    } else throw new Error('empty');
+  }catch(e){
+    evtStore=EVENTS;
+    evtList.innerHTML=evtStore.map(renderEvtCard).join('');
+  }
 }
 
 // ===== ROUTE =====
@@ -843,7 +889,7 @@ async function generateAIPlan(){
       body:JSON.stringify({
         model:'llama-3.1-8b-instant',
         max_tokens:1000,
-        messages:[{role:'user',content:`出発地「${s}」から目的地「${e}」への1日おでかけプランを提案。イベント・昼食・観光・夕食の流れで4〜5ステップ。JSONのみ返してください: {"steps":[{"time":"10:00","title":"タイトル","desc":"説明1〜2文","cost":"¥XXX〜"}]}`}]
+        messages:[{role:'user',content:`出発地「${s}」から目的地「${e}」への1日おでかけプランを提案。朝出発・昼食・観光・夕食の流れで4〜5ステップ。各ステップに実際の日本円の費用目安を含め、最後のステップにその日の合計費用を記載。JSONのみ返してください: {"steps":[{"time":"10:00","title":"具体的な場所名","desc":"内容と特徴を1〜2文","cost":"¥1,000〜2,000"}]}`}]
       })
     });
     const data=await res.json();
@@ -910,7 +956,8 @@ function showToast(msg){
 }
 
 // ===== INIT =====
-document.getElementById('home-evt-list').innerHTML=EVENTS.map(renderEvtCard).join('');
+evtStore=EVENTS;
+document.getElementById('home-evt-list').innerHTML='<div class="loading-card">📍 位置情報取得後にイベントを表示します</div>';
 document.getElementById('route-evt-list').innerHTML=EVENTS.slice(0,2).map(renderEvtCard).join('');
 checkServer().then(()=>{
   getCurrentLocation('home');
