@@ -212,8 +212,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
 .place-action-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 4px;border-radius:12px;border:1px solid var(--border2);background:none;color:var(--text2);font-family:'Noto Sans JP',sans-serif;font-size:10px;cursor:pointer;transition:.15s;}
 .place-action-btn:hover,.place-action-btn:active{color:var(--accent);border-color:var(--accent);background:var(--accent-dim);}
 .place-action-ico{font-size:22px;}
-.place-map{border-radius:var(--r);overflow:hidden;margin-bottom:4px;background:var(--surface2);cursor:pointer;}
-.place-map img{width:100%;height:160px;object-fit:cover;display:block;}
+.place-map{border-radius:var(--r);overflow:hidden;margin-bottom:4px;background:var(--surface2);}
+.place-map iframe{width:100%;height:160px;border:0;display:block;border-radius:var(--r);}
 </style>
 </head>
 <body>
@@ -605,10 +605,14 @@ async function openPlaceModal(placeId){
   // 地図
   const mapHtml=(lat&&lng)?`<div class="modal-section">
     <div class="modal-section-title">地図</div>
-    <div class="place-map" onclick="location.href='${mapsUrl}'">
-      <img src="${SERVER}/api/places/map?lat=${lat}&lng=${lng}" alt="地図" loading="lazy">
+    <div class="place-map">
+      <iframe
+        src="https://maps.google.com/maps?q=${lat},${lng}&z=16&output=embed&hl=ja"
+        width="100%" height="160" style="border:0;border-radius:12px;display:block;"
+        loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
     </div>
-    <div style="font-size:11px;color:var(--text2);margin-top:4px;">📍 ${p.formatted_address||''}</div>
+    <div style="font-size:11px;color:var(--text2);margin-top:6px;">📍 ${p.formatted_address||''}</div>
   </div>`:'';
 
   document.getElementById('rest-modal-content').innerHTML=`
