@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>サッカー移籍情報</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0c10;--surface:#161620;--surface2:#1e1e2c;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.15);--accent:#e8b84b;--blue:#6aadff;--green:#52d68a;--purple:#a78bfa;--red:#f07070;--text:#eeeef5;--text2:#8888a8;--r:12px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;padding:20px 16px 80px;}
+.page{max-width:640px;margin:0 auto;}
+.hd{display:flex;align-items:center;gap:10px;margin-bottom:26px;flex-wrap:wrap;}
+.logo{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;}
+.logo em{color:var(--accent);font-style:normal;}
+.hd-date{font-size:12px;color:var(--text2);margin-right:auto;}
+.back-link{font-size:11px;color:var(--text2);text-decoration:none;}
+.back-link:hover{color:var(--accent);}
+.sec{margin-bottom:26px;}
+.sec-title{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.sec-title::after{content:'';flex:1;height:1px;background:var(--border2);}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:8px;}
+.card.confirmed{border-left:3px solid var(--red);}
+.card.hwg{border-left:3px solid var(--accent);}
+.card.rumor{border-left:3px solid var(--blue);}
+.card.japan{border-left:3px solid var(--purple);}
+.card.wc-match{border-left:3px solid var(--green);}
+.t-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:6px;}
+.t-player{font-size:14px;font-weight:700;line-height:1.3;}
+.t-fee{font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;background:rgba(232,184,75,.15);color:var(--accent);white-space:nowrap;flex-shrink:0;}
+.t-route{font-size:12px;color:var(--text2);margin-bottom:6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.t-from{color:var(--text2);}
+.t-arrow{color:var(--green);font-weight:700;}
+.t-to{color:var(--text);font-weight:600;}
+.t-league{font-size:10px;color:var(--text2);background:var(--surface2);border-radius:6px;padding:2px 6px;}
+.t-desc{font-size:12px;color:var(--text2);line-height:1.7;}
+.t-src{margin-top:8px;font-size:10px;color:var(--text2);}
+.src-link{color:var(--blue);text-decoration:none;margin-right:8px;}
+.src-link:hover{text-decoration:underline;}
+.match-row{display:flex;align-items:center;gap:8px;}
+.m-team{font-size:13px;font-weight:600;flex:1;min-width:0;}
+.m-team.right{text-align:right;}
+.m-score{font-size:18px;font-weight:800;color:var(--accent);min-width:56px;text-align:center;font-family:'Syne',sans-serif;}
+.m-meta{font-size:11px;color:var(--text2);margin-top:5px;display:flex;gap:12px;flex-wrap:wrap;}
+.m-scorers{font-size:11px;color:var(--text2);margin-top:3px;}
+.sched-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
+.sched-row:last-child{border-bottom:none;}
+.sched-teams{font-size:13px;font-weight:600;}
+.sched-right{text-align:right;}
+.sched-time{font-size:13px;font-weight:700;color:var(--accent);font-family:'Syne',sans-serif;}
+.sched-group{font-size:10px;color:var(--text2);}
+table.standing{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px;}
+table.standing th{color:var(--text2);font-weight:600;padding:5px 8px;border-bottom:1px solid var(--border2);text-align:left;}
+table.standing td{padding:7px 8px;border-bottom:1px solid var(--border);}
+table.standing .pos1,table.standing .pos2{color:var(--green);}
+.grp-title{font-size:13px;font-weight:700;margin:12px 0 6px;color:var(--accent);}
+.wc-badge{background:linear-gradient(135deg,#ff6b00,var(--accent));color:#000;font-size:10px;font-weight:800;padding:4px 10px;border-radius:20px;letter-spacing:.5px;}
+.empty{padding:24px;color:var(--text2);font-size:13px;text-align:center;line-height:2;}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hd">
+    <div class="logo">⚽ <em>移籍</em>情報</div>
+    <div class="hd-date">毎朝7:30更新</div>
+    <a class="back-link" href="./outing-app.html">← アプリ</a>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">本日のデータ</div>
+    <div class="card">
+      <div class="empty">
+        毎朝7:30に自動更新されます<br>
+        初回更新後にコンテンツが表示されます<br><br>
+        <span style="font-size:11px;opacity:.5;">run_soccer_news.ps1 をタスクスケジューラに登録してください</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
