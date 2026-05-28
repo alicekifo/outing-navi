@@ -78,6 +78,13 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
 .open-tag.close{background:rgba(240,112,112,.1);color:var(--red);}
 .open-tag.unknown{background:var(--surface2);color:var(--text2);}
 .evt-list{display:flex;flex-direction:column;gap:10px;margin-bottom:26px;}
+.evt-filter{padding:0 0 10px;display:flex;flex-direction:column;gap:8px;}
+.evt-filter-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.evt-filter-label{font-size:10px;color:var(--text2);min-width:36px;flex-shrink:0;}
+.evt-filter-chips{display:flex;gap:5px;flex-wrap:wrap;}
+.fchip{padding:4px 10px;border-radius:20px;border:1px solid var(--border2);background:none;color:var(--text2);font-size:11px;cursor:pointer;transition:.15s;}
+.fchip.on{background:var(--accent);color:#fff;border-color:var(--accent);}
+.evt-count{font-size:11px;color:var(--text2);margin-left:auto;}
 .evt-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;cursor:pointer;transition:all .2s;display:flex;gap:12px;}
 .evt-card:hover{border-color:var(--border2);transform:translateY(-1px);}
 .evt-date{flex-shrink:0;width:46px;text-align:center;background:var(--surface2);border-radius:10px;padding:8px 4px;}
@@ -236,7 +243,38 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
     </div>
     <div class="section visible" id="h-event">
       <div class="sec-head">
-        <div class="sec-title"><span class="ico">🎪</span>今週末のイベント</div>
+        <div class="sec-title"><span class="ico">🎪</span>周辺のイベント</div>
+      </div>
+      <div class="evt-filter">
+        <div class="evt-filter-row">
+          <span class="evt-filter-label">📅 日程</span>
+          <div class="evt-filter-chips" id="fchip-date">
+            <button class="fchip on" onclick="setEvtFilter('date','all',this)">すべて</button>
+            <button class="fchip" onclick="setEvtFilter('date','today',this)">今日</button>
+            <button class="fchip" onclick="setEvtFilter('date','weekend',this)">今週末</button>
+            <button class="fchip" onclick="setEvtFilter('date','next',this)">来週</button>
+          </div>
+        </div>
+        <div class="evt-filter-row">
+          <span class="evt-filter-label">💰 費用</span>
+          <div class="evt-filter-chips" id="fchip-fee">
+            <button class="fchip on" onclick="setEvtFilter('fee','all',this)">すべて</button>
+            <button class="fchip" onclick="setEvtFilter('fee','free',this)">無料</button>
+            <button class="fchip" onclick="setEvtFilter('fee','paid',this)">有料</button>
+          </div>
+        </div>
+        <div class="evt-filter-row">
+          <span class="evt-filter-label">📍 エリア</span>
+          <div class="evt-filter-chips" id="fchip-area">
+            <button class="fchip on" onclick="setEvtFilter('area','all',this)">全エリア</button>
+          </div>
+        </div>
+        <div class="evt-filter-row">
+          <span class="evt-filter-label">🏷 タグ</span>
+          <div class="evt-filter-chips" id="fchip-tag">
+            <button class="fchip on" onclick="setEvtFilter('tag','all',this)">すべて</button>
+          </div>
+        </div>
       </div>
       <div class="evt-list" id="home-evt-list"></div>
     </div>
@@ -806,7 +844,8 @@ async function loadLocationEvents(lat,lng,areaName){
     const data=await res.json();
     if(data.events&&data.events.length){
       evtStore=data.events;
-      evtList.innerHTML=evtStore.map(renderEvtCard).join('');
+      buildEvtFilterChips();
+      renderFilteredEvts();
       document.getElementById('route-evt-list').innerHTML=evtStore.slice(0,2).map(renderEvtCard).join('');
     } else {
       evtStore=EVENTS;
@@ -916,6 +955,64 @@ function homeTab(tab,btn){
 function chipToggle(btn){btn.classList.toggle('on');}
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
+
+// ===== EVENT FILTER =====
+const evtFilters={date:'all',fee:'all',area:'all',tag:'all'};
+
+function setEvtFilter(key,val,btn){
+  evtFilters[key]=val;
+  document.querySelectorAll(`#fchip-${key} .fchip`).forEach(c=>c.classList.remove('on'));
+  btn.classList.add('on');
+  renderFilteredEvts();
+}
+
+function buildEvtFilterChips(){
+  // エリアチップ（イベントデータから動的生成）
+  const areaKeywords=['渋谷','新宿','上野','浅草','池袋','銀座','表参道','六本木','恵比寿','品川','秋葉原','お台場','横浜','鎌倉','川崎','吉祥寺'];
+  const foundAreas=areaKeywords.filter(k=>evtStore.some(e=>(e.area||e.place||'').includes(k)));
+  const areaContainer=document.getElementById('fchip-area');
+  if(areaContainer&&foundAreas.length>0){
+    areaContainer.innerHTML=`<button class="fchip on" onclick="setEvtFilter('area','all',this)">全エリア</button>`
+      +foundAreas.map(a=>`<button class="fchip" onclick="setEvtFilter('area','${a}',this)">${a}</button>`).join('');
+  }
+  // タグチップ（イベントデータから動的生成）
+  const allTags=[...new Set(evtStore.flatMap(e=>e.tags||[]))].filter(t=>t&&t!=='おでかけ').slice(0,8);
+  const tagContainer=document.getElementById('fchip-tag');
+  if(tagContainer&&allTags.length>0){
+    tagContainer.innerHTML=`<button class="fchip on" onclick="setEvtFilter('tag','all',this)">すべて</button>`
+      +allTags.map(t=>`<button class="fchip" onclick="setEvtFilter('tag','${t}',this)">${t}</button>`).join('');
+  }
+}
+
+function renderFilteredEvts(){
+  const now=new Date();
+  const toStr=d=>d.toISOString().slice(0,10);
+  const today=toStr(now);
+  const dow=now.getDay();
+  const sat=new Date(now); sat.setDate(now.getDate()+(6-dow+7)%7||(dow===6?0:7));
+  const sun=new Date(sat); sun.setDate(sat.getDate()+1);
+  const nextSat=new Date(sat); nextSat.setDate(sat.getDate()+7);
+  const nextSun=new Date(sun); nextSun.setDate(sun.getDate()+7);
+
+  let filtered=evtStore.filter(e=>{
+    const d=e.date||'';
+    if(evtFilters.date==='today'&&d!==today) return false;
+    if(evtFilters.date==='weekend'&&d!==toStr(sat)&&d!==toStr(sun)) return false;
+    if(evtFilters.date==='next'&&d!==toStr(nextSat)&&d!==toStr(nextSun)) return false;
+    if(evtFilters.fee==='free'&&!e.free) return false;
+    if(evtFilters.fee==='paid'&&e.free) return false;
+    if(evtFilters.area!=='all'&&!(e.area||'').includes(evtFilters.area)&&!(e.place||'').includes(evtFilters.area)) return false;
+    if(evtFilters.tag!=='all'&&!(e.tags||[]).includes(evtFilters.tag)) return false;
+    return true;
+  });
+
+  const list=document.getElementById('home-evt-list');
+  if(filtered.length===0){
+    list.innerHTML='<div class="loading-card">条件に合うイベントが見つかりません</div>';
+  } else {
+    list.innerHTML=filtered.map(renderEvtCard).join('');
+  }
+}
 
 function saveSettings(){
   const s=document.getElementById('cfg-server').value.trim();
