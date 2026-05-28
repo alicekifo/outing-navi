@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>おでかけナビ — 構成メモ</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0c10;--surface:#161620;--surface2:#1e1e2c;--border:rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.14);--accent:#e8b84b;--blue:#6aadff;--green:#52d68a;
+  --purple:#a78bfa;--red:#f07070;--text:#eeeef5;--text2:#8888a8;--r:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;min-height:100vh;padding:24px 16px 60px;}
+.page{max-width:640px;margin:0 auto;}
+
+/* header */
+.hd{display:flex;align-items:center;gap:12px;margin-bottom:32px;}
+.hd-logo{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;}
+.hd-logo em{color:var(--accent);font-style:normal;}
+.hd-sub{font-size:12px;color:var(--text2);margin-top:2px;}
+
+/* hero link */
+.hero{background:linear-gradient(135deg,#1a1a2e,#16213e);border:1px solid rgba(106,173,255,.25);border-radius:16px;padding:20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:12px;text-decoration:none;transition:border-color .2s;}
+.hero:hover{border-color:var(--blue);}
+.hero-left{}
+.hero-label{font-size:10px;color:var(--blue);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
+.hero-url{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2);word-break:break-all;}
+.hero-title{font-size:16px;font-weight:700;margin-bottom:6px;}
+.hero-arrow{font-size:20px;flex-shrink:0;color:var(--blue);}
+
+/* section */
+.sec{margin-bottom:24px;}
+.sec-title{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.sec-title::after{content:'';flex:1;height:1px;background:var(--border2);}
+
+/* link card */
+.cards{display:flex;flex-direction:column;gap:8px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--text);transition:border-color .2s;}
+.card:hover{border-color:var(--border2);}
+.card-icon{font-size:20px;flex-shrink:0;width:32px;text-align:center;}
+.card-body{flex:1;min-width:0;}
+.card-name{font-size:13px;font-weight:600;margin-bottom:2px;}
+.card-desc{font-size:11px;color:var(--text2);}
+.card-url{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.card-badge{flex-shrink:0;font-size:10px;font-weight:700;padding:3px 8px;border-radius:20px;}
+.badge-green{background:rgba(82,214,138,.15);color:var(--green);border:1px solid rgba(82,214,138,.3);}
+.badge-blue{background:rgba(106,173,255,.12);color:var(--blue);border:1px solid rgba(106,173,255,.3);}
+.badge-yellow{background:rgba(232,184,75,.12);color:var(--accent);border:1px solid rgba(232,184,75,.3);}
+.badge-purple{background:rgba(167,139,250,.12);color:var(--purple);border:1px solid rgba(167,139,250,.3);}
+
+/* file paths */
+.files{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.file-row{display:flex;align-items:flex-start;gap:12px;padding:11px 16px;border-bottom:1px solid var(--border);}
+.file-row:last-child{border-bottom:none;}
+.file-icon{font-size:15px;flex-shrink:0;margin-top:1px;}
+.file-body{flex:1;min-width:0;}
+.file-name{font-size:12px;font-weight:600;margin-bottom:1px;}
+.file-path{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text2);word-break:break-all;}
+
+/* commands */
+.cmds{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.cmd-row{padding:12px 16px;border-bottom:1px solid var(--border);}
+.cmd-row:last-child{border-bottom:none;}
+.cmd-label{font-size:11px;color:var(--text2);margin-bottom:5px;}
+.cmd-code{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:rgba(232,184,75,.07);border-radius:6px;padding:7px 10px;word-break:break-all;cursor:pointer;transition:background .15s;}
+.cmd-code:hover{background:rgba(232,184,75,.14);}
+
+/* arch */
+.arch{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;font-size:12px;line-height:2;}
+.arch-line{display:flex;align-items:center;gap:8px;padding:3px 0;}
+.arch-box{padding:3px 10px;border-radius:6px;font-weight:600;white-space:nowrap;}
+.arch-arrow{color:var(--text2);font-size:14px;}
+.ab-blue{background:rgba(106,173,255,.12);color:var(--blue);border:1px solid rgba(106,173,255,.2);}
+.ab-green{background:rgba(82,214,138,.1);color:var(--green);border:1px solid rgba(82,214,138,.2);}
+.ab-yellow{background:rgba(232,184,75,.1);color:var(--accent);border:1px solid rgba(232,184,75,.2);}
+.ab-purple{background:rgba(167,139,250,.1);color:var(--purple);border:1px solid rgba(167,139,250,.2);}
+.ab-gray{background:var(--surface2);color:var(--text2);border:1px solid var(--border2);}
+
+/* scheduler */
+.sched{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.sched-row{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--border);}
+.sched-row:last-child{border-bottom:none;}
+.sched-time{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);flex-shrink:0;width:72px;}
+.sched-desc{font-size:12px;flex:1;}
+.sched-status{font-size:18px;flex-shrink:0;}
+
+/* copy toast */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--surface2);border:1px solid var(--border2);border-radius:20px;padding:8px 18px;font-size:12px;opacity:0;transition:all .25s;pointer-events:none;z-index:999;white-space:nowrap;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hd">
+    <div>
+      <div class="hd-logo">おでかけ<em>ナビ</em> <span style="font-size:14px;font-weight:400;color:var(--text2);">構成メモ</span></div>
+      <div class="hd-sub">URLs / Files / Commands — 2026</div>
+    </div>
+  </div>
+
+  <!-- アプリ本体 -->
+  <a class="hero" href="https://alicekifo.github.io/outing-navi/outing-app.html" target="_blank">
+    <div class="hero-left">
+      <div class="hero-label">アプリ本体</div>
+      <div class="hero-title">おでかけナビ</div>
+      <div class="hero-url">alicekifo.github.io/outing-navi/outing-app.html</div>
+    </div>
+    <div class="hero-arrow">↗</div>
+  </a>
+
+  <!-- 外部サービス管理画面 -->
+  <div class="sec">
+    <div class="sec-title">外部サービス</div>
+    <div class="cards">
+
+      <a class="card" href="https://github.com/alicekifo/outing-navi" target="_blank">
+        <div class="card-icon">🐙</div>
+        <div class="card-body">
+          <div class="card-name">GitHub リポジトリ</div>
+          <div class="card-desc">フロントエンドのソースコード・GitHub Pages</div>
+          <div class="card-url">github.com/alicekifo/outing-navi</div>
+        </div>
+        <div class="card-badge badge-green">Pages</div>
+      </a>
+
+      <a class="card" href="https://phoney-panoramic-hypocrite.ngrok-free.dev/" target="_blank">
+        <div class="card-icon">🌐</div>
+        <div class="card-body">
+          <div class="card-name">バックエンドサーバー（ngrok）</div>
+          <div class="card-desc">Express API・Places・Events・ヘルスチェック</div>
+          <div class="card-url">phoney-panoramic-hypocrite.ngrok-free.dev</div>
+        </div>
+        <div class="card-badge badge-blue">port 3000</div>
+      </a>
+
+      <a class="card" href="https://dashboard.ngrok.com" target="_blank">
+        <div class="card-icon">🔌</div>
+        <div class="card-body">
+          <div class="card-name">ngrok ダッシュボード</div>
+          <div class="card-desc">静的ドメイン管理・トンネル確認</div>
+          <div class="card-url">dashboard.ngrok.com</div>
+        </div>
+        <div class="card-badge badge-blue">管理</div>
+      </a>
+
+      <a class="card" href="https://supabase.com/dashboard/project/hcwyuxrsyvhffdspiipz" target="_blank">
+        <div class="card-icon">🗄️</div>
+        <div class="card-body">
+          <div class="card-name">Supabase（データベース）</div>
+          <div class="card-desc">histories（外出履歴）・bookmarks（保存済み店）</div>
+          <div class="card-url">supabase.com › hcwyuxrsyvhffdspiipz</div>
+        </div>
+        <div class="card-badge badge-green">DB</div>
+      </a>
+
+      <a class="card" href="https://console.groq.com" target="_blank">
+        <div class="card-icon">🤖</div>
+        <div class="card-body">
+          <div class="card-name">Groq Console</div>
+          <div class="card-desc">AIプラン生成・イベント解析（llama-3.1-8b-instant）</div>
+          <div class="card-url">console.groq.com</div>
+        </div>
+        <div class="card-badge badge-purple">AI</div>
+      </a>
+
+      <a class="card" href="https://console.cloud.google.com/apis/credentials" target="_blank">
+        <div class="card-icon">🗺️</div>
+        <div class="card-body">
+          <div class="card-name">Google Cloud Console</div>
+          <div class="card-desc">Places API（周辺検索・詳細・テキスト検索）</div>
+          <div class="card-url">console.cloud.google.com › APIs › Credentials</div>
+        </div>
+        <div class="card-badge badge-yellow">API</div>
+      </a>
+
+      <a class="card" href="https://home.openweathermap.org/api_keys" target="_blank">
+        <div class="card-icon">☁️</div>
+        <div class="card-body">
+          <div class="card-name">OpenWeather</div>
+          <div class="card-desc">現在地の天気・3時間予報（ブラウザ直接呼び出し）</div>
+          <div class="card-url">home.openweathermap.org › API keys</div>
+        </div>
+        <div class="card-badge badge-blue">天気</div>
+      </a>
+
+      <a class="card" href="https://www.walkerplus.com/event_list/weekend/ar0313/" target="_blank">
+        <div class="card-icon">📅</div>
+        <div class="card-body">
+          <div class="card-name">WalkerPlus（スクレイピング元）</div>
+          <div class="card-desc">東京・首都圏の週末イベント一覧</div>
+          <div class="card-url">walkerplus.com/event_list/weekend/ar0313/</div>
+        </div>
+        <div class="card-badge badge-yellow">スクレイプ</div>
+      </a>
+
+      <a class="card" href="https://www.enjoytokyo.jp/event/" target="_blank">
+        <div class="card-icon">🎪</div>
+        <div class="card-body">
+          <div class="card-name">EnjoyTokyo（スクレイピング元）</div>
+          <div class="card-desc">東京のイベント・お出かけ情報</div>
+          <div class="card-url">enjoytokyo.jp/event/</div>
+        </div>
+        <div class="card-badge badge-yellow">スクレイプ</div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- APIエンドポイント -->
+  <div class="sec">
+    <div class="sec-title">APIエンドポイント</div>
+    <div class="cards">
+      <div class="card" style="cursor:default;">
+        <div class="card-icon">💚</div>
+        <div class="card-body">
+          <div class="card-name">ヘルスチェック</div>
+          <div class="card-url">GET /</div>
+        </div>
+      </div>
+      <div class="card" style="cursor:default;">
+        <div class="card-icon">🍽️</div>
+        <div class="card-body">
+          <div class="card-name">周辺のお店</div>
+          <div class="card-url">GET /api/places/nearby?lat=&lng=&type=restaurant&radius=800</div>
+        </div>
+      </div>
+      <div class="card" style="cursor:default;">
+        <div class="card-icon">🔍</div>
+        <div class="card-body">
+          <div class="card-name">テキスト検索</div>
+          <div class="card-url">GET /api/places/search?query=&lat=&lng=</div>
+        </div>
+      </div>
+      <div class="card" style="cursor:default;">
+        <div class="card-icon">🏪</div>
+        <div class="card-body">
+          <div class="card-name">お店の詳細</div>
+          <div class="card-url">GET /api/places/detail?place_id=</div>
+        </div>
+      </div>
+      <div class="card" style="cursor:default;">
+        <div class="card-icon">🎉</div>
+        <div class="card-body">
+          <div class="card-name">イベント一覧</div>
+          <div class="card-url">GET /api/events?area=渋谷,新宿</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 構成ファイル -->
+  <div class="sec">
+    <div class="sec-title">主要ファイル</div>
+    <div class="files">
+      <div class="file-row">
+        <div class="file-icon">🖥️</div>
+        <div class="file-body">
+          <div class="file-name">フロントエンド（編集用）</div>
+          <div class="file-path">C:\Users\ash08\Downloads\outing-app.html</div>
+        </div>
+      </div>
+      <div class="file-row">
+        <div class="file-icon">📁</div>
+        <div class="file-body">
+          <div class="file-name">Gitリポジトリ（push用）</div>
+          <div class="file-path">C:\Users\ash08\outing-navi-repo\</div>
+        </div>
+      </div>
+      <div class="file-row">
+        <div class="file-icon">⚙️</div>
+        <div class="file-body">
+          <div class="file-name">バックエンドサーバー</div>
+          <div class="file-path">C:\Users\ash08\outing-server\server.js</div>
+        </div>
+      </div>
+      <div class="file-row">
+        <div class="file-icon">🕷️</div>
+        <div class="file-body">
+          <div class="file-name">イベントスクレイパー</div>
+          <div class="file-path">C:\Users\ash08\outing-server\scrape_events.js</div>
+        </div>
+      </div>
+      <div class="file-row">
+        <div class="file-icon">🔧</div>
+        <div class="file-body">
+          <div class="file-name">スクレイパー自己修復スクリプト</div>
+          <div class="file-path">C:\Users\ash08\outing-server\fix_scraper.ps1</div>
+        </div>
+      </div>
+      <div class="file-row">
+        <div class="file-icon">🔑</div>
+        <div class="file-body">
+          <div class="file-name">Groq APIキー設定</div>
+          <div class="file-path">C:\Users\ash08\outing-server\config.json</div>
+        </div>
+      </div>
+      <div class="file-row">
+        <div class="file-icon">📦</div>
+        <div class="file-body">
+          <div class="file-name">イベントデータ（自動生成）</div>
+          <div class="file-path">C:\Users\ash08\outing-server\events.json</div>
+        </div>
+      </div>
+      <div class="file-row">
+        <div class="file-icon">📋</div>
+        <div class="file-body">
+          <div class="file-name">スクレイパーログ</div>
+          <div class="file-path">C:\Users\ash08\outing-server\logs\scrape_YYYY-MM-DD.txt</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- タスクスケジューラ -->
+  <div class="sec">
+    <div class="sec-title">自動起動（タスクスケジューラ）</div>
+    <div class="sched">
+      <div class="sched-row">
+        <div class="sched-time">ログイン時</div>
+        <div class="sched-desc">Express サーバー起動（port 3000）</div>
+        <div class="sched-status">✅</div>
+      </div>
+      <div class="sched-row">
+        <div class="sched-time">ログイン時</div>
+        <div class="sched-desc">ngrok トンネル起動（静的ドメイン）</div>
+        <div class="sched-status">✅</div>
+      </div>
+      <div class="sched-row">
+        <div class="sched-time">毎朝 7:00</div>
+        <div class="sched-desc">イベントスクレイピング → events.json 更新</div>
+        <div class="sched-status">✅</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 手動コマンド -->
+  <div class="sec">
+    <div class="sec-title">手動コマンド（クリックでコピー）</div>
+    <div class="cmds">
+      <div class="cmd-row">
+        <div class="cmd-label">サーバーを手動起動</div>
+        <div class="cmd-code" onclick="copyCmd(this)">node C:\Users\ash08\outing-server\server.js</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-label">イベントを今すぐ取得</div>
+        <div class="cmd-code" onclick="copyCmd(this)">node C:\Users\ash08\outing-server\scrape_events.js</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-label">スクレイパーを自己修復</div>
+        <div class="cmd-code" onclick="copyCmd(this)">C:\Users\ash08\outing-server\fix_scraper.ps1</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-label">HTMLをGitHubへ反映（3ステップ）</div>
+        <div class="cmd-code" onclick="copyCmd(this)">cp C:\Users\ash08\Downloads\outing-app.html C:\Users\ash08\outing-navi-repo\outing-app.html</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-label">　↓ コミット&プッシュ</div>
+        <div class="cmd-code" onclick="copyCmd(this)">cd C:\Users\ash08\outing-navi-repo; git add outing-app.html; git commit -m "update"; git push</div>
+      </div>
+      <div class="cmd-row">
+        <div class="cmd-label">最新ログを確認</div>
+        <div class="cmd-code" onclick="copyCmd(this)">Get-Content (Get-ChildItem C:\Users\ash08\outing-server\logs -Filter *.txt | Sort-Object LastWriteTime -Desc | Select-Object -First 1).FullName</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- アーキテクチャ -->
+  <div class="sec">
+    <div class="sec-title">アーキテクチャ</div>
+    <div class="arch">
+      <div class="arch-line">
+        <span class="arch-box ab-blue">スマホ・PC</span>
+        <span class="arch-arrow">→</span>
+        <span class="arch-box ab-green">GitHub Pages</span>
+        <span style="font-size:11px;color:var(--text2);">（HTML/JS）</span>
+      </div>
+      <div class="arch-line">
+        <span class="arch-box ab-blue">スマホ・PC</span>
+        <span class="arch-arrow">→</span>
+        <span class="arch-box ab-yellow">ngrok</span>
+        <span class="arch-arrow">→</span>
+        <span class="arch-box ab-green">Express :3000</span>
+      </div>
+      <div class="arch-line">
+        <span class="arch-box ab-green">Express</span>
+        <span class="arch-arrow">→</span>
+        <span class="arch-box ab-yellow">Google Places</span>
+        <span style="font-size:11px;color:var(--text2);">（周辺検索）</span>
+      </div>
+      <div class="arch-line">
+        <span class="arch-box ab-green">GitHub Pages</span>
+        <span class="arch-arrow">→</span>
+        <span class="arch-box ab-purple">Groq AI</span>
+        <span style="font-size:11px;color:var(--text2);">（AIプラン生成）</span>
+      </div>
+      <div class="arch-line">
+        <span class="arch-box ab-green">GitHub Pages</span>
+        <span class="arch-arrow">→</span>
+        <span class="arch-box ab-blue">Supabase</span>
+        <span style="font-size:11px;color:var(--text2);">（履歴・お気に入り）</span>
+      </div>
+      <div class="arch-line">
+        <span class="arch-box ab-gray">Task Scheduler</span>
+        <span class="arch-arrow">→</span>
+        <span class="arch-box ab-green">scrape_events.js</span>
+        <span class="arch-arrow">→</span>
+        <span class="arch-box ab-purple">Groq</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast">📋 コピーしました</div>
+
+<script>
+function copyCmd(el){
+  navigator.clipboard.writeText(el.textContent.trim()).then(()=>{
+    const t=document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),1800);
+  });
+}
+</script>
+</body>
+</html>
