@@ -201,6 +201,19 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
 .server-status.offline{background:rgba(240,112,112,.1);color:var(--red);}
 @keyframes spin{to{transform:rotate(360deg)}}
 .spinner{width:20px;height:20px;border:2px solid var(--border2);border-top-color:var(--purple);border-radius:50%;animation:spin .8s linear infinite;display:inline-block;vertical-align:middle;margin-right:8px;}
+.place-photos{margin:-8px -20px 0;height:220px;overflow:hidden;position:relative;background:var(--surface2);border-radius:var(--r) var(--r) 0 0;}
+.photos-scroll{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;}
+.photos-scroll::-webkit-scrollbar{display:none;}
+.photos-scroll img{flex-shrink:0;width:100%;height:100%;object-fit:cover;scroll-snap-align:start;}
+.photo-count{position:absolute;bottom:10px;right:12px;background:rgba(0,0,0,.6);color:#fff;font-size:10px;padding:3px 10px;border-radius:10px;backdrop-filter:blur(4px);}
+.place-header{padding:16px 0 12px;border-bottom:1px solid var(--border);}
+.place-rating-row{display:flex;align-items:center;gap:6px;margin:4px 0;flex-wrap:wrap;}
+.place-actions{display:flex;gap:8px;padding:14px 0;border-bottom:1px solid var(--border);margin-bottom:14px;}
+.place-action-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 4px;border-radius:12px;border:1px solid var(--border2);background:none;color:var(--text2);font-family:'Noto Sans JP',sans-serif;font-size:10px;cursor:pointer;transition:.15s;}
+.place-action-btn:hover,.place-action-btn:active{color:var(--accent);border-color:var(--accent);background:var(--accent-dim);}
+.place-action-ico{font-size:22px;}
+.place-map{border-radius:var(--r);overflow:hidden;margin-bottom:4px;background:var(--surface2);cursor:pointer;}
+.place-map img{width:100%;height:160px;object-fit:cover;display:block;}
 </style>
 </head>
 <body>
@@ -554,44 +567,87 @@ function renderPlaceCard(p,idx){
 // ===== PLACE MODAL =====
 async function openPlaceModal(placeId){
   openModal('rest-modal');
-  document.getElementById('rest-modal-content').innerHTML=`<div style="text-align:center;padding:30px 0;"><span class="spinner"></span>詳細を取得中...</div>`;
+  document.getElementById('rest-modal-content').innerHTML=`<div style="text-align:center;padding:40px 0;"><span class="spinner"></span>詳細を取得中...</div>`;
 
-  // キャッシュ確認
   let detail=placeCache[placeId];
-  if(!detail){
-    detail=await fetchPlaceDetail(placeId);
-    if(detail) placeCache[placeId]=detail;
-  }
-
+  if(!detail){detail=await fetchPlaceDetail(placeId);if(detail)placeCache[placeId]=detail;}
   const p=detail;
-  if(!p){
-    document.getElementById('rest-modal-content').innerHTML=`<div style="text-align:center;color:var(--text2);padding:20px;">詳細の取得に失敗しました</div>`;
-    return;
-  }
+  if(!p){document.getElementById('rest-modal-content').innerHTML=`<div style="text-align:center;color:var(--text2);padding:20px;">詳細の取得に失敗しました</div>`;return;}
 
   const isOpen=p.opening_hours?.open_now;
   const mapsUrl=`https://www.google.com/maps/place/?q=place_id:${placeId}`;
   const hours=p.opening_hours?.weekday_text||[];
   const reviews=p.reviews||[];
+  const photos=p.photos||[];
+  const lat=p.geometry?.location?.lat;
+  const lng=p.geometry?.location?.lng;
+  const DN=['日','月','火','水','木','金','土'];
+  const todayDow=DN[new Date().getDay()];
+  _currentPlaceBm={place_id:placeId,name:p.name,genre:p.types?.[0]||'',address:p.formatted_address||'',maps_url:mapsUrl,rating:p.rating||0};
+
+  // 写真カルーセル
+  const photoHtml=photos.length
+    ?`<div class="place-photos">
+        <div class="photos-scroll">${photos.slice(0,6).map(ph=>`<img src="${SERVER}/api/places/photo?ref=${ph.photo_reference}&maxwidth=600" loading="lazy">`).join('')}</div>
+        ${photos.length>1?`<div class="photo-count">📷 ${photos.length}</div>`:''}
+      </div>`
+    :`<div class="place-photos" style="display:flex;align-items:center;justify-content:center;font-size:60px;">${getPlaceEmoji(p)}</div>`;
+
+  // アクションボタン
+  const bmData=JSON.stringify({place_id:placeId,name:p.name,genre:p.types?.[0]||'',address:p.formatted_address||'',maps_url:mapsUrl,rating:p.rating||0}).replace(/'/g,'&apos;');
+  const actionsHtml=`<div class="place-actions">
+    <button class="place-action-btn" onclick="window.open('${mapsUrl}','_blank')"><span class="place-action-ico">🗺</span>ルート</button>
+    ${p.formatted_phone_number?`<button class="place-action-btn" onclick="window.open('tel:${p.formatted_phone_number}','_self')"><span class="place-action-ico">📞</span>電話</button>`:''}
+    <button class="place-action-btn" onclick="saveCurrentPlace()"><span class="place-action-ico">🔖</span>保存</button>
+    ${p.website?`<button class="place-action-btn" onclick="window.open('${p.website}','_blank')"><span class="place-action-ico">🔗</span>公式</button>`:''}
+  </div>`;
+
+  // 地図
+  const mapHtml=(lat&&lng)?`<div class="modal-section">
+    <div class="modal-section-title">地図</div>
+    <div class="place-map" onclick="window.open('${mapsUrl}','_blank')">
+      <img src="${SERVER}/api/places/map?lat=${lat}&lng=${lng}" alt="地図" loading="lazy">
+    </div>
+    <div style="font-size:11px;color:var(--text2);margin-top:4px;">📍 ${p.formatted_address||''}</div>
+  </div>`:'';
 
   document.getElementById('rest-modal-content').innerHTML=`
-    <div style="font-size:28px;margin-bottom:8px;">${getPlaceEmoji(p)}</div>
-    <div class="modal-title">${p.name}</div>
-    <div class="modal-sub">📍 ${p.formatted_address||''}</div>
-    <div class="info-grid">
-      <div class="info-cell"><div class="info-cell-lbl">評価</div><div class="info-cell-val"><span class="stars" style="font-size:11px;">${starsHtml(p.rating)}</span> ${p.rating||'—'}</div></div>
-      <div class="info-cell"><div class="info-cell-lbl">予算目安</div><div class="info-cell-val" style="color:var(--green);">${priceLevelText(p.price_level)}</div></div>
-      <div class="info-cell"><div class="info-cell-lbl">営業状況</div><div class="info-cell-val" style="color:${isOpen===true?'var(--green)':isOpen===false?'var(--red)':'var(--text2)'};">${isOpen===true?'営業中':isOpen===false?'閉店中':'要確認'}</div></div>
-      <div class="info-cell"><div class="info-cell-lbl">電話</div><div class="info-cell-val" style="font-size:11px;">${p.formatted_phone_number||'—'}</div></div>
+    ${photoHtml}
+    <div class="place-header">
+      <div class="modal-title" style="margin-bottom:6px;">${p.name}</div>
+      <div class="place-rating-row">
+        ${p.rating?`<span style="color:var(--accent);font-weight:700;font-size:15px;">${p.rating}</span>
+        <span class="stars" style="font-size:12px;">${starsHtml(p.rating)}</span>
+        <span style="color:var(--text2);font-size:11px;">(${(p.user_ratings_total||0).toLocaleString()}件)</span>`:''}
+        <span style="font-size:11px;font-weight:600;color:${isOpen===true?'var(--green)':isOpen===false?'var(--red)':'var(--text2)'};">${isOpen===true?'● 営業中':isOpen===false?'● 閉店中':'● 要確認'}</span>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:6px;flex-wrap:wrap;">
+        ${p.types?.[0]?`<span style="font-size:11px;color:var(--text2);background:var(--surface2);padding:2px 8px;border-radius:6px;">${p.types[0].replace(/_/g,' ')}</span>`:''}
+        ${p.price_level?`<span style="font-size:11px;color:var(--green);">💴 ${priceLevelText(p.price_level)}</span>`:''}
+      </div>
     </div>
-    ${hours.length?`<div class="modal-section"><div class="modal-section-title">営業時間</div><div class="hours-list">${hours.map(h=>`<div>${h}</div>`).join('')}</div></div>`:''}
-    ${reviews.length?`<div class="modal-section"><div class="modal-section-title">口コミ（${p.user_ratings_total||0}件）</div>${reviews.slice(0,3).map(r=>`<div class="review-item"><div class="review-author"><span>${r.author_name}</span><span style="color:var(--accent);">${'★'.repeat(r.rating)}</span></div><div class="review-text">${r.text?.slice(0,100)}${r.text?.length>100?'...':''}</div></div>`).join('')}</div>`:''}
-    <button class="modal-btn maps" onclick="window.open('${mapsUrl}','_blank')">🗺 Google Mapで見る・ナビ</button>
-    <button class="modal-btn save" onclick="saveBookmark({place_id:'${placeId}',name:'${p.name.replace(/'/g,"\\'")}',genre:'${(p.types?.[0]||'').replace(/'/g,"\\'")}',address:'${(p.formatted_address||'').replace(/'/g,"\\'")}',maps_url:'${mapsUrl}',rating:${p.rating||0}})">🔖 保存リストに追加</button>
-    ${p.website?`<button class="modal-btn site" onclick="window.open('${p.website}','_blank')">🔗 公式サイトへ</button>`:''}
-    <button class="modal-btn site" onclick="window.open('https://www.google.com/search?q=${encodeURIComponent(p.name+' '+( p.formatted_address||''))}','_blank')">🔍 Google検索で詳細</button>
+    ${actionsHtml}
+    ${mapHtml}
+    ${hours.length?`<div class="modal-section">
+      <div class="modal-section-title">営業時間</div>
+      <div class="hours-list">${hours.map(h=>`<div style="${h.startsWith(todayDow)?'color:var(--text);font-weight:700;':''}">${h}</div>`).join('')}</div>
+    </div>`:''}
+    ${p.formatted_phone_number?`<div class="modal-section">
+      <div class="modal-section-title">電話番号</div>
+      <a href="tel:${p.formatted_phone_number}" style="color:var(--blue);font-size:14px;font-weight:600;text-decoration:none;">${p.formatted_phone_number}</a>
+    </div>`:''}
+    ${reviews.length?`<div class="modal-section">
+      <div class="modal-section-title">口コミ（${(p.user_ratings_total||0).toLocaleString()}件）</div>
+      ${reviews.slice(0,3).map(r=>`<div class="review-item">
+        <div class="review-author"><span>${r.author_name}</span><span style="color:var(--accent);">${'★'.repeat(r.rating)}${'☆'.repeat(5-r.rating)}</span></div>
+        <div class="review-text">${r.text||''}</div>
+      </div>`).join('')}
+    </div>`:''}
   `;
 }
+
+let _currentPlaceBm=null;
+function saveCurrentPlace(){if(_currentPlaceBm)saveBookmark(_currentPlaceBm);}
 
 // ===== LOAD NEARBY =====
 async function loadNearbyPlaces(type){
