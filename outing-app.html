@@ -214,6 +214,57 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
 .place-action-ico{font-size:22px;}
 .place-map{border-radius:var(--r);overflow:hidden;margin-bottom:4px;background:var(--surface2);}
 .place-map iframe{width:100%;height:160px;border:0;display:block;border-radius:var(--r);}
+/* ===== VISITED ===== */
+.vis-url-area{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:14px;margin-bottom:16px;}
+.vis-url-label{font-size:11px;color:var(--text2);margin-bottom:8px;}
+.vis-url-row{display:flex;gap:8px;}
+.vis-url-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:12px;outline:none;}
+.vis-url-input:focus{border-color:var(--accent);}
+.vis-url-btn{padding:10px 16px;background:var(--accent);color:#000;border:none;border-radius:10px;font-family:'Noto Sans JP',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;}
+.vis-preview{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--r);padding:14px;margin-bottom:14px;display:none;}
+.vis-preview.show{display:block;}
+.vis-preview-top{display:flex;gap:12px;align-items:flex-start;margin-bottom:12px;}
+.vis-preview-thumb{width:54px;height:54px;border-radius:10px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;overflow:hidden;}
+.vis-preview-thumb img{width:100%;height:100%;object-fit:cover;border-radius:10px;}
+.vis-preview-name{font-size:14px;font-weight:700;margin-bottom:3px;}
+.vis-preview-addr{font-size:11px;color:var(--text2);margin-bottom:4px;}
+.vis-preview-rating{font-size:11px;color:var(--accent);}
+.vis-form-row{display:flex;gap:8px;margin-bottom:10px;align-items:center;}
+.vis-form-label{font-size:11px;color:var(--text2);min-width:44px;}
+.vis-cat-chips{display:flex;gap:6px;}
+.vis-cat-chip{padding:5px 12px;border-radius:20px;border:1px solid var(--border2);background:none;color:var(--text2);font-size:11px;cursor:pointer;transition:.15s;font-family:'Noto Sans JP',sans-serif;}
+.vis-cat-chip.on{background:var(--accent);color:#000;border-color:var(--accent);font-weight:700;}
+.vis-stars{display:flex;gap:4px;}
+.vis-star{font-size:22px;cursor:pointer;color:var(--text3);transition:.1s;}
+.vis-star.on{color:var(--accent);}
+.vis-memo{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:9px 12px;color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:12px;resize:none;outline:none;margin-bottom:10px;}
+.vis-memo:focus{border-color:var(--border2);}
+.vis-save-btn{width:100%;padding:11px;background:var(--green);color:#000;border:none;border-radius:10px;font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;cursor:pointer;}
+.vis-list{display:flex;flex-direction:column;gap:10px;margin-top:4px;}
+.vis-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:13px;display:flex;gap:11px;align-items:flex-start;}
+.vis-card-thumb{width:50px;height:50px;border-radius:9px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;overflow:hidden;}
+.vis-card-thumb img{width:100%;height:100%;object-fit:cover;border-radius:9px;}
+.vis-card-info{flex:1;min-width:0;}
+.vis-card-name{font-size:13px;font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.vis-card-addr{font-size:10px;color:var(--text2);margin-bottom:4px;}
+.vis-card-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.vis-card-cat{font-size:10px;background:var(--surface2);padding:2px 7px;border-radius:5px;color:var(--text2);}
+.vis-card-stars{font-size:11px;color:var(--accent);}
+.vis-card-date{font-size:10px;color:var(--text3);}
+.vis-card-memo{font-size:11px;color:var(--text2);margin-top:4px;line-height:1.5;}
+.vis-card-del{background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;padding:2px;flex-shrink:0;align-self:flex-start;}
+.vis-card-del:hover{color:var(--red);}
+.vis-empty{text-align:center;color:var(--text2);font-size:12px;padding:30px 0;}
+.rec-card{background:linear-gradient(135deg,rgba(232,184,75,.08),rgba(167,139,250,.08));border:1px solid rgba(232,184,75,.2);border-radius:var(--r-lg);padding:16px;margin-bottom:14px;}
+.rec-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+.rec-title{font-size:13px;font-weight:700;color:var(--accent);}
+.rec-date{font-size:10px;color:var(--text3);}
+.rec-content{font-size:12px;color:var(--text2);line-height:1.8;white-space:pre-wrap;}
+.rec-ask-btn{width:100%;padding:12px;background:var(--purple-dim);color:var(--purple);border:1px solid rgba(167,139,250,.3);border-radius:10px;font-family:'Noto Sans JP',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:.2s;margin-top:8px;}
+.rec-ask-btn:active{opacity:.7;}
+.vis-tab-bar{display:flex;gap:6px;margin-bottom:16px;}
+.vis-tab{flex:1;padding:8px;border-radius:10px;border:1px solid var(--border);background:none;color:var(--text2);font-family:'Noto Sans JP',sans-serif;font-size:12px;cursor:pointer;transition:.15s;}
+.vis-tab.on{background:var(--surface2);color:var(--text);border-color:var(--border2);font-weight:700;}
 </style>
 </head>
 <body>
@@ -398,10 +449,86 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
   </div>
 </div>
 
+<!-- VISITED -->
+<div class="screen" id="screen-visited">
+  <div class="app-header">
+    <div class="header-row">
+      <div class="logo">おでかけ<em>ナビ</em></div>
+      <div style="font-size:11px;color:var(--text2);">行った記録・おすすめ</div>
+    </div>
+    <div class="vis-tab-bar">
+      <button class="vis-tab on" onclick="visTab('record',this)">📍 記録する</button>
+      <button class="vis-tab" onclick="visTab('recommend',this)">✨ AIおすすめ</button>
+    </div>
+  </div>
+  <div class="scroll-body">
+    <!-- 記録タブ -->
+    <div id="vis-record">
+      <div class="vis-url-area">
+        <div class="vis-url-label">Google MapsのURLを貼り付けると自動で取得します</div>
+        <div class="vis-url-row">
+          <input class="vis-url-input" id="vis-url-input" placeholder="https://maps.app.goo.gl/..." oninput="visClearPreview()">
+          <button class="vis-url-btn" onclick="visResolveUrl()">検索</button>
+        </div>
+      </div>
+      <!-- プレビュー -->
+      <div class="vis-preview" id="vis-preview">
+        <div class="vis-preview-top">
+          <div class="vis-preview-thumb" id="vis-prev-thumb">🍽</div>
+          <div>
+            <div class="vis-preview-name" id="vis-prev-name">—</div>
+            <div class="vis-preview-addr" id="vis-prev-addr">—</div>
+            <div class="vis-preview-rating" id="vis-prev-rating"></div>
+          </div>
+        </div>
+        <div class="vis-form-row">
+          <span class="vis-form-label">カテゴリ</span>
+          <div class="vis-cat-chips">
+            <button class="vis-cat-chip on" onclick="visSelectCat('グルメ',this)">🍜 グルメ</button>
+            <button class="vis-cat-chip" onclick="visSelectCat('スポット',this)">🗺 スポット</button>
+            <button class="vis-cat-chip" onclick="visSelectCat('カフェ',this)">☕ カフェ</button>
+            <button class="vis-cat-chip" onclick="visSelectCat('その他',this)">📌 その他</button>
+          </div>
+        </div>
+        <div class="vis-form-row">
+          <span class="vis-form-label">評価</span>
+          <div class="vis-stars" id="vis-stars">
+            <span class="vis-star" onclick="visSetStar(1)">★</span>
+            <span class="vis-star" onclick="visSetStar(2)">★</span>
+            <span class="vis-star" onclick="visSetStar(3)">★</span>
+            <span class="vis-star" onclick="visSetStar(4)">★</span>
+            <span class="vis-star" onclick="visSetStar(5)">★</span>
+          </div>
+        </div>
+        <textarea class="vis-memo" id="vis-memo" rows="2" placeholder="メモ（おすすめメニュー、雰囲気など）"></textarea>
+        <button class="vis-save-btn" onclick="visSave()">💾 保存する</button>
+      </div>
+      <!-- 保存済みリスト -->
+      <div class="sec-head" style="margin-top:4px;">
+        <div class="sec-title"><span class="ico">📖</span>保存した場所</div>
+        <button class="see-all" onclick="loadVisited()">更新</button>
+      </div>
+      <div class="vis-list" id="vis-list"><div class="vis-empty">まだ記録がありません</div></div>
+    </div>
+    <!-- おすすめタブ -->
+    <div id="vis-recommend" style="display:none;">
+      <div class="rec-card" id="rec-card">
+        <div class="rec-header">
+          <div class="rec-title">✨ AIおすすめ</div>
+          <div class="rec-date" id="rec-date">—</div>
+        </div>
+        <div class="rec-content" id="rec-content">「記録する」タブで行った場所を追加すると、AIがあなたの好みに合わせたおすすめを提案します。</div>
+      </div>
+      <button class="rec-ask-btn" id="rec-ask-btn" onclick="visAskRecommend()">🤖 今すぐ提案してもらう</button>
+    </div>
+  </div>
+</div>
+
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
   <button class="nav-btn on" onclick="gotoScreen('home',this)"><div class="nav-ico">🏠</div><div class="nav-lbl">ホーム</div></button>
   <button class="nav-btn" onclick="gotoScreen('route',this)"><div class="nav-ico">🗺</div><div class="nav-lbl">ルート</div></button>
+  <button class="nav-btn" onclick="gotoScreen('visited',this);loadVisited()"><div class="nav-ico">📍</div><div class="nav-lbl">記録</div></button>
   <button class="nav-btn" onclick="gotoScreen('history',this)"><div class="nav-ico">📖</div><div class="nav-lbl">履歴</div></button>
   <button class="nav-btn" onclick="openSettingsModal()"><div class="nav-ico">⚙️</div><div class="nav-lbl">設定</div></button>
 </div>
@@ -1121,6 +1248,164 @@ function showToast(msg){
   const t=document.getElementById('toast');
   t.textContent=msg;t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ===== VISITED =====
+let _visPlace = null;
+let _visStar = 0;
+let _visCat = 'グルメ';
+
+function visTab(tab, btn) {
+  document.querySelectorAll('.vis-tab').forEach(t => t.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('vis-record').style.display = tab === 'record' ? '' : 'none';
+  document.getElementById('vis-recommend').style.display = tab === 'recommend' ? '' : 'none';
+  if (tab === 'recommend') loadRecommend();
+}
+
+function visClearPreview() {
+  _visPlace = null;
+  document.getElementById('vis-preview').classList.remove('show');
+}
+
+async function visResolveUrl() {
+  const url = document.getElementById('vis-url-input').value.trim();
+  if (!url) { showToast('URLを入力してください'); return; }
+  if (!serverOnline) { showToast('⚠️ サーバーがオフラインです'); return; }
+  showToast('🔍 場所を検索中...');
+  try {
+    const res = await fetch(`${SERVER}/api/visited/resolve-url?url=${encodeURIComponent(url)}`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
+    const data = await res.json();
+    if (!data.found) { showToast('❌ ' + (data.error || '場所を特定できませんでした')); return; }
+    _visPlace = data;
+    const thumb = document.getElementById('vis-prev-thumb');
+    const photoRef = data.photos?.[0]?.photo_reference;
+    if (photoRef) {
+      thumb.innerHTML = `<img src="${SERVER}/api/places/photo?ref=${encodeURIComponent(photoRef)}&maxwidth=120" onerror="this.parentNode.textContent='🍽'">`;
+    } else {
+      thumb.textContent = data.types?.includes('cafe') ? '☕' : data.types?.includes('bar') ? '🍺' : '🍽';
+    }
+    document.getElementById('vis-prev-name').textContent = data.name || '—';
+    document.getElementById('vis-prev-addr').textContent = data.formatted_address || '';
+    document.getElementById('vis-prev-rating').textContent = data.rating ? `Google評価 ★${data.rating}（${(data.user_ratings_total||0).toLocaleString()}件）` : '';
+    _visStar = 0; _visCat = 'グルメ';
+    document.querySelectorAll('.vis-star').forEach(s => s.classList.remove('on'));
+    document.querySelectorAll('.vis-cat-chip').forEach((c,i) => c.classList.toggle('on', i === 0));
+    document.getElementById('vis-memo').value = '';
+    document.getElementById('vis-preview').classList.add('show');
+    showToast('✅ ' + data.name);
+  } catch(e) { showToast('❌ エラー: ' + e.message); }
+}
+
+function visSelectCat(cat, btn) {
+  _visCat = cat;
+  document.querySelectorAll('.vis-cat-chip').forEach(c => c.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+function visSetStar(n) {
+  _visStar = n;
+  document.querySelectorAll('.vis-star').forEach((s, i) => s.classList.toggle('on', i < n));
+}
+
+async function visSave() {
+  if (!_visPlace) { showToast('先に場所を検索してください'); return; }
+  if (!serverOnline) { showToast('⚠️ サーバーがオフラインです'); return; }
+  const payload = {
+    place_id: _visPlace.place_id,
+    name: _visPlace.name,
+    address: _visPlace.formatted_address || '',
+    types: _visPlace.types || [],
+    google_rating: _visPlace.rating || null,
+    lat: _visPlace.geometry?.location?.lat || null,
+    lng: _visPlace.geometry?.location?.lng || null,
+    photo_ref: _visPlace.photos?.[0]?.photo_reference || null,
+    category: _visCat,
+    my_rating: _visStar,
+    memo: document.getElementById('vis-memo').value.trim(),
+    visited_at: new Date().toISOString().slice(0, 10),
+  };
+  try {
+    const res = await fetch(`${SERVER}/api/visited`, { method: 'POST', headers: { 'Content-Type': 'application/json', 'ngrok-skip-browser-warning': 'true' }, body: JSON.stringify(payload) });
+    const data = await res.json();
+    if (data.ok) {
+      showToast('✅ 保存しました！');
+      document.getElementById('vis-url-input').value = '';
+      visClearPreview();
+      loadVisited();
+    }
+  } catch(e) { showToast('❌ 保存に失敗しました'); }
+}
+
+async function loadVisited() {
+  const list = document.getElementById('vis-list');
+  if (!serverOnline) { list.innerHTML = '<div class="vis-empty">サーバーがオフラインです</div>'; return; }
+  try {
+    const res = await fetch(`${SERVER}/api/visited`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
+    const data = await res.json();
+    const places = data.places || [];
+    if (!places.length) { list.innerHTML = '<div class="vis-empty">まだ記録がありません<br><span style="font-size:11px;">Google MapsのURLを貼り付けて追加してみましょう</span></div>'; return; }
+    list.innerHTML = places.map(p => {
+      const stars = p.my_rating ? '★'.repeat(p.my_rating) + '☆'.repeat(5 - p.my_rating) : '未評価';
+      const thumb = p.photo_ref
+        ? `<img src="${SERVER}/api/places/photo?ref=${encodeURIComponent(p.photo_ref)}&maxwidth=120" onerror="this.parentNode.textContent='🍽'">`
+        : (p.category === 'カフェ' ? '☕' : p.category === 'スポット' ? '🗺' : '🍽');
+      const mapsUrl = `https://www.google.com/maps/search/?api=1&query_place_id=${p.place_id}`;
+      return `<div class="vis-card">
+        <div class="vis-card-thumb" onclick="window.open('${mapsUrl}','_blank')" style="cursor:pointer">${thumb}</div>
+        <div class="vis-card-info">
+          <div class="vis-card-name" onclick="window.open('${mapsUrl}','_blank')" style="cursor:pointer">${p.name}</div>
+          <div class="vis-card-addr">${p.address}</div>
+          <div class="vis-card-meta">
+            <span class="vis-card-cat">${p.category || ''}</span>
+            <span class="vis-card-stars">${stars}</span>
+            <span class="vis-card-date">${p.visited_at || ''}</span>
+          </div>
+          ${p.memo ? `<div class="vis-card-memo">💬 ${p.memo}</div>` : ''}
+        </div>
+        <button class="vis-card-del" onclick="visDelete('${p.id}')">✕</button>
+      </div>`;
+    }).join('');
+  } catch(e) { list.innerHTML = '<div class="vis-empty">読み込みに失敗しました</div>'; }
+}
+
+async function visDelete(id) {
+  if (!confirm('この記録を削除しますか？')) return;
+  try {
+    await fetch(`${SERVER}/api/visited/${id}`, { method: 'DELETE', headers: { 'ngrok-skip-browser-warning': 'true' } });
+    loadVisited();
+  } catch(e) { showToast('❌ 削除に失敗しました'); }
+}
+
+async function visAskRecommend() {
+  const btn = document.getElementById('rec-ask-btn');
+  const content = document.getElementById('rec-content');
+  if (!GROQ_KEY) { showToast('⚙️ 設定からGroq APIキーを入力してください'); return; }
+  if (!serverOnline) { showToast('⚠️ サーバーがオフラインです'); return; }
+  btn.disabled = true; btn.textContent = '🤖 提案中...';
+  content.textContent = '...';
+  try {
+    const res = await fetch(`${SERVER}/api/visited`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
+    const data = await res.json();
+    const places = (data.places || []).slice(0, 20);
+    if (!places.length) { content.textContent = 'まず場所を記録してください。'; btn.disabled = false; btn.textContent = '🤖 今すぐ提案してもらう'; return; }
+    const placeList = places.map(p => `・${p.name}（${p.category}、評価${p.my_rating || '?'}/5）${p.memo ? '：' + p.memo : ''}`).join('\n');
+    const prompt = `以下は私が実際に行って記録した場所のリストです：\n${placeList}\n\nこの好みをもとに、次に行きたくなるようなおすすめのお店・スポット・イベントを東京近郊で5件提案してください。それぞれ「名前 / 場所 / おすすめ理由」を2〜3行で。`;
+    const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_KEY}` },
+      body: JSON.stringify({ model: 'llama-3.1-8b-instant', max_tokens: 800, messages: [{ role: 'user', content: prompt }] })
+    });
+    const json = await resp.json();
+    const text = json.choices?.[0]?.message?.content || '提案を取得できませんでした';
+    content.textContent = text;
+    document.getElementById('rec-date').textContent = new Date().toLocaleDateString('ja-JP');
+  } catch(e) { content.textContent = 'エラー: ' + e.message; }
+  btn.disabled = false; btn.textContent = '🔄 もう一度提案してもらう';
+}
+
+async function loadRecommend() {
+  // 起動時は何もしない（ボタンを押したとき提案）
 }
 
 // ===== INIT =====
