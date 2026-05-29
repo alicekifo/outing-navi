@@ -4,89 +4,107 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>NEXUS</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0c0c10;--surface:#161620;--surface2:#1e1e2c;
-  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.15);
-  --accent:#e8b84b;--purple:#a78bfa;--blue:#6aadff;--green:#52d68a;
-  --red:#f07070;--pink:#f472b6;--orange:#fb923c;--teal:#2dd4bf;
-  --text:#e8e8f0;--text2:#a8a8c8;--r:14px;
+  --bg:#000000;
+  --g1:#111114;
+  --surface:#1c1c1e;
+  --surface2:#2c2c2e;
+  --border:rgba(255,255,255,0.08);
+  --border2:rgba(255,255,255,0.18);
+  --yellow:#ffd60a;
+  --purple:#bf5af2;
+  --blue:#0a84ff;
+  --green:#30d158;
+  --red:#ff453a;
+  --pink:#ff375f;
+  --orange:#ff9f0a;
+  --teal:#5ac8fa;
+  --text:#ffffff;
+  --text2:rgba(235,235,245,0.6);
+  --text3:rgba(235,235,245,0.3);
+  --r:16px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;}
-body{padding:20px 16px 60px;}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,'Noto Sans JP',sans-serif;}
+body{padding:20px 16px 72px;}
 .page{max-width:600px;margin:0 auto;}
 
 /* header */
-.hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;padding-top:4px;}
-.hd-left{}
-.hd-title{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;letter-spacing:-1px;color:var(--accent);}
-.hd-sub{font-size:12px;color:var(--text2);margin-top:2px;}
-.hd-date{font-size:11px;color:var(--text2);margin-top:3px;}
-.edit-btn{background:none;border:1px solid var(--border2);border-radius:8px;color:var(--text2);font-size:12px;padding:6px 12px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:.2s;white-space:nowrap;margin-top:4px;}
-.edit-btn.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:700;}
+.hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;padding-top:8px;}
+.hd-title{font-family:'Syne',sans-serif;font-size:34px;font-weight:800;letter-spacing:-1.5px;color:var(--text);}
+.hd-sub{font-size:12px;color:var(--text2);margin-top:3px;letter-spacing:.3px;}
+.hd-date{font-size:11px;color:var(--text3);margin-top:3px;}
+.edit-btn{background:var(--surface);border:1px solid var(--border2);border-radius:20px;color:var(--text2);font-size:12px;font-weight:600;padding:7px 14px;cursor:pointer;font-family:-apple-system,'Noto Sans JP',sans-serif;transition:.2s;white-space:nowrap;margin-top:4px;}
+.edit-btn.active{background:var(--yellow);color:#000;border-color:var(--yellow);}
+
+/* model toggle — Apple segmented control */
+.model-toggle{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
+.model-lbl{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--text3);text-transform:uppercase;}
+.mtgl-seg{background:var(--surface);border-radius:10px;padding:3px;display:inline-flex;gap:2px;}
+.mtgl-btn{font-size:12px;font-weight:600;padding:6px 18px;border-radius:8px;background:transparent;border:none;color:var(--text2);cursor:pointer;font-family:-apple-system,'Noto Sans JP',sans-serif;transition:.15s;}
+.mtgl-btn.on{background:var(--surface2);color:var(--text);}
 
 /* section label */
-.sec-label{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--text2);margin-bottom:10px;margin-top:8px;text-transform:uppercase;}
+.sec-label{font-size:10px;font-weight:700;letter-spacing:2.5px;color:var(--text3);margin-bottom:10px;margin-top:4px;text-transform:uppercase;}
 
-/* card */
-.cards-wrap{display:grid;gap:10px;margin-bottom:24px;}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 16px;text-decoration:none;display:flex;gap:14px;align-items:center;transition:all .15s;cursor:pointer;position:relative;overflow:hidden;}
-.card:active{opacity:.75;}
-.card.accent-yellow{border-left:3px solid var(--accent);}
-.card.accent-purple{border-left:3px solid var(--purple);}
-.card.accent-blue{border-left:3px solid var(--blue);}
-.card.accent-green{border-left:3px solid var(--green);}
-.card.accent-red{border-left:3px solid var(--red);}
-.card.accent-pink{border-left:3px solid var(--pink);}
-.card.accent-orange{border-left:3px solid var(--orange);}
-.card-ico{font-size:24px;flex-shrink:0;width:46px;height:46px;background:var(--surface2);border-radius:12px;display:flex;align-items:center;justify-content:center;}
+/* cards */
+.cards-wrap{display:grid;gap:8px;margin-bottom:28px;}
+.card{background:var(--g1);border:1px solid var(--border);border-radius:var(--r);padding:16px;text-decoration:none;display:flex;gap:14px;align-items:center;transition:opacity .15s;cursor:pointer;position:relative;overflow:hidden;}
+.card:active{opacity:.65;}
+
+/* per-accent icon backgrounds */
+.card-ico{font-size:22px;flex-shrink:0;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;}
+.card.accent-yellow .card-ico{background:rgba(255,214,10,0.16);}
+.card.accent-purple  .card-ico{background:rgba(191,90,242,0.16);}
+.card.accent-blue    .card-ico{background:rgba(10,132,255,0.16);}
+.card.accent-green   .card-ico{background:rgba(48,209,88,0.16);}
+.card.accent-red     .card-ico{background:rgba(255,69,58,0.16);}
+.card.accent-pink    .card-ico{background:rgba(255,55,95,0.16);}
+.card.accent-orange  .card-ico{background:rgba(255,159,10,0.16);}
+.card.accent-teal    .card-ico{background:rgba(90,200,250,0.16);}
+
 .card-body{flex:1;min-width:0;}
-.card-title{font-size:15px;font-weight:700;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.card-title{font-size:15px;font-weight:600;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text);}
 .card-desc{font-size:13px;color:var(--text2);line-height:1.65;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word;overflow-wrap:break-word;}
-.card-badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;margin-top:6px;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;}
-.badge-daily{background:rgba(232,184,75,.12);color:var(--accent);border:1px solid rgba(232,184,75,.25);}
-.badge-app{background:rgba(106,173,255,.12);color:var(--blue);border:1px solid rgba(106,173,255,.25);}
-.badge-smoke{background:rgba(240,112,112,.12);color:var(--red);border:1px solid rgba(240,112,112,.25);}
-.badge-exhibition{background:rgba(244,114,182,.12);color:var(--pink);border:1px solid rgba(244,114,182,.25);}
-.badge-weekly{background:rgba(251,146,60,.12);color:var(--orange);border:1px solid rgba(251,146,60,.25);}
-.badge-ent{background:rgba(82,214,138,.12);color:var(--green);border:1px solid rgba(82,214,138,.25);}
-.badge-life{background:rgba(45,212,191,.12);color:var(--teal);border:1px solid rgba(45,212,191,.25);}
-.card.accent-teal{border-left:3px solid var(--teal);}
 
-/* hidden card (edit mode) */
-.card.card-hidden{opacity:.35;}
+/* badges */
+.card-badge{display:inline-flex;align-items:center;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;margin-top:7px;}
+.badge-daily      {background:rgba(255,214,10,0.15);   color:var(--yellow);}
+.badge-app        {background:rgba(10,132,255,0.15);   color:var(--blue);}
+.badge-smoke      {background:rgba(255,69,58,0.15);    color:var(--red);}
+.badge-exhibition {background:rgba(255,55,95,0.15);    color:var(--pink);}
+.badge-weekly     {background:rgba(255,159,10,0.15);   color:var(--orange);}
+.badge-ent        {background:rgba(48,209,88,0.15);    color:var(--green);}
+.badge-life       {background:rgba(90,200,250,0.15);   color:var(--teal);}
 
-/* edit mode overlay on card */
-.card-edit-bar{display:none;position:absolute;top:0;right:0;bottom:0;background:rgba(12,12,16,.85);align-items:center;gap:4px;padding:0 10px;border-radius:0 var(--r) var(--r) 0;}
+/* hidden card */
+.card.card-hidden{opacity:.3;}
+
+/* edit mode */
+.card-edit-bar{display:none;position:absolute;top:0;right:0;bottom:0;background:rgba(0,0,0,.82);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:center;gap:4px;padding:0 10px;border-radius:0 var(--r) var(--r) 0;}
 .edit-mode .card-edit-bar{display:flex;}
 .edit-mode .card:active{opacity:1;}
-.edt-btn{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text2);font-size:14px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
-.edt-btn:active{background:var(--border2);}
+.edt-btn{background:var(--surface);border:1px solid var(--border2);border-radius:8px;color:var(--text2);font-size:14px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.edt-btn:active{background:var(--surface2);}
 .edt-btn.vis-on{color:var(--green);}
 .edt-btn.vis-off{color:var(--red);}
 
-/* model toggle */
-.model-toggle{display:flex;align-items:center;gap:8px;margin-bottom:16px;}
-.model-lbl{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--text2);text-transform:uppercase;}
-.mtgl-btn{font-size:12px;font-weight:700;padding:6px 14px;border-radius:12px;background:none;border:1px solid var(--border2);color:var(--text2);cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:.15s;}
-.mtgl-btn.on{background:var(--accent);color:#000;border-color:var(--accent);}
-
 /* footer */
-.footer{text-align:center;font-size:10px;color:var(--text2);margin-top:8px;}
+.footer{text-align:center;font-size:11px;color:var(--text3);margin-top:12px;}
 
 /* smoking sheet */
-.smoke-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;align-items:flex-end;}
+.smoke-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;align-items:flex-end;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
 .smoke-overlay.open{display:flex;}
-.smoke-sheet{background:var(--surface);border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-width:600px;margin:0 auto;}
+.smoke-sheet{background:var(--surface);border-radius:20px 20px 0 0;padding:24px 20px 48px;width:100%;max-width:600px;margin:0 auto;}
 .smoke-sheet-title{font-size:13px;font-weight:700;color:var(--text2);margin-bottom:16px;text-align:center;}
 .smoke-btn{display:flex;align-items:center;gap:14px;background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:16px;text-decoration:none;margin-bottom:10px;cursor:pointer;}
-.smoke-btn:active{opacity:.7;}
-.smoke-btn-ico{font-size:26px;width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.smoke-btn-label{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.smoke-btn:active{opacity:.65;}
+.smoke-btn-ico{font-size:26px;width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.smoke-btn-label{font-size:14px;font-weight:600;color:var(--text);margin-bottom:2px;}
 .smoke-btn-sub{font-size:11px;color:var(--text2);}
-.smoke-cancel{width:100%;margin-top:6px;padding:13px;background:none;border:1px solid var(--border);border-radius:12px;color:var(--text2);font-family:'Noto Sans JP',sans-serif;font-size:13px;cursor:pointer;}
+.smoke-cancel{width:100%;margin-top:6px;padding:15px;background:var(--surface2);border:none;border-radius:14px;color:var(--text2);font-family:-apple-system,'Noto Sans JP',sans-serif;font-size:14px;font-weight:600;cursor:pointer;}
 </style>
 </head>
 <body>
@@ -101,8 +119,10 @@ body{padding:20px 16px 60px;}
   </div>
   <div class="model-toggle">
     <span class="model-lbl">MODEL</span>
-    <button class="mtgl-btn on" id="tbtn-s" onclick="setModel('sonnet')">Sonnet</button>
-    <button class="mtgl-btn" id="tbtn-o" onclick="setModel('opus')">Opus</button>
+    <div class="mtgl-seg">
+      <button class="mtgl-btn on" id="tbtn-s" onclick="setModel('sonnet')">Sonnet</button>
+      <button class="mtgl-btn" id="tbtn-o" onclick="setModel('opus')">Opus</button>
+    </div>
   </div>
   <div id="cards-root"></div>
   <div class="footer">毎日自動更新 &mdash; Powered by Claude</div>
@@ -112,12 +132,12 @@ body{padding:20px 16px 60px;}
 <div class="smoke-overlay" id="smoke-overlay" onclick="closeSmokingSheet(event)">
   <div class="smoke-sheet">
     <div class="smoke-sheet-title" id="smoke-sheet-title">&#x1F4CD; 現在地を取得中…</div>
-    <a class="smoke-btn" id="smoke-gmaps-btn" href="#" target="_blank" style="border-left:3px solid #4285f4;">
-      <div class="smoke-btn-ico" style="background:rgba(66,133,244,.12);">&#x1F5FA;&#xFE0F;</div>
+    <a class="smoke-btn" id="smoke-gmaps-btn" href="#" target="_blank" style="border-left:3px solid #0a84ff;">
+      <div class="smoke-btn-ico" style="background:rgba(10,132,255,0.16);">&#x1F5FA;&#xFE0F;</div>
       <div><div class="smoke-btn-label">Google Maps で探す</div><div class="smoke-btn-sub">現在地周辺を地図表示</div></div>
     </a>
     <a class="smoke-btn" href="https://www.enmaru.jp/" target="_blank" style="border-left:3px solid var(--red);">
-      <div class="smoke-btn-ico" style="background:rgba(240,112,112,.12);">&#x1F6AC;</div>
+      <div class="smoke-btn-ico" style="background:rgba(255,69,58,0.16);">&#x1F6AC;</div>
       <div><div class="smoke-btn-label">えんまる で探す</div><div class="smoke-btn-sub">喫煙所専門サイト</div></div>
     </a>
     <button class="smoke-cancel" onclick="closeSmokingSheet()">閉じる</button>
@@ -128,9 +148,9 @@ body{padding:20px 16px 60px;}
 // ── Card definitions ──────────────────────────────────────────
 const CARD_DEFS = [
   { id:'exhibition', section:'EXHIBITION', icon:'&#x1F5BC;&#xFE0F;', title:'美術展・特別展', desc:'関東・関西の展覧会情報、チケット発売リマインダー付き', badge:'毎週月更新', badgeCls:'badge-exhibition', href:'./exhibition.html', accent:'accent-pink' },
-  { id:'gourmet',    section:'DAILY NEWS', icon:'&#x1F374;', title:'話題グルメ',    desc:'バズり食べも・新規オープン・ミシュラン・期間限定', badge:'毎週金 07:30', badgeCls:'badge-weekly', href:'./gourmet.html', accent:'accent-orange' },
-  { id:'ai_news',    section:'DAILY NEWS', icon:'&#x1F9E0;', title:'AIニュース・論文', desc:'AI動向・認知科学・行動経済学・心理学 の注目論文を毎日生成', badge:'毎日 08:00', badgeCls:'badge-daily', href:'./ai_news.html', accent:'accent-purple' },
-  { id:'soccer',     section:'DAILY NEWS', icon:'&#x26BD;',  title:'サッカー移籍情報', desc:'海外サッカーの最新移籍・Here We Go・日本人選手動向', badge:'毎日 07:30', badgeCls:'badge-daily', href:'./soccer.html', accent:'accent-yellow' },
+  { id:'gourmet',    section:'DAILY NEWS', icon:'&#x1F374;', title:'話題グルメ',    desc:'バズり食べも・新規オープン・ミシュラン・期間限定', badge:'毎週金更新', badgeCls:'badge-weekly', href:'./gourmet.html', accent:'accent-orange' },
+  { id:'ai_news',    section:'DAILY NEWS', icon:'&#x1F9E0;', title:'AIニュース・論文', desc:'AI動向・認知科学・行動経済学・心理学 の注目論文を毎日生成', badge:'毎日更新', badgeCls:'badge-daily', href:'./ai_news.html', accent:'accent-purple' },
+  { id:'soccer',     section:'DAILY NEWS', icon:'&#x26BD;',  title:'サッカー移籍情報', desc:'海外サッカーの最新移籍・Here We Go・日本人選手動向', badge:'毎日更新', badgeCls:'badge-daily', href:'./soccer.html', accent:'accent-yellow' },
   { id:'entertainment', section:'WEEKLY',   icon:'&#x1F3AC;', title:'エンタメ週報',    desc:'映画公開・ゲーム新作・アニメ・ストリーミング新着を毎週まとめ', badge:'毎週土更新', badgeCls:'badge-ent',  href:'./entertainment.html', accent:'accent-green' },
   { id:'lifestyle',    section:'WEEKLY',   icon:'&#x1F377;', title:'ライフスタイル週報', desc:'ワイン・日本酒・ガジェット・テックニュース', badge:'毎週日更新', badgeCls:'badge-life', href:'./lifestyle.html',     accent:'accent-teal' },
   { id:'outing',     section:'APP',        icon:'&#x1F5FA;', title:'おでかけナビ', desc:'辺りのお店・イベント検索、行った場所の記録・AIおすすめ', badge:'GPS・記録・AI', badgeCls:'badge-app', href:'./outing-app.html', accent:'accent-blue' },
