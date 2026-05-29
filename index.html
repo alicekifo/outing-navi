@@ -6,6 +6,7 @@
 <title>NEXUS</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
+/* ── Dark theme (default) ── */
 :root{
   --bg:#000000;
   --g1:#111114;
@@ -25,7 +26,57 @@
   --text2:rgba(235,235,245,0.6);
   --text3:rgba(235,235,245,0.3);
   --r:16px;
+  --card-shadow:none;
+  --seg-on-shadow:none;
+  --ico-opacity:0.16;
 }
+
+/* ── Light theme ── */
+html.light{
+  --bg:#f5f5f7;
+  --g1:#ffffff;
+  --surface:#f2f2f2;
+  --surface2:#e5e5ea;
+  --border:rgba(0,0,0,0.08);
+  --border2:rgba(0,0,0,0.16);
+  --yellow:#c68400;
+  --purple:#9d35e0;
+  --blue:#0066cc;
+  --green:#1a8a3a;
+  --red:#d70015;
+  --pink:#d9004a;
+  --orange:#c85800;
+  --teal:#0076a8;
+  --text:#1d1d1f;
+  --text2:rgba(60,60,67,0.6);
+  --text3:rgba(60,60,67,0.36);
+  --card-shadow:0 1px 4px rgba(0,0,0,0.07);
+  --seg-on-shadow:0 1px 3px rgba(0,0,0,0.13);
+}
+
+/* icon bg tints — slightly stronger in light mode */
+html.light .card.accent-yellow .card-ico{background:rgba(198,132,0,0.12);}
+html.light .card.accent-purple  .card-ico{background:rgba(157,53,224,0.12);}
+html.light .card.accent-blue    .card-ico{background:rgba(0,102,204,0.12);}
+html.light .card.accent-green   .card-ico{background:rgba(26,138,58,0.12);}
+html.light .card.accent-red     .card-ico{background:rgba(215,0,21,0.12);}
+html.light .card.accent-pink    .card-ico{background:rgba(217,0,74,0.12);}
+html.light .card.accent-orange  .card-ico{background:rgba(200,88,0,0.12);}
+html.light .card.accent-teal    .card-ico{background:rgba(0,118,168,0.12);}
+
+html.light .badge-daily      {background:rgba(198,132,0,0.12);    color:var(--yellow);}
+html.light .badge-app        {background:rgba(0,102,204,0.12);    color:var(--blue);}
+html.light .badge-smoke      {background:rgba(215,0,21,0.12);     color:var(--red);}
+html.light .badge-exhibition {background:rgba(217,0,74,0.12);     color:var(--pink);}
+html.light .badge-weekly     {background:rgba(200,88,0,0.12);     color:var(--orange);}
+html.light .badge-ent        {background:rgba(26,138,58,0.12);    color:var(--green);}
+html.light .badge-life       {background:rgba(0,118,168,0.12);    color:var(--teal);}
+
+html.light .mtgl-btn.on{box-shadow:var(--seg-on-shadow);}
+html.light .smoke-sheet{background:#ffffff;}
+html.light .smoke-btn{background:var(--surface);}
+
+/* ── Base ── */
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,'Noto Sans JP',sans-serif;}
 body{padding:20px 16px 72px;}
@@ -36,7 +87,10 @@ body{padding:20px 16px 72px;}
 .hd-title{font-family:'Syne',sans-serif;font-size:34px;font-weight:800;letter-spacing:-1.5px;color:var(--text);}
 .hd-sub{font-size:12px;color:var(--text2);margin-top:3px;letter-spacing:.3px;}
 .hd-date{font-size:11px;color:var(--text3);margin-top:3px;}
-.edit-btn{background:var(--surface);border:1px solid var(--border2);border-radius:20px;color:var(--text2);font-size:12px;font-weight:600;padding:7px 14px;cursor:pointer;font-family:-apple-system,'Noto Sans JP',sans-serif;transition:.2s;white-space:nowrap;margin-top:4px;}
+.hd-right{display:flex;align-items:flex-start;gap:8px;padding-top:4px;}
+.theme-btn{background:var(--surface);border:1px solid var(--border2);border-radius:20px;font-size:14px;padding:7px 10px;cursor:pointer;line-height:1;transition:.2s;}
+.theme-btn:active{opacity:.65;}
+.edit-btn{background:var(--surface);border:1px solid var(--border2);border-radius:20px;color:var(--text2);font-size:12px;font-weight:600;padding:7px 14px;cursor:pointer;font-family:-apple-system,'Noto Sans JP',sans-serif;transition:.2s;white-space:nowrap;}
 .edit-btn.active{background:var(--yellow);color:#000;border-color:var(--yellow);}
 
 /* model toggle — Apple segmented control */
@@ -51,10 +105,10 @@ body{padding:20px 16px 72px;}
 
 /* cards */
 .cards-wrap{display:grid;gap:8px;margin-bottom:28px;}
-.card{background:var(--g1);border:1px solid var(--border);border-radius:var(--r);padding:16px;text-decoration:none;display:flex;gap:14px;align-items:center;transition:opacity .15s;cursor:pointer;position:relative;overflow:hidden;}
+.card{background:var(--g1);border:1px solid var(--border);border-radius:var(--r);padding:16px;text-decoration:none;display:flex;gap:14px;align-items:center;transition:opacity .15s;cursor:pointer;position:relative;overflow:hidden;box-shadow:var(--card-shadow);}
 .card:active{opacity:.65;}
 
-/* per-accent icon backgrounds */
+/* per-accent icon backgrounds (dark mode values) */
 .card-ico{font-size:22px;flex-shrink:0;width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;}
 .card.accent-yellow .card-ico{background:rgba(255,214,10,0.16);}
 .card.accent-purple  .card-ico{background:rgba(191,90,242,0.16);}
@@ -115,7 +169,10 @@ body{padding:20px 16px 72px;}
       <div class="hd-sub">News &middot; Apps &middot; Culture</div>
       <div class="hd-date" id="hd-date"></div>
     </div>
-    <button class="edit-btn" id="edit-btn" onclick="toggleEdit()">&#x270F; 編集</button>
+    <div class="hd-right">
+      <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#x2600;&#xFE0F;</button>
+      <button class="edit-btn" id="edit-btn" onclick="toggleEdit()">&#x270F; 編集</button>
+    </div>
   </div>
   <div class="model-toggle">
     <span class="model-lbl">MODEL</span>
@@ -136,7 +193,7 @@ body{padding:20px 16px 72px;}
       <div class="smoke-btn-ico" style="background:rgba(10,132,255,0.16);">&#x1F5FA;&#xFE0F;</div>
       <div><div class="smoke-btn-label">Google Maps で探す</div><div class="smoke-btn-sub">現在地周辺を地図表示</div></div>
     </a>
-    <a class="smoke-btn" href="https://www.enmaru.jp/" target="_blank" style="border-left:3px solid var(--red);">
+    <a class="smoke-btn" href="https://www.enmaru.jp/" target="_blank" style="border-left:3px solid #ff453a;">
       <div class="smoke-btn-ico" style="background:rgba(255,69,58,0.16);">&#x1F6AC;</div>
       <div><div class="smoke-btn-label">えんまる で探す</div><div class="smoke-btn-sub">喫煙所専門サイト</div></div>
     </a>
@@ -161,14 +218,13 @@ const CARD_DEFS = [
   { id:'quick_memo', section:'APP',        icon:'&#x1F4DD;', title:'クイックメモ',  desc:'Vault用Markdownをすばやく作成してクリップボードにコピー', badge:'クリップボード', badgeCls:'badge-ent', href:'./quick_memo.html',  accent:'accent-green' },
 ];
 
-const PREF_KEY = 'nexus_prefs';
+const PREF_KEY   = 'nexus_prefs';
+const THEME_KEY  = 'nexus_theme';
 
 function loadPrefs() {
   try { return JSON.parse(localStorage.getItem(PREF_KEY)) || []; } catch { return []; }
 }
-function savePrefs(prefs) {
-  localStorage.setItem(PREF_KEY, JSON.stringify(prefs));
-}
+function savePrefs(prefs) { localStorage.setItem(PREF_KEY, JSON.stringify(prefs)); }
 function getOrderedCards() {
   const prefs = loadPrefs();
   return CARD_DEFS.map(c => {
@@ -182,6 +238,18 @@ function setPref(id, key, val) {
   if (idx >= 0) prefs[idx][key] = val;
   else prefs.push({ id, order: CARD_DEFS.findIndex(c=>c.id===id), visible: true, [key]: val });
   savePrefs(prefs);
+}
+
+// ── Theme ─────────────────────────────────────────────────────
+let themeMode = localStorage.getItem(THEME_KEY) || 'dark';
+function applyTheme() {
+  document.documentElement.classList.toggle('light', themeMode === 'light');
+  document.getElementById('theme-btn').textContent = themeMode === 'light' ? '🌙' : '☀️';
+}
+function toggleTheme() {
+  themeMode = themeMode === 'dark' ? 'light' : 'dark';
+  localStorage.setItem(THEME_KEY, themeMode);
+  applyTheme();
 }
 
 // ── Render ────────────────────────────────────────────────────
@@ -304,6 +372,7 @@ document.getElementById('hd-date').textContent =
 
 document.getElementById('tbtn-s').classList.toggle('on', modelMode === 'sonnet');
 document.getElementById('tbtn-o').classList.toggle('on', modelMode === 'opus');
+applyTheme();
 render();
 </script>
 </body>
