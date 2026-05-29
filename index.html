@@ -6,56 +6,73 @@
 <title>NEXUS</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0c0c10;--surface:#161620;--surface2:#1e1e2c;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--accent:#e8b84b;--purple:#a78bfa;--blue:#6aadff;--green:#52d68a;--red:#f07070;--text:#eeeef5;--text2:#8888a8;--r:16px;}
+:root{
+  --bg:#0c0c10;--surface:#161620;--surface2:#1e1e2c;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.15);
+  --accent:#e8b84b;--purple:#a78bfa;--blue:#6aadff;--green:#52d68a;
+  --red:#f07070;--pink:#f472b6;--orange:#fb923c;
+  --text:#eeeef5;--text2:#8888a8;--r:14px;
+}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;}
-body{padding:24px 18px 60px;}
-.page{max-width:640px;margin:0 auto;}
+body{padding:20px 16px 60px;}
+.page{max-width:600px;margin:0 auto;}
 
 /* header */
-.hd{margin-bottom:32px;padding-top:8px;}
-.hd-title{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.5px;margin-bottom:4px;}
-.hd-title em{color:var(--accent);font-style:normal;}
-.hd-sub{font-size:12px;color:var(--text2);}
-.hd-date{font-size:11px;color:var(--text2);margin-top:2px;}
+.hd{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;padding-top:4px;}
+.hd-left{}
+.hd-title{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;letter-spacing:-1px;color:var(--accent);}
+.hd-sub{font-size:11px;color:var(--text2);margin-top:1px;}
+.hd-date{font-size:10px;color:var(--text2);margin-top:2px;}
+.edit-btn{background:none;border:1px solid var(--border2);border-radius:8px;color:var(--text2);font-size:12px;padding:6px 12px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:.2s;white-space:nowrap;margin-top:4px;}
+.edit-btn.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:700;}
 
-/* section */
-.sec-label{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--text2);margin-bottom:10px;text-transform:uppercase;}
+/* section label */
+.sec-label{font-size:9px;font-weight:700;letter-spacing:2.5px;color:var(--text2);margin-bottom:8px;margin-top:4px;text-transform:uppercase;}
 
-/* card grid */
-.grid{display:grid;gap:12px;margin-bottom:28px;}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 18px 16px;text-decoration:none;display:flex;gap:14px;align-items:flex-start;transition:all .2s;cursor:pointer;}
-.card:hover,.card:active{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,.4);}
-.card-ico{font-size:28px;flex-shrink:0;width:44px;height:44px;background:var(--surface2);border-radius:12px;display:flex;align-items:center;justify-content:center;}
-.card-body{flex:1;min-width:0;}
-.card-title{font-size:15px;font-weight:700;margin-bottom:3px;}
-.card-desc{font-size:11px;color:var(--text2);line-height:1.6;}
-.card-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:6px;margin-top:6px;}
-.badge-new{background:rgba(82,214,138,.15);color:var(--green);border:1px solid rgba(82,214,138,.3);}
-.badge-daily{background:rgba(232,184,75,.12);color:var(--accent);border:1px solid rgba(232,184,75,.25);}
-.badge-app{background:rgba(106,173,255,.12);color:var(--blue);border:1px solid rgba(106,173,255,.25);}
-
-/* accent borders */
+/* card */
+.cards-wrap{display:grid;gap:8px;margin-bottom:20px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:13px 14px;text-decoration:none;display:flex;gap:12px;align-items:center;transition:all .15s;cursor:pointer;position:relative;overflow:hidden;}
+.card:active{opacity:.75;}
 .card.accent-yellow{border-left:3px solid var(--accent);}
 .card.accent-purple{border-left:3px solid var(--purple);}
 .card.accent-blue{border-left:3px solid var(--blue);}
 .card.accent-green{border-left:3px solid var(--green);}
 .card.accent-red{border-left:3px solid var(--red);}
+.card.accent-pink{border-left:3px solid var(--pink);}
+.card.accent-orange{border-left:3px solid var(--orange);}
+.card-ico{font-size:22px;flex-shrink:0;width:40px;height:40px;background:var(--surface2);border-radius:10px;display:flex;align-items:center;justify-content:center;}
+.card-body{flex:1;min-width:0;}
+.card-title{font-size:14px;font-weight:700;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.card-desc{font-size:11px;color:var(--text2);line-height:1.5;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;word-break:break-word;overflow-wrap:break-word;}
+.card-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 6px;border-radius:5px;margin-top:5px;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;}
+.badge-daily{background:rgba(232,184,75,.12);color:var(--accent);border:1px solid rgba(232,184,75,.25);}
+.badge-app{background:rgba(106,173,255,.12);color:var(--blue);border:1px solid rgba(106,173,255,.25);}
 .badge-smoke{background:rgba(240,112,112,.12);color:var(--red);border:1px solid rgba(240,112,112,.25);}
-.card.accent-pink{border-left:3px solid #f472b6;}
-.badge-exhibition{background:rgba(244,114,182,.12);color:#f472b6;border:1px solid rgba(244,114,182,.25);}
-.card.accent-orange{border-left:3px solid #fb923c;}
-.badge-weekly{background:rgba(251,146,60,.12);color:#fb923c;border:1px solid rgba(251,146,60,.25);}
+.badge-exhibition{background:rgba(244,114,182,.12);color:var(--pink);border:1px solid rgba(244,114,182,.25);}
+.badge-weekly{background:rgba(251,146,60,.12);color:var(--orange);border:1px solid rgba(251,146,60,.25);}
+
+/* hidden card (edit mode) */
+.card.card-hidden{opacity:.35;}
+
+/* edit mode overlay on card */
+.card-edit-bar{display:none;position:absolute;top:0;right:0;bottom:0;background:rgba(12,12,16,.85);align-items:center;gap:4px;padding:0 10px;border-radius:0 var(--r) var(--r) 0;}
+.edit-mode .card-edit-bar{display:flex;}
+.edit-mode .card:active{opacity:1;}
+.edt-btn{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;color:var(--text2);font-size:14px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.edt-btn:active{background:var(--border2);}
+.edt-btn.vis-on{color:var(--green);}
+.edt-btn.vis-off{color:var(--red);}
 
 /* footer */
 .footer{text-align:center;font-size:10px;color:var(--text2);margin-top:8px;}
 
-/* smoking bottom sheet */
+/* smoking sheet */
 .smoke-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;align-items:flex-end;}
 .smoke-overlay.open{display:flex;}
-.smoke-sheet{background:var(--surface);border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-width:640px;margin:0 auto;}
+.smoke-sheet{background:var(--surface);border-radius:20px 20px 0 0;padding:24px 20px 40px;width:100%;max-width:600px;margin:0 auto;}
 .smoke-sheet-title{font-size:13px;font-weight:700;color:var(--text2);margin-bottom:16px;text-align:center;}
-.smoke-btn{display:flex;align-items:center;gap:14px;background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:16px;text-decoration:none;margin-bottom:10px;transition:.15s;cursor:pointer;}
+.smoke-btn{display:flex;align-items:center;gap:14px;background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:16px;text-decoration:none;margin-bottom:10px;cursor:pointer;}
 .smoke-btn:active{opacity:.7;}
 .smoke-btn-ico{font-size:26px;width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .smoke-btn-label{font-size:14px;font-weight:700;color:var(--text);margin-bottom:2px;}
@@ -65,127 +82,153 @@ body{padding:24px 18px 60px;}
 </head>
 <body>
 <div class="page">
-
   <div class="hd">
-    <div class="hd-title"><em>NEXUS</em></div>
-    <div class="hd-sub">News &middot; Apps &middot; Culture</div>
-    <div class="hd-date" id="hd-date"></div>
-  </div>
-
-  <div class="sec-label">&#x1F3A8; Exhibition</div>
-  <div class="grid">
-    <a class="card accent-pink" href="./exhibition.html">
-      <div class="card-ico">&#x1F5BC;&#xFE0F;</div>
-      <div class="card-body">
-        <div class="card-title">&#x7F8E;&#x8853;&#x5C55;&#x30FB;&#x7279;&#x5225;&#x5C55;</div>
-        <div class="card-desc">&#x95A2;&#x6771;&#x30FB;&#x95A2;&#x897F;&#x306E;&#x5C55;&#x89A7;&#x4F1A;&#x60C5;&#x5831;&#x3001;&#x30C1;&#x30B1;&#x30C3;&#x30C8;&#x767A;&#x58F2;&#x30EA;&#x30DE;&#x30A4;&#x30F3;&#x30C0;&#x30FC;&#x4ED8;&#x304D;</div>
-        <span class="card-badge badge-exhibition">&#x6BCE;&#x9031;&#x6708;&#x66F4;&#x65B0;</span>
-      </div>
-    </a>
-  </div>
-
-  <div class="sec-label">&#x1F4F0; Daily News</div>
-  <div class="grid">
-    <a class="card accent-orange" href="./gourmet.html">
-      <div class="card-ico">&#x1F374;</div>
-      <div class="card-body">
-        <div class="card-title">&#x8A71;&#x984C;&#x30B0;&#x30EB;&#x30E1;</div>
-        <div class="card-desc">&#x30D0;&#x30BA;&#x308A;&#x98DF;&#x3079;&#x3082;&#x30FB;&#x65B0;&#x898F;&#x30AA;&#x30FC;&#x30D7;&#x30F3;&#x30FB;&#x30DF;&#x30B7;&#x30E5;&#x30E9;&#x30F3;&#x30FB;&#x671F;&#x9593;&#x9650;&#x5B9A;&#x3092;&#x6BCE;&#x9031;&#x307E;&#x3068;&#x3081;</div>
-        <span class="card-badge badge-weekly">&#x6BCE;&#x9031;&#x91D1; 07:30 &#x66F4;&#x65B0;</span>
-      </div>
-    </a>
-    <a class="card accent-purple" href="./ai_news.html">
-      <div class="card-ico">&#x1F9E0;</div>
-      <div class="card-body">
-        <div class="card-title">AI&#x30CB;&#x30E5;&#x30FC;&#x30B9;&#x30FB;&#x8AD6;&#x6587;</div>
-        <div class="card-desc">AI&#x52D5;&#x5411;&#x30FB;&#x8A8D;&#x77E5;&#x79D1;&#x5B66;&#x30FB;&#x884C;&#x52D5;&#x7D4C;&#x6E08;&#x5B66;&#x30FB;&#x5FC3;&#x7406;&#x5B66; &#x306E;&#x6CE8;&#x76EE;&#x8AD6;&#x6587;&#x3092;&#x6BCE;&#x65E5;&#x81EA;&#x52D5;&#x751F;&#x6210;</div>
-        <span class="card-badge badge-daily">&#x6BCE;&#x65E5; 08:00 &#x66F4;&#x65B0;</span>
-      </div>
-    </a>
-    <a class="card accent-yellow" href="./soccer.html">
-      <div class="card-ico">&#x26BD;</div>
-      <div class="card-body">
-        <div class="card-title">&#x30B5;&#x30C3;&#x30AB;&#x30FC;&#x79FB;&#x7C4D;&#x60C5;&#x5831;</div>
-        <div class="card-desc">&#x6D77;&#x5916;&#x30B5;&#x30C3;&#x30AB;&#x30FC;&#x306E;&#x6700;&#x65B0;&#x79FB;&#x7C4D;&#x30FB;Here We Go&#x30FB;&#x65E5;&#x672C;&#x4EBA;&#x9078;&#x624B;&#x52D5;&#x5411;</div>
-        <span class="card-badge badge-daily">&#x6BCE;&#x65E5; 07:30 &#x66F4;&#x65B0;</span>
-      </div>
-    </a>
-  </div>
-
-  <div class="sec-label">&#x1F4F1; App</div>
-  <div class="grid">
-    <a class="card accent-blue" href="./outing-app.html">
-      <div class="card-ico">&#x1F5FA;</div>
-      <div class="card-body">
-        <div class="card-title">&#x304A;&#x3067;&#x304B;&#x3051;&#x30CA;&#x30D3;</div>
-        <div class="card-desc">&#x8FBA;&#x308A;&#x306E;&#x304A;&#x5E97;&#x30FB;&#x30A4;&#x30D9;&#x30F3;&#x30C8;&#x691C;&#x7D22;&#x3001;&#x884C;&#x3063;&#x305F;&#x5834;&#x6240;&#x306E;&#x8A18;&#x9332;&#x30FB;AI&#x304A;&#x3059;&#x3059;&#x3081;</div>
-        <span class="card-badge badge-app">GPS&#x30FB;&#x8A18;&#x9332;&#x30FB;AI&#x30EC;&#x30B3;&#x30E1;&#x30F3;&#x30C9;</span>
-      </div>
-    </a>
-    <div class="card accent-red" onclick="openSmokingFinder()" id="smoking-card">
-      <div class="card-ico">&#x1F6AC;</div>
-      <div class="card-body">
-        <div class="card-title">&#x8FBA;&#x308A;&#x306E;&#x55AB;&#x7159;&#x6240;</div>
-        <div class="card-desc" id="smoking-desc">&#x30BF;&#x30C3;&#x30D7;&#x3057;&#x3066;&#x73FE;&#x5728;&#x5730;&#x5468;&#x8FBA;&#x306E;&#x55AB;&#x30A8;&#x30EA;&#x30A2;&#x3092;&#x63A2;&#x3059;</div>
-        <span class="card-badge badge-smoke">&#x30AF;&#x30A4;&#x30C3;&#x30AF;&#x691C;&#x7D22;</span>
-      </div>
+    <div class="hd-left">
+      <div class="hd-title">NEXUS</div>
+      <div class="hd-sub">News &middot; Apps &middot; Culture</div>
+      <div class="hd-date" id="hd-date"></div>
     </div>
+    <button class="edit-btn" id="edit-btn" onclick="toggleEdit()">&#x270F; 編集</button>
   </div>
-
-  <div class="sec-label">&#x1F4DD; Info</div>
-  <div class="grid">
-    <a class="card accent-green" href="./info.html">
-      <div class="card-ico">&#x2139;&#xFE0F;</div>
-      <div class="card-body">
-        <div class="card-title">&#x30B7;&#x30B9;&#x30C6;&#x30E0;&#x60C5;&#x5831;</div>
-        <div class="card-desc">&#x3053;&#x306E;&#x30B5;&#x30A4;&#x30C8;&#x306E;&#x69CB;&#x6210;&#x30FB;&#x30EA;&#x30F3;&#x30AF;&#x307E;&#x3068;&#x3081;</div>
-      </div>
-    </a>
-  </div>
-
-  <div class="footer">&#x6BCE;&#x65E5;&#x81EA;&#x52D5;&#x66F4;&#x65B0; &mdash; Powered by Claude</div>
+  <div id="cards-root"></div>
+  <div class="footer">毎日自動更新 &mdash; Powered by Claude</div>
 </div>
 
-<!-- smoking bottom sheet -->
+<!-- smoking sheet -->
 <div class="smoke-overlay" id="smoke-overlay" onclick="closeSmokingSheet(event)">
   <div class="smoke-sheet">
-    <div class="smoke-sheet-title" id="smoke-sheet-title">&#x1F4CD; &#x73FE;&#x5728;&#x5730;&#x3092;&#x53D6;&#x5F97;&#x4E2D;&#x2026;</div>
+    <div class="smoke-sheet-title" id="smoke-sheet-title">&#x1F4CD; 現在地を取得中…</div>
     <a class="smoke-btn" id="smoke-gmaps-btn" href="#" target="_blank" style="border-left:3px solid #4285f4;">
       <div class="smoke-btn-ico" style="background:rgba(66,133,244,.12);">&#x1F5FA;&#xFE0F;</div>
-      <div>
-        <div class="smoke-btn-label">Google Maps &#x3067;&#x63A2;&#x3059;</div>
-        <div class="smoke-btn-sub">&#x73FE;&#x5728;&#x5730;&#x5468;&#x8FBA;&#x3092;&#x5730;&#x56F3;&#x8868;&#x793A;</div>
-      </div>
+      <div><div class="smoke-btn-label">Google Maps で探す</div><div class="smoke-btn-sub">現在地周辺を地図表示</div></div>
     </a>
     <a class="smoke-btn" href="https://enmaru.net/" target="_blank" style="border-left:3px solid var(--red);">
       <div class="smoke-btn-ico" style="background:rgba(240,112,112,.12);">&#x1F6AC;</div>
-      <div>
-        <div class="smoke-btn-label">&#x3048;&#x3093;&#x307E;&#x308B; &#x3067;&#x63A2;&#x3059;</div>
-        <div class="smoke-btn-sub">&#x55AB;&#x7159;&#x6240;&#x5C02;&#x9580;&#x30B5;&#x30A4;&#x30C8;</div>
-      </div>
+      <div><div class="smoke-btn-label">えんまる で探す</div><div class="smoke-btn-sub">喫煙所専門サイト</div></div>
     </a>
-    <button class="smoke-cancel" onclick="closeSmokingSheet()">&#x9589;&#x3058;&#x308B;</button>
+    <button class="smoke-cancel" onclick="closeSmokingSheet()">閉じる</button>
   </div>
 </div>
 
 <script>
-const d = new Date();
-const w = ['日','月','火','水','木','金','土'];
-document.getElementById('hd-date').textContent =
-  d.getFullYear() + '/' + (d.getMonth()+1) + '/' + d.getDate() + ' (' + w[d.getDay()] + ')';
+// ── Card definitions ──────────────────────────────────────────
+const CARD_DEFS = [
+  { id:'exhibition', section:'EXHIBITION', icon:'&#x1F5BC;&#xFE0F;', title:'美術展・特別展', desc:'関東・関西の展覧会情報、チケット発売リマインダー付き', badge:'毎週月更新', badgeCls:'badge-exhibition', href:'./exhibition.html', accent:'accent-pink' },
+  { id:'gourmet',    section:'DAILY NEWS', icon:'&#x1F374;', title:'話題グルメ',    desc:'バズり食べも・新規オープン・ミシュラン・期間限定', badge:'毎週金 07:30', badgeCls:'badge-weekly', href:'./gourmet.html', accent:'accent-orange' },
+  { id:'ai_news',    section:'DAILY NEWS', icon:'&#x1F9E0;', title:'AIニュース・論文', desc:'AI動向・認知科学・行動経済学・心理学 の注目論文を毎日生成', badge:'毎日 08:00', badgeCls:'badge-daily', href:'./ai_news.html', accent:'accent-purple' },
+  { id:'soccer',     section:'DAILY NEWS', icon:'&#x26BD;',  title:'サッカー移籍情報', desc:'海外サッカーの最新移籍・Here We Go・日本人選手動向', badge:'毎日 07:30', badgeCls:'badge-daily', href:'./soccer.html', accent:'accent-yellow' },
+  { id:'outing',     section:'APP',        icon:'&#x1F5FA;', title:'おでかけナビ', desc:'辺りのお店・イベント検索、行った場所の記録・AIおすすめ', badge:'GPS・記録・AI', badgeCls:'badge-app', href:'./outing-app.html', accent:'accent-blue' },
+  { id:'smoking',    section:'APP',        icon:'&#x1F6AC;', title:'辺りの喫煙所',  desc:'タップして現在地周辺の喫煙所を探す', badge:'クイック検索', badgeCls:'badge-smoke', onclick:'openSmokingFinder()', accent:'accent-red' },
+];
 
+const PREF_KEY = 'nexus_prefs';
+
+function loadPrefs() {
+  try { return JSON.parse(localStorage.getItem(PREF_KEY)) || []; } catch { return []; }
+}
+function savePrefs(prefs) {
+  localStorage.setItem(PREF_KEY, JSON.stringify(prefs));
+}
+function getOrderedCards() {
+  const prefs = loadPrefs();
+  return CARD_DEFS.map(c => {
+    const p = prefs.find(x => x.id === c.id) || { order: CARD_DEFS.indexOf(c), visible: true };
+    return { ...c, order: p.order, visible: p.visible };
+  }).sort((a, b) => a.order - b.order);
+}
+function setPref(id, key, val) {
+  const prefs = loadPrefs();
+  const idx = prefs.findIndex(x => x.id === id);
+  if (idx >= 0) prefs[idx][key] = val;
+  else prefs.push({ id, order: CARD_DEFS.findIndex(c=>c.id===id), visible: true, [key]: val });
+  savePrefs(prefs);
+}
+
+// ── Render ────────────────────────────────────────────────────
+let editMode = false;
+
+function render() {
+  const root = document.getElementById('cards-root');
+  root.className = editMode ? 'edit-mode' : '';
+  const cards = getOrderedCards();
+  let html = '';
+  let lastSection = null;
+  cards.forEach((c, idx) => {
+    if (c.section !== lastSection) {
+      if (lastSection !== null) html += '</div>';
+      html += `<div class="sec-label">${c.section}</div><div class="cards-wrap">`;
+      lastSection = c.section;
+    }
+    const hiddenCls = c.visible ? '' : ' card-hidden';
+    const tag = c.href ? 'a' : 'div';
+    const hrefAttr = c.href ? `href="${c.href}"` : '';
+    const onclickAttr = c.onclick ? `onclick="${c.onclick}"` : '';
+    html += `<${tag} class="card ${c.accent}${hiddenCls}" ${hrefAttr} ${onclickAttr}>
+      <div class="card-ico">${c.icon}</div>
+      <div class="card-body">
+        <div class="card-title">${c.title}</div>
+        <div class="card-desc">${c.desc}</div>
+        <span class="card-badge ${c.badgeCls}">${c.badge}</span>
+      </div>
+      <div class="card-edit-bar">
+        <button class="edt-btn" onclick="event.preventDefault();moveCard('${c.id}',-1)" title="上へ">&#x25B2;</button>
+        <button class="edt-btn" onclick="event.preventDefault();moveCard('${c.id}',1)" title="下へ">&#x25BC;</button>
+        <button class="edt-btn ${c.visible?'vis-on':'vis-off'}" onclick="event.preventDefault();toggleVisible('${c.id}')" title="${c.visible?'非表示':'表示'}">
+          ${c.visible ? '&#x1F441;' : '&#x1F648;'}
+        </button>
+      </div>
+    </${tag}>`;
+  });
+  if (lastSection !== null) html += '</div>';
+  root.innerHTML = html;
+}
+
+function toggleEdit() {
+  editMode = !editMode;
+  const btn = document.getElementById('edit-btn');
+  btn.textContent = editMode ? '✓ 完了' : '✏ 編集';
+  btn.classList.toggle('active', editMode);
+  render();
+}
+
+function moveCard(id, dir) {
+  const cards = getOrderedCards();
+  const idx = cards.findIndex(c => c.id === id);
+  const sameSection = cards.filter(c => c.section === cards[idx].section);
+  const secIdx = sameSection.findIndex(c => c.id === id);
+  const target = sameSection[secIdx + dir];
+  if (!target) return;
+  const prefs = loadPrefs();
+  const aOrder = cards[idx].order;
+  const bOrder = target.order;
+  function upsert(xid, val) {
+    const i = prefs.findIndex(x => x.id === xid);
+    if (i >= 0) prefs[i].order = val;
+    else prefs.push({ id: xid, order: val, visible: true });
+  }
+  upsert(id, bOrder);
+  upsert(target.id, aOrder);
+  savePrefs(prefs);
+  render();
+}
+
+function toggleVisible(id) {
+  const cards = getOrderedCards();
+  const c = cards.find(x => x.id === id);
+  setPref(id, 'visible', !c.visible);
+  render();
+}
+
+// ── Smoking sheet ─────────────────────────────────────────────
 function openSmokingFinder() {
+  if (editMode) return;
   const overlay = document.getElementById('smoke-overlay');
   const title = document.getElementById('smoke-sheet-title');
   const gmapsBtn = document.getElementById('smoke-gmaps-btn');
-  // set default Google Maps link (no coords)
   gmapsBtn.href = 'https://www.google.com/maps/search/%E5%96%AB%E7%85%99%E6%89%80/';
   title.textContent = '📍 現在地を取得中…';
   overlay.classList.add('open');
-  if (!navigator.geolocation) {
-    title.textContent = '🚨 GPS非対応ブラウザ';
-    return;
-  }
+  if (!navigator.geolocation) { title.textContent = '🚨 GPS非対応'; return; }
   navigator.geolocation.getCurrentPosition(
     pos => {
       const lat = pos.coords.latitude.toFixed(6);
@@ -196,11 +239,18 @@ function openSmokingFinder() {
     () => { title.textContent = 'ℹ️ GPS取得失敗 — 地図から検索できます'; }
   );
 }
-
 function closeSmokingSheet(e) {
   if (e && e.target !== document.getElementById('smoke-overlay')) return;
   document.getElementById('smoke-overlay').classList.remove('open');
 }
+
+// ── Init ──────────────────────────────────────────────────────
+const d = new Date();
+const w = ['日','月','火','水','木','金','土'];
+document.getElementById('hd-date').textContent =
+  d.getFullYear() + '/' + (d.getMonth()+1) + '/' + d.getDate() + ' (' + w[d.getDay()] + ')';
+
+render();
 </script>
 </body>
 </html>
