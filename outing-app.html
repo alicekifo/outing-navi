@@ -527,9 +527,14 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
         <div class="vis-url-area">
           <div class="vis-url-label">Google MapsのURLを貼り付けると自動で取得します</div>
           <div class="vis-url-row">
-            <input class="vis-url-input" id="vis-url-input" placeholder="https://maps.app.goo.gl/..." oninput="visClearPreview()">
-            <button class="vis-url-btn" onclick="visResolveUrl()">検索</button>
+            <input class="vis-url-input" id="vis-url-input" placeholder="https://maps.app.goo.gl/..." oninput="visUrlClear()">
+            <button class="vis-url-btn" id="vis-url-btn" onclick="visResolveUrl()">検索</button>
           </div>
+        </div>
+        <!-- 候補リスト -->
+        <div id="vis-url-candidates" style="display:none;">
+          <div class="vis-step-label">どのお店ですか？</div>
+          <div id="vis-url-cand-list"></div>
         </div>
       </div>
 
@@ -1450,6 +1455,7 @@ function visTab(tab, btn) {
 }
 
 let _visTags = new Set();
+let _visUrlCandidates = [];
 
 function visToggleTag(btn, tag) {
   if (_visTags.has(tag)) { _visTags.delete(tag); btn.classList.remove('on'); }
@@ -1483,33 +1489,55 @@ function visShowPreview() {
   document.getElementById('vis-preview').classList.add('show');
 }
 
+function visUrlClear() {
+  visClearPreview();
+  document.getElementById('vis-url-candidates').style.display = 'none';
+}
+
+function visSelectUrlCandidate(idx) {
+  _visPlace = _visUrlCandidates[idx];
+  document.getElementById('vis-url-candidates').style.display = 'none';
+  visShowPreview();
+}
+
 async function visResolveUrl() {
   const url = document.getElementById('vis-url-input').value.trim();
   if (!url) { showToast('URLを入力してください'); return; }
   if (!serverOnline) { showToast('⚠️ サーバーがオフラインです'); return; }
-  showToast('🔍 場所を検索中...');
+  const btn = document.getElementById('vis-url-btn');
+  btn.disabled = true; btn.textContent = '検索中...';
+  document.getElementById('vis-url-candidates').style.display = 'none';
+  visClearPreview();
   try {
     const res = await fetch(`${SERVER}/api/visited/resolve-url?url=${encodeURIComponent(url)}`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
     const data = await res.json();
+    btn.disabled = false; btn.textContent = '検索';
     if (!data.found) { showToast('❌ ' + (data.error || '場所を特定できませんでした')); return; }
-    _visPlace = data;
-    const thumb = document.getElementById('vis-prev-thumb');
-    const photoRef = data.photos?.[0]?.photo_reference;
-    if (photoRef) {
-      thumb.innerHTML = `<img src="${SERVER}/api/places/photo?ref=${encodeURIComponent(photoRef)}&maxwidth=120" onerror="this.parentNode.textContent='🍽'">`;
-    } else {
-      thumb.textContent = data.types?.includes('cafe') ? '☕' : data.types?.includes('bar') ? '🍺' : '🍽';
+
+    // 候補複数 → 選択リスト表示
+    if (data.candidates) {
+      _visUrlCandidates = data.candidates;
+      document.getElementById('vis-url-cand-list').innerHTML = data.candidates.map((p, i) => `
+        <div class="vis-alt-item" onclick="visSelectUrlCandidate(${i})">
+          <div class="vis-alt-thumb">${visPlaceEmoji(p)}</div>
+          <div style="flex:1;min-width:0;">
+            <div class="vis-alt-name">${p.name}</div>
+            <div class="vis-alt-addr">${p.formatted_address || ''}</div>
+            ${p.rating ? `<div class="vis-alt-dist">★ ${p.rating}</div>` : ''}
+          </div>
+        </div>`).join('');
+      document.getElementById('vis-url-candidates').style.display = '';
+      return;
     }
-    document.getElementById('vis-prev-name').textContent = data.name || '—';
-    document.getElementById('vis-prev-addr').textContent = data.formatted_address || '';
-    document.getElementById('vis-prev-rating').textContent = data.rating ? `Google評価 ★${data.rating}（${(data.user_ratings_total||0).toLocaleString()}件）` : '';
-    _visStar = 0; _visCat = 'グルメ';
-    document.querySelectorAll('.vis-star').forEach(s => s.classList.remove('on'));
-    document.querySelectorAll('.vis-cat-chip').forEach((c,i) => c.classList.toggle('on', i === 0));
-    document.getElementById('vis-memo').value = '';
-    document.getElementById('vis-preview').classList.add('show');
+
+    // 確定1件 (exact)
+    _visPlace = data;
+    visShowPreview();
     showToast('✅ ' + data.name);
-  } catch(e) { showToast('❌ エラー: ' + e.message); }
+  } catch(e) {
+    btn.disabled = false; btn.textContent = '検索';
+    showToast('❌ エラー: ' + e.message);
+  }
 }
 
 function visSelectCat(cat, btn) {
