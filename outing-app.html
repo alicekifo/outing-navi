@@ -252,6 +252,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
 .vis-card-stars{font-size:11px;color:var(--accent);}
 .vis-card-date{font-size:10px;color:var(--text3);}
 .vis-card-memo{font-size:11px;color:var(--text2);margin-top:4px;line-height:1.5;}
+.vis-card-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px;}
+.vis-card-tag{font-size:10px;padding:2px 7px;border-radius:8px;background:var(--surface2);border:1px solid var(--border2);color:var(--text2);}
 .vis-card-del{background:none;border:none;color:var(--text3);font-size:16px;cursor:pointer;padding:2px;flex-shrink:0;align-self:flex-start;}
 .vis-card-del:hover{color:var(--red);}
 .vis-empty{text-align:center;color:var(--text2);font-size:12px;padding:30px 0;}
@@ -265,6 +267,28 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
 .vis-tab-bar{display:flex;gap:6px;margin-bottom:16px;}
 .vis-tab{flex:1;padding:8px;border-radius:10px;border:1px solid var(--border);background:none;color:var(--text2);font-family:'Noto Sans JP',sans-serif;font-size:12px;cursor:pointer;transition:.15s;}
 .vis-tab.on{background:var(--surface2);color:var(--text);border-color:var(--border2);font-weight:700;}
+.vis-method-row{display:flex;gap:8px;margin-bottom:16px;}
+.vis-method-btn{flex:1;padding:9px;border-radius:10px;border:1px solid var(--border);background:none;color:var(--text2);font-family:'Noto Sans JP',sans-serif;font-size:12px;cursor:pointer;transition:.15s;}
+.vis-method-btn.on{background:var(--surface2);color:var(--text);border-color:var(--border2);font-weight:700;}
+.vis-gps-big-btn{width:100%;padding:18px;background:linear-gradient(135deg,rgba(82,214,138,.15),rgba(106,173,255,.1));border:1px solid rgba(82,214,138,.3);border-radius:var(--r-lg);color:var(--green);font-family:'Noto Sans JP',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:12px;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+.vis-gps-big-btn:active{opacity:.7;}
+.vis-step-label{font-size:10px;color:var(--text2);letter-spacing:.5px;font-weight:700;margin-bottom:8px;text-transform:uppercase;}
+.vis-confirm-card{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--r);padding:14px;margin-bottom:10px;display:flex;gap:12px;align-items:center;}
+.vis-confirm-thumb{width:56px;height:56px;border-radius:10px;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;overflow:hidden;}
+.vis-confirm-thumb img{width:100%;height:100%;object-fit:cover;border-radius:10px;}
+.vis-confirm-info{flex:1;min-width:0;}
+.vis-confirm-name{font-size:14px;font-weight:700;margin-bottom:3px;}
+.vis-confirm-addr{font-size:11px;color:var(--text2);margin-bottom:3px;}
+.vis-confirm-dist{font-size:10px;color:var(--green);}
+.vis-confirm-btns{display:flex;gap:8px;margin-bottom:12px;}
+.vis-confirm-ok{flex:1;padding:11px;background:var(--green);color:#000;border:none;border-radius:10px;font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;cursor:pointer;}
+.vis-confirm-ng{flex:1;padding:11px;background:var(--surface2);color:var(--text2);border:1px solid var(--border2);border-radius:10px;font-family:'Noto Sans JP',sans-serif;font-size:13px;cursor:pointer;}
+.vis-alt-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px;display:flex;gap:10px;align-items:center;cursor:pointer;margin-bottom:8px;transition:.15s;}
+.vis-alt-item:hover,.vis-alt-item:active{border-color:var(--accent);}
+.vis-alt-thumb{width:44px;height:44px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.vis-alt-name{font-size:13px;font-weight:700;margin-bottom:2px;}
+.vis-alt-addr{font-size:10px;color:var(--text2);}
+.vis-alt-dist{font-size:10px;color:var(--green);margin-top:2px;}
 </style>
 </head>
 <body>
@@ -464,15 +488,53 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
   <div class="scroll-body">
     <!-- 記録タブ -->
     <div id="vis-record">
-      <div class="vis-url-area">
-        <div class="vis-url-label">Google MapsのURLを貼り付けると自動で取得します</div>
-        <div class="vis-url-row">
-          <input class="vis-url-input" id="vis-url-input" placeholder="https://maps.app.goo.gl/..." oninput="visClearPreview()">
-          <button class="vis-url-btn" onclick="visResolveUrl()">検索</button>
+      <!-- 入力方法切り替え -->
+      <div class="vis-method-row">
+        <button class="vis-method-btn on" onclick="visSetMethod('gps',this)">📍 現在地から</button>
+        <button class="vis-method-btn" onclick="visSetMethod('url',this)">🔗 URLから</button>
+      </div>
+
+      <!-- GPS方式 -->
+      <div id="vis-gps-area">
+        <button class="vis-gps-big-btn" onclick="visStartGPS()">
+          <span style="font-size:22px;">📍</span>今いる場所を追加する
+        </button>
+        <!-- STEP1: 推定結果の確認 -->
+        <div id="vis-confirm-area" style="display:none;">
+          <div class="vis-step-label">このお店ですか？</div>
+          <div class="vis-confirm-card">
+            <div class="vis-confirm-thumb" id="vis-conf-thumb">🍽</div>
+            <div class="vis-confirm-info">
+              <div class="vis-confirm-name" id="vis-conf-name">—</div>
+              <div class="vis-confirm-addr" id="vis-conf-addr">—</div>
+              <div class="vis-confirm-dist" id="vis-conf-dist"></div>
+            </div>
+          </div>
+          <div class="vis-confirm-btns">
+            <button class="vis-confirm-ok" onclick="visConfirmOk()">✅ そうです</button>
+            <button class="vis-confirm-ng" onclick="visShowAlts()">❌ 違います</button>
+          </div>
+        </div>
+        <!-- STEP2: 近くの候補リスト -->
+        <div id="vis-alts-area" style="display:none;">
+          <div class="vis-step-label">近くにあるお店・スポット</div>
+          <div id="vis-alts-list"></div>
         </div>
       </div>
-      <!-- プレビュー -->
-      <div class="vis-preview" id="vis-preview">
+
+      <!-- URL方式 -->
+      <div id="vis-url-area" style="display:none;">
+        <div class="vis-url-area">
+          <div class="vis-url-label">Google MapsのURLを貼り付けると自動で取得します</div>
+          <div class="vis-url-row">
+            <input class="vis-url-input" id="vis-url-input" placeholder="https://maps.app.goo.gl/..." oninput="visClearPreview()">
+            <button class="vis-url-btn" onclick="visResolveUrl()">検索</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP3: 評価・保存（GPS・URL共通） -->
+      <div id="vis-preview" class="vis-preview">
         <div class="vis-preview-top">
           <div class="vis-preview-thumb" id="vis-prev-thumb">🍽</div>
           <div>
@@ -500,9 +562,27 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
             <span class="vis-star" onclick="visSetStar(5)">★</span>
           </div>
         </div>
-        <textarea class="vis-memo" id="vis-memo" rows="2" placeholder="メモ（おすすめメニュー、雰囲気など）"></textarea>
+        <div class="vis-form-row" style="align-items:flex-start;flex-wrap:wrap;gap:6px;">
+          <span class="vis-form-label" style="margin-top:4px;">タグ</span>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;">
+            <button class="vis-cat-chip" id="tag-return" onclick="visToggleTag(this,'またくる')">♻️ またくる</button>
+            <button class="vis-cat-chip" id="tag-value" onclick="visToggleTag(this,'お得')">💰 お得</button>
+            <button class="vis-cat-chip" id="tag-pricey" onclick="visToggleTag(this,'高め')">💸 高め</button>
+            <button class="vis-cat-chip" id="tag-date" onclick="visToggleTag(this,'デートに◎')">💕 デートに◎</button>
+            <button class="vis-cat-chip" id="tag-solo" onclick="visToggleTag(this,'一人でも◎')">🙆 一人でも◎</button>
+          </div>
+        </div>
+        <div class="vis-form-row" style="flex-direction:column;align-items:flex-start;gap:4px;">
+          <span class="vis-form-label">感想・メモ</span>
+          <textarea class="vis-memo" id="vis-memo" rows="2" placeholder="雰囲気、おすすめメニューなど"></textarea>
+        </div>
+        <div class="vis-form-row" style="flex-direction:column;align-items:flex-start;gap:4px;">
+          <span class="vis-form-label">特記事項（任意）</span>
+          <textarea class="vis-memo" id="vis-special" rows="2" placeholder="例）鳳凰美田の果実酒もも がある、ランチのみ営業、予約必須"></textarea>
+        </div>
         <button class="vis-save-btn" onclick="visSave()">💾 保存する</button>
       </div>
+
       <!-- 保存済みリスト -->
       <div class="sec-head" style="margin-top:4px;">
         <div class="sec-title"><span class="ico">📖</span>保存した場所</div>
@@ -1254,6 +1334,112 @@ function showToast(msg){
 let _visPlace = null;
 let _visStar = 0;
 let _visCat = 'グルメ';
+let _visNearby = [];
+
+function visSetMethod(method, btn) {
+  document.querySelectorAll('.vis-method-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('vis-gps-area').style.display = method === 'gps' ? '' : 'none';
+  document.getElementById('vis-url-area').style.display = method === 'url' ? '' : 'none';
+  visClearPreview();
+  document.getElementById('vis-confirm-area').style.display = 'none';
+  document.getElementById('vis-alts-area').style.display = 'none';
+}
+
+function calcDist(lat1, lng1, lat2, lng2) {
+  const R = 6371000;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+}
+
+async function visStartGPS() {
+  if (!serverOnline) { showToast('⚠️ サーバーがオフラインです'); return; }
+  showToast('📍 現在地を取得中...');
+  document.getElementById('vis-confirm-area').style.display = 'none';
+  document.getElementById('vis-alts-area').style.display = 'none';
+  visClearPreview();
+
+  navigator.geolocation.getCurrentPosition(async pos => {
+    const { latitude: lat, longitude: lng } = pos.coords;
+    try {
+      // 半径100mで最も近い飲食店・スポットを取得
+      const res = await fetch(`${SERVER}/api/places/nearby?lat=${lat}&lng=${lng}&type=establishment&radius=150`, { headers: { 'ngrok-skip-browser-warning': 'true' } });
+      const data = await res.json();
+      _visNearby = (data.results || [])
+        .map(p => ({ ...p, _dist: calcDist(lat, lng, p.geometry?.location?.lat, p.geometry?.location?.lng) }))
+        .sort((a, b) => a._dist - b._dist);
+
+      if (!_visNearby.length) { showToast('近くにお店が見つかりませんでした'); return; }
+
+      visShowConfirm(_visNearby[0]);
+    } catch(e) { showToast('❌ エラー: ' + e.message); }
+  }, err => {
+    showToast('📍 位置情報の取得を許可してください');
+  }, { enableHighAccuracy: true, timeout: 10000 });
+}
+
+function visPlaceEmoji(p) {
+  const t = p.types || [];
+  if (t.includes('cafe')) return '☕';
+  if (t.includes('bar')) return '🍺';
+  if (t.includes('convenience_store')) return '🏪';
+  if (t.includes('bakery')) return '🥐';
+  if (t.includes('park')) return '🌳';
+  if (t.includes('museum')) return '🏛';
+  return '🍽';
+}
+
+function visShowConfirm(place) {
+  const thumb = document.getElementById('vis-conf-thumb');
+  const photoRef = place.photos?.[0]?.photo_reference;
+  if (photoRef) {
+    thumb.innerHTML = `<img src="${SERVER}/api/places/photo?ref=${encodeURIComponent(photoRef)}&maxwidth=120" onerror="this.parentNode.textContent='${visPlaceEmoji(place)}'">`;
+  } else {
+    thumb.textContent = visPlaceEmoji(place);
+  }
+  document.getElementById('vis-conf-name').textContent = place.name;
+  document.getElementById('vis-conf-addr').textContent = place.vicinity || '';
+  document.getElementById('vis-conf-dist').textContent = `📍 ここから約 ${place._dist}m`;
+  document.getElementById('vis-confirm-area').style.display = '';
+  document.getElementById('vis-alts-area').style.display = 'none';
+  _visPlace = {
+    place_id: place.place_id,
+    name: place.name,
+    formatted_address: place.vicinity || '',
+    types: place.types || [],
+    rating: place.rating,
+    user_ratings_total: place.user_ratings_total,
+    geometry: place.geometry,
+    photos: place.photos,
+  };
+}
+
+function visConfirmOk() {
+  document.getElementById('vis-confirm-area').style.display = 'none';
+  document.getElementById('vis-alts-area').style.display = 'none';
+  visShowPreview();
+}
+
+function visShowAlts() {
+  const alts = _visNearby.slice(1, 8);
+  document.getElementById('vis-alts-list').innerHTML = alts.map((p, i) => `
+    <div class="vis-alt-item" onclick="visSelectAlt(${i+1})">
+      <div class="vis-alt-thumb">${visPlaceEmoji(p)}</div>
+      <div>
+        <div class="vis-alt-name">${p.name}</div>
+        <div class="vis-alt-addr">${p.vicinity || ''}</div>
+        <div class="vis-alt-dist">📍 約 ${p._dist}m</div>
+      </div>
+    </div>`).join('');
+  document.getElementById('vis-alts-area').style.display = '';
+  document.getElementById('vis-confirm-area').style.display = 'none';
+}
+
+function visSelectAlt(idx) {
+  visShowConfirm(_visNearby[idx]);
+}
 
 function visTab(tab, btn) {
   document.querySelectorAll('.vis-tab').forEach(t => t.classList.remove('on'));
@@ -1263,9 +1449,38 @@ function visTab(tab, btn) {
   if (tab === 'recommend') loadRecommend();
 }
 
+let _visTags = new Set();
+
+function visToggleTag(btn, tag) {
+  if (_visTags.has(tag)) { _visTags.delete(tag); btn.classList.remove('on'); }
+  else { _visTags.add(tag); btn.classList.add('on'); }
+}
+
 function visClearPreview() {
   _visPlace = null;
+  _visTags = new Set();
+  _visStar = 0; _visCat = 'グルメ';
   document.getElementById('vis-preview').classList.remove('show');
+  document.querySelectorAll('.vis-cat-chip').forEach((c,i) => c.classList.toggle('on', i===0));
+  document.querySelectorAll('.vis-star').forEach(s => s.classList.remove('on'));
+  ['tag-return','tag-value','tag-pricey','tag-date','tag-solo'].forEach(id => document.getElementById(id)?.classList.remove('on'));
+  document.getElementById('vis-memo').value = '';
+  document.getElementById('vis-special').value = '';
+}
+
+function visShowPreview() {
+  if (!_visPlace) return;
+  const thumb = document.getElementById('vis-prev-thumb');
+  const photoRef = _visPlace.photos?.[0]?.photo_reference;
+  if (photoRef) {
+    thumb.innerHTML = `<img src="${SERVER}/api/places/photo?ref=${encodeURIComponent(photoRef)}&maxwidth=120" onerror="this.parentNode.textContent='🍽'">`;
+  } else {
+    thumb.textContent = _visPlace.types?.includes('cafe') ? '☕' : _visPlace.types?.includes('bar') ? '🍺' : '🍽';
+  }
+  document.getElementById('vis-prev-name').textContent = _visPlace.name || '—';
+  document.getElementById('vis-prev-addr').textContent = _visPlace.formatted_address || '';
+  document.getElementById('vis-prev-rating').textContent = _visPlace.rating ? `Google ★${_visPlace.rating}` : '';
+  document.getElementById('vis-preview').classList.add('show');
 }
 
 async function visResolveUrl() {
@@ -1323,6 +1538,8 @@ async function visSave() {
     category: _visCat,
     my_rating: _visStar,
     memo: document.getElementById('vis-memo').value.trim(),
+    tags: [..._visTags],
+    special: document.getElementById('vis-special').value.trim(),
     visited_at: new Date().toISOString().slice(0, 10),
   };
   try {
@@ -1362,6 +1579,8 @@ async function loadVisited() {
             <span class="vis-card-date">${p.visited_at || ''}</span>
           </div>
           ${p.memo ? `<div class="vis-card-memo">💬 ${p.memo}</div>` : ''}
+          ${p.special ? `<div class="vis-card-memo" style="color:var(--purple)">📌 ${p.special}</div>` : ''}
+          ${(p.tags && p.tags.length) ? `<div class="vis-card-tags">${p.tags.map(t=>`<span class="vis-card-tag">${t}</span>`).join('')}</div>` : ''}
         </div>
         <button class="vis-card-del" onclick="visDelete('${p.id}')">✕</button>
       </div>`;
