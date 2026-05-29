@@ -64,6 +64,12 @@ body{padding:20px 16px 60px;}
 .edt-btn.vis-on{color:var(--green);}
 .edt-btn.vis-off{color:var(--red);}
 
+/* model toggle */
+.model-toggle{display:flex;align-items:center;gap:8px;margin-bottom:16px;}
+.model-lbl{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--text2);text-transform:uppercase;}
+.mtgl-btn{font-size:11px;font-weight:700;padding:4px 12px;border-radius:12px;background:none;border:1px solid var(--border2);color:var(--text2);cursor:pointer;font-family:'Noto Sans JP',sans-serif;transition:.15s;}
+.mtgl-btn.on{background:var(--accent);color:#000;border-color:var(--accent);}
+
 /* footer */
 .footer{text-align:center;font-size:10px;color:var(--text2);margin-top:8px;}
 
@@ -89,6 +95,11 @@ body{padding:20px 16px 60px;}
       <div class="hd-date" id="hd-date"></div>
     </div>
     <button class="edit-btn" id="edit-btn" onclick="toggleEdit()">&#x270F; 編集</button>
+  </div>
+  <div class="model-toggle">
+    <span class="model-lbl">MODEL</span>
+    <button class="mtgl-btn on" id="tbtn-s" onclick="setModel('sonnet')">Sonnet</button>
+    <button class="mtgl-btn" id="tbtn-o" onclick="setModel('opus')">Opus</button>
   </div>
   <div id="cards-root"></div>
   <div class="footer">毎日自動更新 &mdash; Powered by Claude</div>
@@ -145,6 +156,8 @@ function setPref(id, key, val) {
 }
 
 // ── Render ────────────────────────────────────────────────────
+const NEWS_IDS = ['exhibition','gourmet','ai_news','soccer'];
+let modelMode = localStorage.getItem('nexus_model') || 'sonnet';
 let editMode = false;
 
 function render() {
@@ -161,7 +174,9 @@ function render() {
     }
     const hiddenCls = c.visible ? '' : ' card-hidden';
     const tag = c.href ? 'a' : 'div';
-    const hrefAttr = c.href ? `href="${c.href}"` : '';
+    const resolvedHref = c.href && NEWS_IDS.includes(c.id) && modelMode === 'opus'
+      ? c.href.replace('.html', '_opus.html') : c.href;
+    const hrefAttr = resolvedHref ? `href="${resolvedHref}"` : '';
     const onclickAttr = c.onclick ? `onclick="${c.onclick}"` : '';
     html += `<${tag} class="card ${c.accent}${hiddenCls}" ${hrefAttr} ${onclickAttr}>
       <div class="card-ico">${c.icon}</div>
@@ -219,6 +234,14 @@ function toggleVisible(id) {
   render();
 }
 
+function setModel(m) {
+  modelMode = m;
+  localStorage.setItem('nexus_model', m);
+  document.getElementById('tbtn-s').classList.toggle('on', m === 'sonnet');
+  document.getElementById('tbtn-o').classList.toggle('on', m === 'opus');
+  render();
+}
+
 // ── Smoking sheet ─────────────────────────────────────────────
 function openSmokingFinder() {
   if (editMode) return;
@@ -250,6 +273,8 @@ const w = ['日','月','火','水','木','金','土'];
 document.getElementById('hd-date').textContent =
   d.getFullYear() + '/' + (d.getMonth()+1) + '/' + d.getDate() + ' (' + w[d.getDay()] + ')';
 
+document.getElementById('tbtn-s').classList.toggle('on', modelMode === 'sonnet');
+document.getElementById('tbtn-o').classList.toggle('on', modelMode === 'opus');
 render();
 </script>
 </body>
