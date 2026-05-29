@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Alice's Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0c10;--surface:#161620;--surface2:#1e1e2c;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--accent:#e8b84b;--purple:#a78bfa;--blue:#6aadff;--green:#52d68a;--text:#eeeef5;--text2:#8888a8;--r:16px;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;}
+body{padding:24px 18px 60px;}
+.page{max-width:640px;margin:0 auto;}
+
+/* header */
+.hd{margin-bottom:32px;padding-top:8px;}
+.hd-title{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.5px;margin-bottom:4px;}
+.hd-title em{color:var(--accent);font-style:normal;}
+.hd-sub{font-size:12px;color:var(--text2);}
+.hd-date{font-size:11px;color:var(--text2);margin-top:2px;}
+
+/* section */
+.sec-label{font-size:10px;font-weight:700;letter-spacing:2px;color:var(--text2);margin-bottom:10px;text-transform:uppercase;}
+
+/* card grid */
+.grid{display:grid;gap:12px;margin-bottom:28px;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 18px 16px;text-decoration:none;display:flex;gap:14px;align-items:flex-start;transition:all .2s;cursor:pointer;}
+.card:hover,.card:active{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,.4);}
+.card-ico{font-size:28px;flex-shrink:0;width:44px;height:44px;background:var(--surface2);border-radius:12px;display:flex;align-items:center;justify-content:center;}
+.card-body{flex:1;min-width:0;}
+.card-title{font-size:15px;font-weight:700;margin-bottom:3px;}
+.card-desc{font-size:11px;color:var(--text2);line-height:1.6;}
+.card-badge{display:inline-block;font-size:9px;font-weight:700;padding:2px 7px;border-radius:6px;margin-top:6px;}
+.badge-new{background:rgba(82,214,138,.15);color:var(--green);border:1px solid rgba(82,214,138,.3);}
+.badge-daily{background:rgba(232,184,75,.12);color:var(--accent);border:1px solid rgba(232,184,75,.25);}
+.badge-app{background:rgba(106,173,255,.12);color:var(--blue);border:1px solid rgba(106,173,255,.25);}
+
+/* accent borders */
+.card.accent-yellow{border-left:3px solid var(--accent);}
+.card.accent-purple{border-left:3px solid var(--purple);}
+.card.accent-blue{border-left:3px solid var(--blue);}
+.card.accent-green{border-left:3px solid var(--green);}
+
+/* footer */
+.footer{text-align:center;font-size:10px;color:var(--text2);margin-top:8px;}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="hd">
+    <div class="hd-title">Alice's <em>Hub</em></div>
+    <div class="hd-sub">ニュース・アプリ・ナレッジ</div>
+    <div class="hd-date" id="hd-date"></div>
+  </div>
+
+  <div class="sec-label">&#x1F4F0; Daily News</div>
+  <div class="grid">
+    <a class="card accent-purple" href="./ai_news.html">
+      <div class="card-ico">&#x1F9E0;</div>
+      <div class="card-body">
+        <div class="card-title">AI&#x30CB;&#x30E5;&#x30FC;&#x30B9;&#x30FB;&#x8AD6;&#x6587;</div>
+        <div class="card-desc">AI&#x52D5;&#x5411;&#x30FB;&#x8A8D;&#x77E5;&#x79D1;&#x5B66;&#x30FB;&#x884C;&#x52D5;&#x7D4C;&#x6E08;&#x5B66;&#x30FB;&#x5FC3;&#x7406;&#x5B66; &#x306E;&#x6CE8;&#x76EE;&#x8AD6;&#x6587;&#x3092;&#x6BCE;&#x65E5;&#x81EA;&#x52D5;&#x751F;&#x6210;</div>
+        <span class="card-badge badge-daily">&#x6BCE;&#x65E5; 08:00 &#x66F4;&#x65B0;</span>
+      </div>
+    </a>
+    <a class="card accent-yellow" href="./soccer.html">
+      <div class="card-ico">&#x26BD;</div>
+      <div class="card-body">
+        <div class="card-title">&#x30B5;&#x30C3;&#x30AB;&#x30FC;&#x79FB;&#x7C4D;&#x60C5;&#x5831;</div>
+        <div class="card-desc">&#x6D77;&#x5916;&#x30B5;&#x30C3;&#x30AB;&#x30FC;&#x306E;&#x6700;&#x65B0;&#x79FB;&#x7C4D;&#x30FB;Here We Go&#x30FB;&#x65E5;&#x672C;&#x4EBA;&#x9078;&#x624B;&#x52D5;&#x5411;</div>
+        <span class="card-badge badge-daily">&#x6BCE;&#x65E5; 07:30 &#x66F4;&#x65B0;</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="sec-label">&#x1F4F1; App</div>
+  <div class="grid">
+    <a class="card accent-blue" href="./outing-app.html">
+      <div class="card-ico">&#x1F5FA;</div>
+      <div class="card-body">
+        <div class="card-title">&#x304A;&#x3067;&#x304B;&#x3051;&#x30CA;&#x30D3;</div>
+        <div class="card-desc">&#x8FBA;&#x308A;&#x306E;&#x304A;&#x5E97;&#x30FB;&#x30A4;&#x30D9;&#x30F3;&#x30C8;&#x691C;&#x7D22;&#x3001;&#x884C;&#x3063;&#x305F;&#x5834;&#x6240;&#x306E;&#x8A18;&#x9332;&#x30FB;AI&#x304A;&#x3059;&#x3059;&#x3081;</div>
+        <span class="card-badge badge-app">GPS&#x30FB;&#x8A18;&#x9332;&#x30FB;AI&#x30EC;&#x30B3;&#x30E1;&#x30F3;&#x30C9;</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="sec-label">&#x1F4DD; Info</div>
+  <div class="grid">
+    <a class="card accent-green" href="./info.html">
+      <div class="card-ico">&#x2139;&#xFE0F;</div>
+      <div class="card-body">
+        <div class="card-title">&#x30B7;&#x30B9;&#x30C6;&#x30E0;&#x60C5;&#x5831;</div>
+        <div class="card-desc">&#x3053;&#x306E;&#x30B5;&#x30A4;&#x30C8;&#x306E;&#x69CB;&#x6210;&#x30FB;&#x30EA;&#x30F3;&#x30AF;&#x307E;&#x3068;&#x3081;</div>
+      </div>
+    </a>
+  </div>
+
+  <div class="footer">&#x6BCE;&#x65E5;&#x81EA;&#x52D5;&#x66F4;&#x65B0; &mdash; Powered by Claude</div>
+</div>
+<script>
+const d = new Date();
+const w = ['&#x65E5;','&#x6708;','&#x706B;','&#x6C34;','&#x6728;','&#x91D1;','&#x571F;'];
+document.getElementById('hd-date').textContent =
+  d.getFullYear() + '/' + (d.getMonth()+1) + '/' + d.getDate() + ' (' + w[d.getDay()] + ')';
+</script>
+</body>
+</html>
