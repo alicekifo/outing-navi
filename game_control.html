@@ -268,6 +268,20 @@ async function sendMode(mode) {
   }
 }
 
+// ページ閲覧検知（30分以内の再訪は通知しない）
+(function() {
+  const last = parseInt(localStorage.getItem('gc_lastOpen') || '0');
+  const now = Date.now();
+  if (now - last > 30 * 60 * 1000) {
+    fetch('https://ntfy.sh/' + TOPIC, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Title': '👁 game_control 閲覧' },
+      body: 'page:open'
+    }).catch(() => {});
+  }
+  localStorage.setItem('gc_lastOpen', now.toString());
+})();
+
 // 初期化
 fetchStatus();
 fetchTaskStatus();
