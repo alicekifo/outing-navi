@@ -125,7 +125,7 @@ body{padding:24px 18px 60px;}
     <div class="card accent-red" onclick="openSmokingFinder()" id="smoking-card">
       <div class="card-ico">&#x1F6AC;</div>
       <div class="card-body">
-        <div class="card-title">&#x8FBA;&#x308A;&#x306E;&#x55AB;&#x30A8;&#x30EA;&#x30A2;</div>
+        <div class="card-title">&#x8FBA;&#x308A;&#x306E;&#x55AB;&#x7159;&#x6240;</div>
         <div class="card-desc" id="smoking-desc">&#x30BF;&#x30C3;&#x30D7;&#x3057;&#x3066;&#x73FE;&#x5728;&#x5730;&#x5468;&#x8FBA;&#x306E;&#x55AB;&#x30A8;&#x30EA;&#x30A2;&#x3092;&#x63A2;&#x3059;</div>
         <span class="card-badge badge-smoke">&#x30AF;&#x30A4;&#x30C3;&#x30AF;&#x691C;&#x7D22;</span>
       </div>
@@ -161,7 +161,7 @@ body{padding:24px 18px 60px;}
       <div class="smoke-btn-ico" style="background:rgba(240,112,112,.12);">&#x1F6AC;</div>
       <div>
         <div class="smoke-btn-label">&#x3048;&#x3093;&#x307E;&#x308B; &#x3067;&#x63A2;&#x3059;</div>
-        <div class="smoke-btn-sub">&#x55AB;&#x30A8;&#x30EA;&#x30A2;&#x5C02;&#x9580;&#x30B5;&#x30A4;&#x30C8;</div>
+        <div class="smoke-btn-sub">&#x55AB;&#x7159;&#x6240;&#x5C02;&#x9580;&#x30B5;&#x30A4;&#x30C8;</div>
       </div>
     </a>
     <button class="smoke-cancel" onclick="closeSmokingSheet()">&#x9589;&#x3058;&#x308B;</button>
@@ -179,7 +179,7 @@ function openSmokingFinder() {
   const title = document.getElementById('smoke-sheet-title');
   const gmapsBtn = document.getElementById('smoke-gmaps-btn');
   // set default Google Maps link (no coords)
-  gmapsBtn.href = 'https://www.google.com/maps/search/喫エリア/';
+  gmapsBtn.href = 'https://www.google.com/maps/search/%E5%96%AB%E7%85%99%E6%89%80/';
   title.textContent = '📍 現在地を取得中…';
   overlay.classList.add('open');
   if (!navigator.geolocation) {
@@ -190,8 +190,8 @@ function openSmokingFinder() {
     pos => {
       const lat = pos.coords.latitude.toFixed(6);
       const lng = pos.coords.longitude.toFixed(6);
-      gmapsBtn.href = 'https://www.google.com/maps/search/喫エリア/@' + lat + ',' + lng + ',17z';
-      title.textContent = '📍 現在地周辺の喫エリア';
+      gmapsBtn.href = 'https://www.google.com/maps/search/%E5%96%AB%E7%85%99%E6%89%80/@' + lat + ',' + lng + ',17z';
+      title.textContent = '📍 現在地周辺の喫煙所';
     },
     () => { title.textContent = 'ℹ️ GPS取得失敗 — 地図から検索できます'; }
   );
