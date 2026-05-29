@@ -46,6 +46,10 @@ textarea{height:70px;resize:vertical;}
 .type-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:5px;margin-left:6px;vertical-align:middle;}
 .badge-wine{background:rgba(244,114,182,.15);color:var(--wine);}
 .badge-sake{background:rgba(232,184,75,.15);color:var(--sake);}
+.photo-pick-btn{display:flex;align-items:center;gap:6px;padding:9px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text2);font-size:13px;cursor:pointer;width:100%;}
+.photo-pick-btn:hover{border-color:var(--accent);}
+.photo-preview{width:100%;max-height:160px;object-fit:cover;border-radius:8px;margin-top:8px;display:none;}
+.item-photo{width:100%;max-height:180px;object-fit:cover;border-radius:10px;margin-bottom:8px;display:block;}
 </style>
 </head>
 <body>
@@ -85,6 +89,12 @@ textarea{height:70px;resize:vertical;}
       <div class="form-label">メモ</div>
       <textarea id="f-note" placeholder="味わい・香り・ペアリングなど"></textarea>
     </div>
+    <div class="form-row">
+      <div class="form-label">写真</div>
+      <input id="f-photo" type="file" accept="image/*" capture="environment" style="display:none" onchange="onPhotoChange(this)">
+      <div class="photo-pick-btn" onclick="document.getElementById('f-photo').click()">&#x1F4F7; 写真を選択</div>
+      <img id="photo-preview" class="photo-preview">
+    </div>
     <button class="add-btn" id="add-btn" onclick="addEntry()">&#x2B;  追加</button>
   </div>
   <div class="list-header">
@@ -97,6 +107,20 @@ textarea{height:70px;resize:vertical;}
 const KEY = 'drink_memo_v1';
 let curType = 'wine';
 let curRating = 0;
+let curPhoto = null;
+
+function onPhotoChange(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    curPhoto = e.target.result;
+    const preview = document.getElementById('photo-preview');
+    preview.src = curPhoto;
+    preview.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
 
 function setType(t) {
   curType = t;
@@ -136,6 +160,7 @@ function addEntry() {
     rating: curRating,
     price: document.getElementById('f-price').value.trim(),
     note: document.getElementById('f-note').value.trim(),
+    photo: curPhoto || null,
     date: new Date().toISOString().slice(0,10)
   };
   const data = load();
@@ -146,7 +171,11 @@ function addEntry() {
   document.getElementById('f-price').value = '';
   document.getElementById('f-note').value = '';
   curRating = 0;
+  curPhoto = null;
   document.querySelectorAll('.star').forEach(x => x.classList.remove('on'));
+  document.getElementById('photo-preview').style.display = 'none';
+  document.getElementById('photo-preview').src = '';
+  document.getElementById('f-photo').value = '';
   renderList();
 }
 
@@ -162,6 +191,7 @@ function renderList() {
   document.getElementById('list').innerHTML = data.map(e => {
     const stars = '&#x2605;'.repeat(e.rating) + '&#x2606;'.repeat(5 - e.rating);
     return `<div class="item-card">
+      ${e.photo ? `<img class="item-photo" src="${e.photo}" alt="${e.name}">` : ''}
       <div class="item-top">
         <div class="item-name">${e.name}</div>
         <button class="item-del" onclick="deleteEntry(${e.id})">&#x2715;</button>
@@ -189,6 +219,7 @@ function exportMd() {
       if (e.rating) lines.push(`- 評価: ${'★'.repeat(e.rating)}${'☆'.repeat(5-e.rating)}`);
       if (e.price) lines.push(`- 価格: ${e.price}`);
       if (e.note) lines.push(`- メモ: ${e.note}`);
+      if (e.photo) lines.push(`- 📷 写真あり`);
       lines.push(`- 記録日: ${e.date}`, '');
     });
   });

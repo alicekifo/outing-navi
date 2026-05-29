@@ -679,6 +679,7 @@ const SUPA_URL='https://hcwyuxrsyvhffdspiipz.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhjd3l1eHJzeXZoZmZkc3BpaXB6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3NTY3NzksImV4cCI6MjA5NTMzMjc3OX0.WMS1Q4wJ5f2vnBqUpk7p96_TrsdidTOOQUiohsl5e9U';
 const WEATHER_KEY='80794671a5885cfca96929620e89a5da';
 let SERVER=localStorage.getItem('outing_server')||'https://phoney-panoramic-hypocrite.ngrok-free.dev';
+fetch('./server.json?_='+Date.now()).then(r=>r.json()).then(c=>{if(c&&c.url){SERVER=c.url;localStorage.setItem('outing_server',c.url);}}).catch(()=>{});
 let GROQ_KEY=localStorage.getItem('outing_groq')||'';
 
 const {createClient}=supabase;
