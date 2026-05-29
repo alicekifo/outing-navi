@@ -324,6 +324,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
         <button class="chip" onclick="filterFood(this,'cafe')">☕ カフェ</button>
         <button class="chip" onclick="filterFood(this,'bar')">🍺 バー</button>
         <button class="chip" onclick="filterFood(this,'fast_food')">🍔 ファスト系</button>
+        <button class="chip" onclick="filterFood(this,'smoking')" style="border-color:rgba(240,112,112,.3);color:#f07070;">🚬 喫煙所</button>
       </div>
       <div class="rest-list" id="home-rest-list">
         <div class="loading-card">📍 現在地を取得するとお店が表示されます</div>
@@ -739,10 +740,12 @@ async function fetchPlaceDetail(place_id){
   }catch(e){return null;}
 }
 
-async function fetchPlacesByQuery(query){
+async function fetchPlacesByQuery(query,lat,lng){
   if(!serverOnline) return [];
   try{
-    const res=await fetch(`${SERVER}/api/places/search?query=${encodeURIComponent(query)}`,{headers:{'ngrok-skip-browser-warning':'true'}});
+    let url=`${SERVER}/api/places/search?query=${encodeURIComponent(query)}`;
+    if(lat&&lng) url+=`&lat=${lat}&lng=${lng}`;
+    const res=await fetch(url,{headers:{'ngrok-skip-browser-warning':'true'}});
     const data=await res.json();
     return data.results||[];
   }catch(e){return[];}
@@ -910,7 +913,32 @@ async function loadRouteAreaPlaces(query){
 function filterFood(btn,type){
   document.querySelectorAll('#h-food .chip').forEach(c=>c.classList.remove('on'));
   btn.classList.add('on');
-  loadNearbyPlaces(type);
+  if(type==='smoking') loadSmokingAreas();
+  else loadNearbyPlaces(type);
+}
+
+async function loadSmokingAreas(){
+  if(!currentLat){showToast('📍 まず現在地を取得してください');return;}
+  const list=document.getElementById('home-rest-list');
+  if(!serverOnline){list.innerHTML=`<div class="loading-card">⚠️ サーバーがオフラインです</div>`;return;}
+  list.innerHTML=`<div class="loading-card"><span class="spinner"></span>近くの喫煙所を検索中...</div>`;
+  const places=await fetchPlacesByQuery('喫煙所',currentLat,currentLng);
+  if(!places.length){
+    list.innerHTML=`<div class="loading-card">🚬 近くに喫煙所が見つかりませんでした<br><span style="font-size:11px;color:var(--text2);display:block;margin-top:4px;">検索範囲を広げて再試行してみてください</span></div>`;
+    return;
+  }
+  list.innerHTML=places.map((p,i)=>{
+    const addr=p.formatted_address||p.vicinity||'';
+    const rating=p.rating?`<span style="color:var(--accent)">★${p.rating}</span>`:'';
+    const mapsUrl=`https://www.google.com/maps/search/?api=1&query_place_id=${p.place_id}`;
+    return `<div class="rest-card" onclick="window.open('${mapsUrl}','_blank')" style="border-left:3px solid #f07070;">
+      <div class="rest-thumb" style="background:rgba(240,112,112,.1);font-size:26px;">🚬</div>
+      <div class="rest-info">
+        <div class="rest-name">${p.name}</div>
+        <div class="rest-meta">${rating}<span class="rest-dist">${addr}</span></div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 // ===== WEATHER =====
