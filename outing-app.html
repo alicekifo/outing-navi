@@ -1335,6 +1335,18 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'),2800);
 }
 
+function requestNotifPermission() {
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission();
+  }
+}
+
+function sendNotif(title, body, icon = '📍') {
+  if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification(title, { body, icon: 'https://alicekifo.github.io/outing-navi/icon.png', badge: 'https://alicekifo.github.io/outing-navi/icon.png', silent: false });
+  }
+}
+
 // ===== VISITED =====
 let _visPlace = null;
 let _visStar = 0;
@@ -1575,6 +1587,7 @@ async function visSave() {
     const data = await res.json();
     if (data.ok) {
       showToast('✅ 保存しました！');
+      sendNotif('📍 記録完了', `${_visPlace.name} を保存しました${ _visStar ? ' ★'.repeat(_visStar) : ''}`);
       document.getElementById('vis-url-input').value = '';
       visClearPreview();
       loadVisited();
@@ -1662,6 +1675,7 @@ document.getElementById('route-evt-list').innerHTML=EVENTS.slice(0,2).map(render
 checkServer().then(()=>{
   getCurrentLocation('home');
 });
+requestNotifPermission();
 </script>
 </body>
 </html>
