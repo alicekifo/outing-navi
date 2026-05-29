@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>&#x7F8E;&#x8853;&#x5C55;&#x30FB;&#x7279;&#x5225;&#x5C55; - 2026/5/29</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0c10;--surface:#161620;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.15);--accent:#f472b6;--blue:#6aadff;--green:#52d68a;--yellow:#e8b84b;--text:#eeeef5;--text2:#8888a8;--r:12px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;padding:20px 16px 80px;}
+.page{max-width:680px;margin:0 auto;}
+.hd{display:flex;align-items:center;gap:10px;margin-bottom:26px;flex-wrap:wrap;}
+.logo{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;}
+.logo em{color:var(--accent);font-style:normal;}
+.hd-date{font-size:12px;color:var(--text2);margin-right:auto;}
+.back-link{font-size:11px;color:var(--text2);text-decoration:none;}
+.back-link:hover{color:var(--accent);}
+#watchlist-bar{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--yellow);border-radius:var(--r);padding:12px 16px;margin-bottom:20px;display:none;}
+#watchlist-bar.has-items{display:block;}
+.watchlist-title{font-size:11px;font-weight:700;color:var(--yellow);margin-bottom:8px;}
+.watchlist-item{font-size:12px;color:var(--text2);padding:4px 0;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);}
+.watchlist-item:last-child{border-bottom:none;}
+.watchlist-item .sale-date{font-size:11px;color:var(--green);font-weight:700;}
+.watchlist-item .remove-btn{font-size:10px;color:var(--text2);background:none;border:none;cursor:pointer;padding:2px 6px;}
+#content h2{font-size:13px;font-weight:700;letter-spacing:1px;color:var(--text2);margin:28px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--border2);}
+#content h3{font-size:15px;font-weight:700;color:var(--text);margin:16px 0 6px;line-height:1.5;}
+#content p{font-size:13px;color:var(--text2);line-height:1.9;margin-bottom:10px;}
+#content ul,#content ol{font-size:13px;color:var(--text2);line-height:1.9;padding-left:20px;margin-bottom:12px;}
+#content li{margin-bottom:5px;}
+#content strong{color:var(--text);font-weight:700;}
+#content em{color:var(--accent);font-style:normal;}
+#content a{color:var(--blue);text-decoration:none;word-break:break-all;}
+#content a:hover{text-decoration:underline;}
+#content blockquote{border-left:3px solid var(--accent);padding:10px 16px;background:rgba(244,114,182,0.07);border-radius:0 var(--r) var(--r) 0;margin:12px 0;}
+#content blockquote p{color:var(--text);margin:0;}
+#content hr{border:none;border-top:1px solid var(--border);margin:20px 0;}
+.watch-btn{display:inline-flex;align-items:center;gap:5px;font-size:11px;background:rgba(244,114,182,.1);color:var(--accent);border:1px solid rgba(244,114,182,.3);border-radius:8px;padding:4px 10px;cursor:pointer;margin-top:6px;font-family:'Noto Sans JP',sans-serif;}
+.watch-btn:hover{background:rgba(244,114,182,.2);}
+</style>
+</head>
+<body>
+<div class="page">
+<div class="hd">
+  <div class="logo">&#x1F3A8; <em>&#x7F8E;&#x8853;&#x5C55;</em></div>
+  <div class="hd-date">2026/5/29 &#x66F4;&#x65B0;</div>
+  <a class="back-link" href="./index.html">&larr; Hub</a>
+</div>
+<div id="watchlist-bar">
+  <div class="watchlist-title">&#x23F0; &#x30A6;&#x30A9;&#x30C3;&#x30C1;&#x30EA;&#x30B9;&#x30C8;</div>
+  <div id="watchlist-items"></div>
+</div>
+<div id="content"></div>
+</div>
+<script>
+const md = "収集した情報をまとめてレポートを生成します。\n\n---\n\n## 🔔 今週のチケット発売\n\n| 展覧会 | 発売日 | 会場 | 料金（一般） | 購入リンク |\n|--------|--------|------|-------------|-----------|\n| **フェルメール《真珠の耳飾りの少女》展** | **6月1日（月）12:00〜** 先行抽選受付開始（結果発表：6/12） | 大阪中之島美術館 | 3,000円 | [公式チケットページ](https://vermeer2026.exhibit.jp/tickets/) |\n\n\u003e **参考（6月12日発売）:** 大ゴッホ展 夜のカフェテラス ── 7月1日（水）以降入場分のチケットが6月12日（金）10:00から発売開始。[e-tix購入ページ](https://www.e-tix.jp/vangogh_tokyo/)\n\n---\n\n## 🎨 関東の展覧会\n\n### 現在開催中（終了が近い順）\n\n| 美術館 | 展示名 | 会期 | 料金（一般） | 見どころ |\n|--------|--------|------|-------------|---------|\n| **東京国立博物館** | 前田育徳会創立百周年記念 特別展「百万石！加賀前田家」 | 4/14〜**6/7** ⚠️ | 要確認 | 金沢・加賀前田家の国宝・重文級の至宝が上野に大集結 |\n| **国立西洋美術館** | 北斎 冨嶽三十六景 井内コレクションより / チュルリョーニス展 内なる星座 | 3/28〜**6/14** | 要確認 | 北斎とリトアニア幻想絵画の異色2展同時開催 |\n| **国立科学博物館** | 超危険生物展 科学で挑む生き物の本気 | 3/14〜**6/14** | 要確認 | 毒・牙・電気…自然界の危険生物を科学的視点で解説 |\n| **東京国立博物館** | アイルランド チェスター・ビーティー・コレクション 絵巻と絵本のたからばこ | 4/27〜7/20 | 要確認 | 世界屈指の個人コレクションから日本の絵巻・絵本の傑作を紹介 |\n| **山種美術館** | 川合玉堂 ― なつかしい日本の情景 | 5/16〜7/26 | 要確認 | 四季の自然を温かく描いた日本画壇の巨匠、玉堂の世界 |\n| **東京都現代美術館** | エリック・カール展 はじまりは、はらぺこあおむし | 4月〜7月（終了日要確認） | 要確認 | 絵本作家エリック・カールの創作の軌跡を辿る初の大規模展 |\n| **上野の森美術館** | **大ゴッホ展 夜のカフェテラス** 🆕 本日開幕 | **5/29〜8/12** | 平日2,800円 / 土日祝3,000円（6/30まで高校生以下無料） | 《夜のカフェテラス》が約20年ぶり来日。ゴッホ後期傑作が一堂に集結 |\n\n### 間もなく開始（開始日順）\n\n| 美術館 | 展示名 | 開始日〜終了日 | 料金（一般） | 見どころ |\n|--------|--------|--------------|-------------|---------|\n| **国立新美術館** | ピカソ meets ポール・スミス 遊び心の冒険へ | 6/10〜9/21 | 要確認 | 20世紀を代表する芸術家と現代デザイナーが時代を超えてコラボ |\n| **東京国立博物館** | 弘法大師生誕1250年記念 特別展「空海と真言の名宝」 | 7/14〜9/6 | 要確認 | 全国真言宗寺院の秘仏・密教美術の至宝が空前の規模で集結 |\n\n---\n\n## 🏯 関西の展覧会\n\n### 現在開催中（終了が近い順）\n\n| 美術館 | 展示名 | 会期 | 料金（一般） | 見どころ |\n|--------|--------|------|-------------|---------|\n| **奈良国立博物館** | 神仏の山 吉野・大峯 ― 蔵王権現に捧げた祈りと美 | 4/10〜**6/7** ⚠️ | 要確認 | 修験道の聖地・吉野大峯の仏像・神具が初めて一堂に |\n| **京都文化博物館** | 原安三郎コレクション 北斎×広重 | 4/18〜**6/14** | 要確認 | 江戸浮世絵二大巨頭の競演。国内最高水準の保存状態の摺物を展示 |\n| **会場要確認（兵庫）** | モダン都市生活と竹久夢二 ― 川西英コレクション | 3/28〜**6/21** | 要確認 | 大正浪漫の象徴・夢二と版画家・川西英の大正〜昭和モダン文化を展観 |\n| **山王美術館（大阪）** | 生誕185年 ルノワール展 | 3/1〜7/31 | 要確認 | ルノワール作品を中心に、印象派・後印象派の名品を集めた大規模展 |\n\n### 間もなく開始（開始日順）\n\n| 美術館 | 展示名 | 開始日〜終了日 | 料金（一般） | 見どころ |\n|--------|--------|--------------|-------------|---------|\n| **あべのハルカス美術館（大阪）** | ゴッホの跳ね橋と印象派の画家たち ヴァルラフ＝リヒャルツ美術館所蔵 | 7/4〜9/9 | 要確認 | ケルンの名門美術館が所蔵する印象派〜後期印象派の精華 |\n| **大阪市立美術館** | 水滸伝 | 7/11〜9/6 | 要確認 | 中国四大名著のひとつ「水滸伝」を主題とする絵画・工芸の傑作を網羅 |\n| **大阪・会場要確認** | NHK大河ドラマ 特別展「豊臣兄弟！」 | 7/8〜8/31 | 要確認 | 大河ドラマ連動展。秀吉・秀長兄弟ゆかりの名品が集結 |\n| **京都国立近代美術館** | フォンタネージ ― イタリアの光・心の風景 | 7/18〜10/4 | 要確認 | 明治初期の洋画教育に貢献したイタリア人画家の大回顧展 |\n| **大阪中之島美術館** | **フェルメール《真珠の耳飾りの少女》展** | 8/21〜9/27 | **3,000円** | 「最後の来日」とも語られる奇跡の単独来日。日時指定制・要事前購入 |\n\n---\n\n## ✨ 注目ピックアップ\n\n### 1. 大ゴッホ展 夜のカフェテラス｜上野の森美術館（東京）\n\n**本日開幕。** 《夜のカフェテラス》（クレラー＝ミュラー美術館蔵）が約20年ぶりに来日。アルル時代の傑作を核に、ゴッホの後期作品を体系的に鑑賞できる国内最大規模のゴッホ展。6月30日まで高校生以下無料という破格の入場条件も見逃せない。混雑必至のため[事前予約](https://www.e-tix.jp/vangogh_tokyo/)強く推奨。\n\n### 2. フェルメール《真珠の耳飾りの少女》展｜大阪中之島美術館\n\n**チケット来週発売開始（6/1）。** 14年ぶり来日で、「これが最後か」と各方面で話題の一作。単独での貸出機会は極めて稀で、17世紀オランダ絵画の名品群も一緒に来日予定。先行抽選は6月1日（月）12時〜7日（日）23:59。一般3,000円の[公式ページ](https://vermeer2026.exhibit.jp/)を今すぐブックマーク推奨。\n\n### 3. 弘法大師生誕1250年記念 特別展「空海と真言の名宝」｜東京国立博物館\n\n**7月14日開幕。** 弘法大師・空海の生誕1250年という千年に一度の節目を記念した空前の大特別展。全国の真言宗寺院に秘蔵される国宝・重文が上野に集結する予定。密教美術ファンのみならず日本美術史上の一大イベント。チケット料金・発売日は[東博公式サイト](https://www.tnm.jp/modules/r_free_page/index.php?id=2760)で要確認。\n\n---\n\n**Sources:**\n- [美術展ナビ 関東](https://artexhibition.jp/exhibitions/?q=\u0026region=3\u0026a=\u0026t=1\u0026state=search)\n- [東京アートビート 2026年美術館スケジュール](https://www.tokyoartbeat.com/articles/-/2026-museum-schedule-202512)\n- [上野の森美術館 大ゴッホ展公式](https://www.ueno-mori.org/exhibitions/article.cgi?id=12647064)\n- [大ゴッホ展 公式チケット](https://grand-van-gogh-tokyo.com/ticket/)\n- [フェルメール展 公式サイト](https://vermeer2026.exhibit.jp/)\n- [フェルメール展チケット情報 artexhibition](https://artexhibition.jp/topics/news/20260527-AEJ2913218/)\n- [東京国立博物館 空海と真言の名宝](https://www.tnm.jp/modules/r_free_page/index.php?id=2760)\n- [関西2026-2027展覧会スケジュール](https://www.outermosterm.com/2026-2027-exhibition-schedule-kansai/)\n- [関西2026オススメ25選 artexhibition](https://artexhibition.jp/topics/news/20260115-AEJ2819472/)\n- [art-voyage 東京展覧会スケジュール2026](https://art-voyage.jp/ex-tokyo-schedule-2026/)\n- [art-voyage 近畿展覧会スケジュール2026](https://art-voyage.jp/ex-kinki-schedule-2026/)";
+document.getElementById('content').innerHTML = marked.parse(md);
+
+// watchlist
+const WL_KEY = 'exhibition_watchlist';
+function loadWatchlist() {
+  return JSON.parse(localStorage.getItem(WL_KEY) || '[]');
+}
+function saveWatchlist(list) {
+  localStorage.setItem(WL_KEY, JSON.stringify(list));
+}
+function renderWatchlist() {
+  const list = loadWatchlist();
+  const bar = document.getElementById('watchlist-bar');
+  const container = document.getElementById('watchlist-items');
+  if (!list.length) { bar.classList.remove('has-items'); return; }
+  bar.classList.add('has-items');
+  container.innerHTML = list.map((item, i) => {
+    const daysLeft = item.saleDate ? Math.ceil((new Date(item.saleDate) - new Date()) / 86400000) : null;
+    const saleTxt = daysLeft !== null
+      ? (daysLeft <= 0 ? '&#x767A;&#x58F2;&#x4E2D;' : daysLeft + '&#x65E5;&#x5F8C;&#x767A;&#x58F2;')
+      : '';
+    return '<div class="watchlist-item"><span>' + item.name + '</span><span><span class="sale-date">' + saleTxt + '</span><button class="remove-btn" onclick="removeWatch(' + i + ')">&#x2715;</button></span></div>';
+  }).join('');
+}
+function removeWatch(i) {
+  const list = loadWatchlist();
+  list.splice(i, 1);
+  saveWatchlist(list);
+  renderWatchlist();
+}
+function addToWatchlist(name, saleDate) {
+  const list = loadWatchlist();
+  if (list.find(x => x.name === name)) { alert('&#x767B;&#x9332;&#x6E08;&#x307F;&#x3067;&#x3059;'); return; }
+  list.push({ name, saleDate: saleDate || null, addedAt: new Date().toISOString() });
+  saveWatchlist(list);
+  renderWatchlist();
+  checkSaleNotifications();
+}
+function checkSaleNotifications() {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  const today = new Date().toDateString();
+  loadWatchlist().forEach(item => {
+    if (item.saleDate && new Date(item.saleDate).toDateString() === today) {
+      new Notification('&#x1F3AB; &#x30C1;&#x30B1;&#x30C3;&#x30C8;&#x767A;&#x58F2;&#x65E5;&#xFF01;', {
+        body: item.name + ' &#x306E;&#x30C1;&#x30B1;&#x30C3;&#x30C8;&#x304C;&#x672C;&#x65E5;&#x767A;&#x58F2;&#x3067;&#x3059;',
+        icon: '/favicon.ico'
+      });
+    }
+  });
+}
+
+// inject watch buttons after h3 tags in content
+document.querySelectorAll('#content h3').forEach(h3 => {
+  const name = h3.textContent.trim();
+  const btn = document.createElement('button');
+  btn.className = 'watch-btn';
+  btn.innerHTML = '&#x2B50; &#x30A6;&#x30A9;&#x30C3;&#x30C1;';
+  btn.onclick = () => {
+    const dateMatch = h3.nextElementSibling ? h3.nextElementSibling.textContent.match(/\d{4}[\/\-]\d{1,2}[\/\-]\d{1,2}/) : null;
+    addToWatchlist(name, dateMatch ? dateMatch[0].replace(/\//g, '-') : null);
+  };
+  h3.appendChild(btn);
+});
+
+if ('Notification' in window && Notification.permission === 'default') {
+  Notification.requestPermission();
+}
+renderWatchlist();
+checkSaleNotifications();
+</script>
+</body>
+</html>
