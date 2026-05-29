@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Game Mode Control</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#000;color:#fff;font-family:-apple-system,'Noto Sans JP',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:20px;}
+.title{font-size:14px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,0.4);text-transform:uppercase;}
+.status-card{width:100%;max-width:360px;background:#1c1c1e;border-radius:20px;padding:20px 24px;text-align:center;}
+.status-label{font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:1px;margin-bottom:8px;}
+.status-mode{font-size:28px;font-weight:800;letter-spacing:-0.5px;transition:.3s;}
+.status-mode.gaming{color:#ff453a;}
+.status-mode.normal{color:#30d158;}
+.status-mode.unknown{color:rgba(255,255,255,0.3);}
+.status-time{font-size:11px;color:rgba(255,255,255,0.3);margin-top:6px;}
+.buttons{display:flex;flex-direction:column;gap:12px;width:100%;max-width:360px;}
+.btn{width:100%;padding:20px;border:none;border-radius:18px;font-size:17px;font-weight:700;cursor:pointer;font-family:-apple-system,'Noto Sans JP',sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;transition:.15s;letter-spacing:0.3px;}
+.btn:active{transform:scale(0.97);opacity:0.9;}
+.btn-gaming{background:#ff453a;color:#fff;}
+.btn-normal{background:#30d158;color:#000;}
+.btn:disabled{opacity:0.35;cursor:default;}
+.feedback{font-size:13px;color:rgba(255,255,255,0.5);min-height:20px;text-align:center;}
+.log-section{width:100%;max-width:360px;}
+.log-title{font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:1px;margin-bottom:8px;}
+.log-list{background:#111;border-radius:12px;padding:12px;max-height:140px;overflow-y:auto;}
+.log-item{font-size:11px;color:rgba(255,255,255,0.4);padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-variant-numeric:tabular-nums;}
+.log-item:last-child{border-bottom:none;}
+.log-item .mode-tag{font-weight:700;}
+.log-item .mode-tag.gaming{color:#ff453a;}
+.log-item .mode-tag.normal{color:#30d158;}
+</style>
+</head>
+<body>
+<div class="title">🎮 Game Mode</div>
+
+<div class="status-card">
+  <div class="status-label">CURRENT MODE</div>
+  <div class="status-mode unknown" id="status-mode">---</div>
+  <div class="status-time" id="status-time">取得中...</div>
+</div>
+
+<div class="buttons">
+  <button class="btn btn-gaming" id="btn-gaming" onclick="sendMode('gaming')" disabled>
+    🎮 ゲームモードON
+  </button>
+  <button class="btn btn-normal" id="btn-normal" onclick="sendMode('normal')" disabled>
+    ✅ 通常モードに戻す
+  </button>
+</div>
+
+<div class="feedback" id="feedback"></div>
+
+<div class="log-section">
+  <div class="log-title">RECENT LOG</div>
+  <div class="log-list" id="log-list"><div class="log-item" style="color:rgba(255,255,255,0.2)">読み込み中...</div></div>
+</div>
+
+<script>
+const TOPIC = 'ash08-outing-gm-7h3r9';
+let currentMode = null;
+
+function timeAgo(unix) {
+  const diff = Math.floor(Date.now() / 1000) - unix;
+  if (diff < 60)  return diff + '秒前';
+  if (diff < 3600) return Math.floor(diff/60) + '分前';
+  if (diff < 86400) return Math.floor(diff/3600) + '時間前';
+  return Math.floor(diff/86400) + '日前';
+}
+
+async function fetchStatus() {
+  try {
+    const resp = await fetch('https://ntfy.sh/' + TOPIC + '/json?poll=1&since=all');
+    const text = await resp.text();
+    const lines = text.trim().split('\n')
+      .filter(l => l.trim() && l.includes('"event":"message"'))
+      .map(l => { try { return JSON.parse(l); } catch { return null; } })
+      .filter(Boolean);
+
+    document.getElementById('btn-gaming').disabled = false;
+    document.getElementById('btn-normal').disabled = false;
+
+    if (lines.length > 0) {
+      const msgs = lines.filter(l => ['gaming','normal'].includes(l.message.toLowerCase()));
+      if (msgs.length > 0) {
+        const latest = msgs[msgs.length - 1];
+        currentMode = latest.message.toLowerCase();
+        const el = document.getElementById('status-mode');
+        el.className = 'status-mode ' + currentMode;
+        el.textContent = currentMode === 'gaming' ? '🎮 GAME MODE' : '✅ NORMAL';
+        document.getElementById('status-time').textContent = '最終更新: ' + timeAgo(latest.time);
+      }
+
+      // Log (last 8 messages, newest first)
+      const logItems = msgs.slice(-8).reverse().map(m => {
+        const tag = m.message.toLowerCase();
+        const src = m.title || (m.message.includes('phone') ? '📱 スマホ' : '💻 PC');
+        return '<div class="log-item"><span class="mode-tag ' + tag + '">' +
+          (tag === 'gaming' ? 'GAME ON' : 'NORMAL') +
+          '</span> &nbsp;' + timeAgo(m.time) + '</div>';
+      }).join('');
+      document.getElementById('log-list').innerHTML = logItems || '<div class="log-item">ログなし</div>';
+    } else {
+      document.getElementById('status-mode').className = 'status-mode normal';
+      document.getElementById('status-mode').textContent = '✅ NORMAL';
+      document.getElementById('status-time').textContent = '記録なし（初回起動）';
+      document.getElementById('log-list').innerHTML = '<div class="log-item" style="color:rgba(255,255,255,0.2)">ログなし</div>';
+    }
+  } catch(e) {
+    document.getElementById('status-time').textContent = '取得エラー';
+  }
+}
+
+async function sendMode(mode) {
+  const btnId = mode === 'gaming' ? 'btn-gaming' : 'btn-normal';
+  const btn = document.getElementById(btnId);
+  btn.disabled = true;
+  document.getElementById('feedback').textContent = '送信中...';
+
+  try {
+    const title = mode === 'gaming' ? 'ゲームモードON' : '通常モードに戻す';
+    await fetch('https://ntfy.sh/' + TOPIC, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+      body: mode
+    });
+    document.getElementById('feedback').textContent = '✅ 送信しました（PCに反映まで最大2分）';
+    setTimeout(() => { document.getElementById('feedback').textContent = ''; }, 4000);
+    await fetchStatus();
+  } catch(e) {
+    document.getElementById('feedback').textContent = '❌ 送信エラー: ' + e.message;
+    btn.disabled = false;
+  }
+}
+
+// 起動時取得、30秒おきに自動更新
+fetchStatus();
+setInterval(fetchStatus, 30000);
+</script>
+</body>
+</html>
