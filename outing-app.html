@@ -1234,11 +1234,15 @@ async function generateAIPlan(){
 }
 
 // ===== NAV =====
-function gotoScreen(name,btn){
+let _currentScreen = 'home';
+
+function gotoScreen(name,btn,pushHistory=true){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById('screen-'+name).classList.add('active');
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
+  if(btn) btn.classList.add('on');
+  if(pushHistory && name !== _currentScreen) history.pushState({screen: name}, '', '');
+  _currentScreen = name;
   if(name==='history'){loadHistory();loadBookmarks();}
 }
 
@@ -1676,6 +1680,16 @@ checkServer().then(()=>{
   getCurrentLocation('home');
 });
 requestNotifPermission();
+
+// スワイプバック → アプリ内前画面に戻る
+history.replaceState({screen: 'home'}, '', '');
+window.addEventListener('popstate', (e) => {
+  const screen = e.state?.screen || 'home';
+  const btn = document.querySelector(`.nav-btn[onclick*="'${screen}'"]`);
+  gotoScreen(screen, btn, false);
+  // 一番後ろまで戻ったときはhomeのエントリを再プッシュしてアプリの外に出ないようにする
+  if (screen === 'home') history.pushState({screen: 'home'}, '', '');
+});
 </script>
 </body>
 </html>
