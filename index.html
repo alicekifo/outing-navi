@@ -6,7 +6,7 @@
 <title>Alice's Hub</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0c0c10;--surface:#161620;--surface2:#1e1e2c;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--accent:#e8b84b;--purple:#a78bfa;--blue:#6aadff;--green:#52d68a;--text:#eeeef5;--text2:#8888a8;--r:16px;}
+:root{--bg:#0c0c10;--surface:#161620;--surface2:#1e1e2c;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--accent:#e8b84b;--purple:#a78bfa;--blue:#6aadff;--green:#52d68a;--red:#f07070;--text:#eeeef5;--text2:#8888a8;--r:16px;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;}
 body{padding:24px 18px 60px;}
@@ -40,6 +40,8 @@ body{padding:24px 18px 60px;}
 .card.accent-purple{border-left:3px solid var(--purple);}
 .card.accent-blue{border-left:3px solid var(--blue);}
 .card.accent-green{border-left:3px solid var(--green);}
+.card.accent-red{border-left:3px solid var(--red);}
+.badge-smoke{background:rgba(240,112,112,.12);color:var(--red);border:1px solid rgba(240,112,112,.25);}
 
 /* footer */
 .footer{text-align:center;font-size:10px;color:var(--text2);margin-top:8px;}
@@ -82,6 +84,14 @@ body{padding:24px 18px 60px;}
         <div class="card-title">&#x304A;&#x3067;&#x304B;&#x3051;&#x30CA;&#x30D3;</div>
         <div class="card-desc">&#x8FBA;&#x308A;&#x306E;&#x304A;&#x5E97;&#x30FB;&#x30A4;&#x30D9;&#x30F3;&#x30C8;&#x691C;&#x7D22;&#x3001;&#x884C;&#x3063;&#x305F;&#x5834;&#x6240;&#x306E;&#x8A18;&#x9332;&#x30FB;AI&#x304A;&#x3059;&#x3059;&#x3081;</div>
         <span class="card-badge badge-app">GPS&#x30FB;&#x8A18;&#x9332;&#x30FB;AI&#x30EC;&#x30B3;&#x30E1;&#x30F3;&#x30C9;</span>
+      </div>
+    </a>
+    <a class="card accent-red" href="./outing-app.html#smoking">
+      <div class="card-ico">&#x1F6AC;</div>
+      <div class="card-body">
+        <div class="card-title">&#x8FBA;&#x308A;&#x306E;&#x55AB;&#x30A8;&#x30EA;&#x30A2;</div>
+        <div class="card-desc">Google Maps&#x30FB;&#x3048;&#x3093;&#x307E;&#x308B;&#x3067;&#x73FE;&#x5728;&#x5730;&#x5468;&#x8FBA;&#x306E;&#x55AB;&#x30A8;&#x30EA;&#x30A2;&#x3092;&#x63A2;&#x3059;</div>
+        <span class="card-badge badge-smoke">&#x30AF;&#x30A4;&#x30C3;&#x30AF;&#x691C;&#x7D22;</span>
       </div>
     </a>
   </div>

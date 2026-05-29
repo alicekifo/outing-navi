@@ -314,6 +314,13 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
     <div class="section visible" id="h-weather">
       <div id="weather-container"><div class="loading-card">📍 現在地を取得すると天気が表示されます</div></div>
     </div>
+    <div class="section visible" id="h-smoking">
+      <div class="sec-head">
+        <div class="sec-title"><span class="ico">🚬</span>近くの喫煙所</div>
+        <button class="see-all" onclick="loadSmokingAreas()">探す</button>
+      </div>
+      <div id="home-smoking-list"></div>
+    </div>
     <div class="section visible" id="h-food">
       <div class="sec-head">
         <div class="sec-title"><span class="ico">🍜</span>近くのご飯屋さん</div>
@@ -324,7 +331,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
         <button class="chip" onclick="filterFood(this,'cafe')">☕ カフェ</button>
         <button class="chip" onclick="filterFood(this,'bar')">🍺 バー</button>
         <button class="chip" onclick="filterFood(this,'fast_food')">🍔 ファスト系</button>
-        <button class="chip" onclick="filterFood(this,'smoking')" style="border-color:rgba(240,112,112,.3);color:#f07070;">🚬 喫煙所</button>
       </div>
       <div class="rest-list" id="home-rest-list">
         <div class="loading-card">📍 現在地を取得するとお店が表示されます</div>
@@ -1710,6 +1716,13 @@ checkServer().then(()=>{
   getCurrentLocation('home');
 });
 requestNotifPermission();
+
+// ハブから #smoking で飛んできたとき自動で喫煙所表示
+if (location.hash === '#smoking') {
+  history.replaceState(null, '', location.pathname);
+  getCurrentLocation('home');
+  setTimeout(() => loadSmokingAreas(), 1500);
+}
 
 // スワイプバック → アプリ内前画面に戻る
 history.replaceState({screen: 'home'}, '', '');
