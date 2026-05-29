@@ -6,34 +6,69 @@
 <title>Game Mode Control</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:#000;color:#fff;font-family:-apple-system,'Noto Sans JP',sans-serif;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:20px;}
-.title{font-size:14px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,0.4);text-transform:uppercase;}
-.status-card{width:100%;max-width:360px;background:#1c1c1e;border-radius:20px;padding:20px 24px;text-align:center;}
-.status-label{font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:1px;margin-bottom:8px;}
-.status-mode{font-size:28px;font-weight:800;letter-spacing:-0.5px;transition:.3s;}
+body{background:#000;color:#fff;font-family:-apple-system,'Noto Sans JP',sans-serif;
+     min-height:100vh;display:flex;flex-direction:column;align-items:center;
+     padding:28px 16px 60px;gap:16px;}
+.title{font-size:12px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,0.35);text-transform:uppercase;align-self:flex-start;max-width:360px;width:100%;}
+
+/* ---- Game Mode ---- */
+.status-card{width:100%;max-width:360px;background:#1c1c1e;border-radius:20px;padding:18px 22px;text-align:center;}
+.status-label{font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:1px;margin-bottom:6px;}
+.status-mode{font-size:26px;font-weight:800;transition:.25s;}
 .status-mode.gaming{color:#ff453a;}
 .status-mode.normal{color:#30d158;}
-.status-mode.unknown{color:rgba(255,255,255,0.3);}
-.status-time{font-size:11px;color:rgba(255,255,255,0.3);margin-top:6px;}
-.buttons{display:flex;flex-direction:column;gap:12px;width:100%;max-width:360px;}
-.btn{width:100%;padding:20px;border:none;border-radius:18px;font-size:17px;font-weight:700;cursor:pointer;font-family:-apple-system,'Noto Sans JP',sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;transition:.15s;letter-spacing:0.3px;}
-.btn:active{transform:scale(0.97);opacity:0.9;}
+.status-mode.unknown{color:rgba(255,255,255,0.25);}
+.status-time{font-size:11px;color:rgba(255,255,255,0.25);margin-top:5px;}
+
+.btn-row{display:flex;gap:10px;width:100%;max-width:360px;}
+.btn{flex:1;padding:16px 10px;border:none;border-radius:16px;font-size:15px;font-weight:700;
+     cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;
+     gap:8px;transition:.12s;}
+.btn:active{transform:scale(0.96);}
 .btn-gaming{background:#ff453a;color:#fff;}
 .btn-normal{background:#30d158;color:#000;}
-.btn:disabled{opacity:0.35;cursor:default;}
-.feedback{font-size:13px;color:rgba(255,255,255,0.5);min-height:20px;text-align:center;}
-.log-section{width:100%;max-width:360px;}
-.log-title{font-size:11px;color:rgba(255,255,255,0.3);letter-spacing:1px;margin-bottom:8px;}
-.log-list{background:#111;border-radius:12px;padding:12px;max-height:140px;overflow-y:auto;}
-.log-item{font-size:11px;color:rgba(255,255,255,0.4);padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-variant-numeric:tabular-nums;}
+.btn:disabled{opacity:0.3;cursor:default;transform:none;}
+
+.feedback{font-size:12px;color:rgba(255,255,255,0.45);min-height:18px;text-align:center;width:100%;max-width:360px;}
+
+/* ---- Divider ---- */
+.divider{width:100%;max-width:360px;border:none;border-top:1px solid rgba(255,255,255,0.08);}
+
+/* ---- Tasks ---- */
+.section-hd{width:100%;max-width:360px;display:flex;align-items:center;justify-content:space-between;}
+.section-title{font-size:11px;font-weight:700;letter-spacing:1.5px;color:rgba(255,255,255,0.35);text-transform:uppercase;}
+.section-sub{font-size:10px;color:rgba(255,255,255,0.2);}
+
+.task-group{width:100%;max-width:360px;}
+.group-label{font-size:10px;color:rgba(255,255,255,0.25);letter-spacing:1px;margin-bottom:6px;padding-left:4px;}
+.task-list{background:#111;border-radius:14px;overflow:hidden;}
+.task-row{display:flex;align-items:center;padding:11px 14px;border-bottom:1px solid rgba(255,255,255,0.05);gap:10px;}
+.task-row:last-child{border-bottom:none;}
+.task-info{flex:1;min-width:0;}
+.task-label{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.task-last{font-size:10px;color:rgba(255,255,255,0.3);margin-top:2px;}
+.run-btn{flex-shrink:0;padding:6px 14px;border:none;border-radius:10px;font-size:12px;font-weight:700;
+         cursor:pointer;font-family:inherit;transition:.12s;}
+.run-btn:active{transform:scale(0.95);}
+.run-btn.due{background:#0a84ff;color:#fff;}
+.run-btn.done{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.3);cursor:default;}
+.run-btn.sending{background:#ff9f0a;color:#000;}
+
+/* ---- Log ---- */
+.log-wrap{width:100%;max-width:360px;}
+.log-inner{background:#111;border-radius:12px;padding:10px 12px;max-height:130px;overflow-y:auto;}
+.log-item{font-size:11px;color:rgba(255,255,255,0.35);padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-variant-numeric:tabular-nums;}
 .log-item:last-child{border-bottom:none;}
-.log-item .mode-tag{font-weight:700;}
-.log-item .mode-tag.gaming{color:#ff453a;}
-.log-item .mode-tag.normal{color:#30d158;}
+.tag-gaming{color:#ff453a;font-weight:700;}
+.tag-normal{color:#30d158;font-weight:700;}
+.tag-run{color:#0a84ff;font-weight:700;}
+.tag-done{color:#30d158;}
+.tag-skip{color:rgba(255,255,255,0.3);}
 </style>
 </head>
 <body>
-<div class="title">🎮 Game Mode</div>
+
+<div class="title">🎮 Game Mode Control</div>
 
 <div class="status-card">
   <div class="status-label">CURRENT MODE</div>
@@ -41,39 +76,136 @@ body{background:#000;color:#fff;font-family:-apple-system,'Noto Sans JP',sans-se
   <div class="status-time" id="status-time">取得中...</div>
 </div>
 
-<div class="buttons">
-  <button class="btn btn-gaming" id="btn-gaming" onclick="sendMode('gaming')" disabled>
-    🎮 ゲームモードON
-  </button>
-  <button class="btn btn-normal" id="btn-normal" onclick="sendMode('normal')" disabled>
-    ✅ 通常モードに戻す
-  </button>
+<div class="btn-row">
+  <button class="btn btn-gaming" id="btn-gaming" onclick="sendMode('gaming')" disabled>🎮 ゲームON</button>
+  <button class="btn btn-normal" id="btn-normal" onclick="sendMode('normal')" disabled>✅ 通常に戻す</button>
 </div>
 
 <div class="feedback" id="feedback"></div>
+<hr class="divider">
 
-<div class="log-section">
-  <div class="log-title">RECENT LOG</div>
-  <div class="log-list" id="log-list"><div class="log-item" style="color:rgba(255,255,255,0.2)">読み込み中...</div></div>
+<div class="section-hd">
+  <div class="status-label" style="margin:0">手動実行</div>
+  <div class="section-sub">取得済みは無効</div>
+</div>
+
+<div class="task-group">
+  <div class="group-label">DAILY</div>
+  <div class="task-list" id="tasks-daily"></div>
+</div>
+
+<div class="task-group">
+  <div class="group-label">WEEKLY</div>
+  <div class="task-list" id="tasks-weekly"></div>
+</div>
+
+<hr class="divider">
+
+<div class="log-wrap">
+  <div class="section-hd" style="margin-bottom:6px">
+    <div class="status-label" style="margin:0">RECENT LOG</div>
+    <div class="section-sub" id="log-updated"></div>
+  </div>
+  <div class="log-inner" id="log-list"><div class="log-item" style="color:rgba(255,255,255,0.15)">読み込み中...</div></div>
 </div>
 
 <script>
 const TOPIC = 'ash08-outing-gm-7h3r9';
-let currentMode = null;
+let taskStatus = null;
+
+const TASK_ORDER = {
+  daily:  ['ai_news','ai_news_opus','soccer_news','soccer_news_opus'],
+  weekly: ['gourmet','gourmet_opus','exhibition','exhibition_opus',
+           'entertainment','entertainment_opus','lifestyle','lifestyle_opus']
+};
+const TASK_LABELS = {
+  'ai_news':'🤖 AIニュース','ai_news_opus':'🤖 AIニュース Opus',
+  'soccer_news':'⚽ サッカー','soccer_news_opus':'⚽ サッカー Opus',
+  'gourmet':'🍴 グルメ','gourmet_opus':'🍴 グルメ Opus',
+  'exhibition':'🎨 美術展','exhibition_opus':'🎨 美術展 Opus',
+  'entertainment':'🎬 エンタメ','entertainment_opus':'🎬 エンタメ Opus',
+  'lifestyle':'✨ ライフスタイル','lifestyle_opus':'✨ ライフスタイル Opus'
+};
 
 function timeAgo(unix) {
-  const diff = Math.floor(Date.now() / 1000) - unix;
-  if (diff < 60)  return diff + '秒前';
-  if (diff < 3600) return Math.floor(diff/60) + '分前';
-  if (diff < 86400) return Math.floor(diff/3600) + '時間前';
-  return Math.floor(diff/86400) + '日前';
+  const d = Math.floor(Date.now()/1000) - unix;
+  if (d < 60)   return d + '秒前';
+  if (d < 3600) return Math.floor(d/60) + '分前';
+  if (d < 86400) return Math.floor(d/3600) + '時間前';
+  return Math.floor(d/86400) + '日前';
 }
 
+function setFeedback(msg, ms = 4000) {
+  document.getElementById('feedback').textContent = msg;
+  if (ms) setTimeout(() => { document.getElementById('feedback').textContent = ''; }, ms);
+}
+
+// ---- Task Status ----
+async function fetchTaskStatus() {
+  try {
+    const r = await fetch('./task_status.json?_=' + Date.now());
+    if (!r.ok) throw new Error();
+    taskStatus = await r.json();
+    renderTasks();
+  } catch {
+    renderTasks(); // status なし→全部 due 扱い
+  }
+}
+
+function renderTasks() {
+  ['daily','weekly'].forEach(period => {
+    const keys = TASK_ORDER[period];
+    const container = document.getElementById('tasks-' + period);
+    container.innerHTML = keys.map(key => {
+      const t = taskStatus?.tasks?.[key];
+      const label  = t?.label  ?? TASK_LABELS[key] ?? key;
+      const isDue  = t ? t.isDue : true;
+      const lastRun = t?.lastRun ?? '未取得';
+      const btnClass = isDue ? 'due' : 'done';
+      const btnText  = isDue ? '実行' : '取得済';
+      return `<div class="task-row">
+        <div class="task-info">
+          <div class="task-label">${label}</div>
+          <div class="task-last">${lastRun}</div>
+        </div>
+        <button id="rbtn-${key}" class="run-btn ${btnClass}"
+                onclick="runTask('${key}')"
+                ${isDue ? '' : 'disabled'}>${btnText}</button>
+      </div>`;
+    }).join('');
+  });
+}
+
+async function runTask(key) {
+  const btn = document.getElementById('rbtn-' + key);
+  btn.classList.remove('due');
+  btn.classList.add('sending');
+  btn.textContent = '送信中';
+  btn.disabled = true;
+
+  try {
+    await fetch('https://ntfy.sh/' + TOPIC, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+      body: 'run:' + key
+    });
+    setFeedback('📤 送信しました。PCが最大2分以内に処理します。');
+    btn.textContent = '送信済';
+  } catch(e) {
+    setFeedback('❌ 送信エラー: ' + e.message);
+    btn.classList.remove('sending');
+    btn.classList.add('due');
+    btn.textContent = '実行';
+    btn.disabled = false;
+  }
+}
+
+// ---- Game Mode ----
 async function fetchStatus() {
   try {
-    const resp = await fetch('https://ntfy.sh/' + TOPIC + '/json?poll=1&since=all');
-    const text = await resp.text();
-    const lines = text.trim().split('\n')
+    const r = await fetch('https://ntfy.sh/' + TOPIC + '/json?poll=1&since=all');
+    const text = await r.text();
+    const all = text.trim().split('\n')
       .filter(l => l.trim() && l.includes('"event":"message"'))
       .map(l => { try { return JSON.parse(l); } catch { return null; } })
       .filter(Boolean);
@@ -81,62 +213,64 @@ async function fetchStatus() {
     document.getElementById('btn-gaming').disabled = false;
     document.getElementById('btn-normal').disabled = false;
 
-    if (lines.length > 0) {
-      const msgs = lines.filter(l => ['gaming','normal'].includes(l.message.toLowerCase()));
-      if (msgs.length > 0) {
-        const latest = msgs[msgs.length - 1];
-        currentMode = latest.message.toLowerCase();
-        const el = document.getElementById('status-mode');
-        el.className = 'status-mode ' + currentMode;
-        el.textContent = currentMode === 'gaming' ? '🎮 GAME MODE' : '✅ NORMAL';
-        document.getElementById('status-time').textContent = '最終更新: ' + timeAgo(latest.time);
-      }
-
-      // Log (last 8 messages, newest first)
-      const logItems = msgs.slice(-8).reverse().map(m => {
-        const tag = m.message.toLowerCase();
-        const src = m.title || (m.message.includes('phone') ? '📱 スマホ' : '💻 PC');
-        return '<div class="log-item"><span class="mode-tag ' + tag + '">' +
-          (tag === 'gaming' ? 'GAME ON' : 'NORMAL') +
-          '</span> &nbsp;' + timeAgo(m.time) + '</div>';
-      }).join('');
-      document.getElementById('log-list').innerHTML = logItems || '<div class="log-item">ログなし</div>';
+    // 最新のゲームモード
+    const modeMsgs = all.filter(m => ['gaming','normal'].includes(m.message.toLowerCase()));
+    if (modeMsgs.length) {
+      const latest = modeMsgs[modeMsgs.length - 1];
+      const mode = latest.message.toLowerCase();
+      const el = document.getElementById('status-mode');
+      el.className = 'status-mode ' + mode;
+      el.textContent = mode === 'gaming' ? '🎮 GAME MODE' : '✅ NORMAL';
+      document.getElementById('status-time').textContent = '最終更新: ' + timeAgo(latest.time);
     } else {
       document.getElementById('status-mode').className = 'status-mode normal';
       document.getElementById('status-mode').textContent = '✅ NORMAL';
-      document.getElementById('status-time').textContent = '記録なし（初回起動）';
-      document.getElementById('log-list').innerHTML = '<div class="log-item" style="color:rgba(255,255,255,0.2)">ログなし</div>';
+      document.getElementById('status-time').textContent = '記録なし（初回）';
     }
-  } catch(e) {
+
+    // ログ（全メッセージ、新しい順、最大10件）
+    const logHtml = all.slice(-10).reverse().map(m => {
+      const txt = m.message;
+      let cls = '', disp = txt;
+      if (txt === 'gaming')          { cls = 'tag-gaming'; disp = '🎮 GAME ON'; }
+      else if (txt === 'normal')     { cls = 'tag-normal'; disp = '✅ NORMAL'; }
+      else if (txt.startsWith('run:')){ cls = 'tag-run';   disp = '📤 ' + txt; }
+      else if (txt.startsWith('📋')) { cls = 'tag-done';  disp = txt; }
+      else if (txt.startsWith('⏭')) { cls = 'tag-skip';  disp = txt; }
+      return `<div class="log-item"><span class="${cls}">${disp}</span> <span style="color:rgba(255,255,255,0.2)">${timeAgo(m.time)}</span></div>`;
+    }).join('') || '<div class="log-item" style="color:rgba(255,255,255,0.15)">ログなし</div>';
+    document.getElementById('log-list').innerHTML = logHtml;
+
+  } catch {
     document.getElementById('status-time').textContent = '取得エラー';
   }
 }
 
 async function sendMode(mode) {
-  const btnId = mode === 'gaming' ? 'btn-gaming' : 'btn-normal';
-  const btn = document.getElementById(btnId);
-  btn.disabled = true;
-  document.getElementById('feedback').textContent = '送信中...';
-
+  document.getElementById('btn-gaming').disabled = true;
+  document.getElementById('btn-normal').disabled = true;
+  setFeedback('送信中...', 0);
   try {
-    const title = mode === 'gaming' ? 'ゲームモードON' : '通常モードに戻す';
     await fetch('https://ntfy.sh/' + TOPIC, {
       method: 'POST',
       headers: { 'Content-Type': 'text/plain; charset=utf-8' },
       body: mode
     });
-    document.getElementById('feedback').textContent = '✅ 送信しました（PCに反映まで最大2分）';
-    setTimeout(() => { document.getElementById('feedback').textContent = ''; }, 4000);
+    setFeedback('✅ 送信しました（PCに反映まで最大2分）');
     await fetchStatus();
   } catch(e) {
-    document.getElementById('feedback').textContent = '❌ 送信エラー: ' + e.message;
-    btn.disabled = false;
+    setFeedback('❌ 送信エラー: ' + e.message);
+  } finally {
+    document.getElementById('btn-gaming').disabled = false;
+    document.getElementById('btn-normal').disabled = false;
   }
 }
 
-// 起動時取得、30秒おきに自動更新
+// 初期化
 fetchStatus();
+fetchTaskStatus();
 setInterval(fetchStatus, 30000);
+setInterval(fetchTaskStatus, 60000);
 </script>
 </body>
 </html>
