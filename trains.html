@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>&#x96FB;&#x8ECA;&#x9045;&#x5EF6;</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0c10;--surface:#161620;--surface2:#1e1e2c;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.15);--accent:#6aadff;--green:#52d68a;--red:#f07070;--yellow:#e8b84b;--text:#eeeef5;--text2:#8888a8;--r:14px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;padding:20px 16px 100px;}
+.page{max-width:540px;margin:0 auto;}
+.hd{display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+.logo{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;}
+.logo em{color:var(--accent);font-style:normal;}
+.back-link{font-size:11px;color:var(--text2);text-decoration:none;margin-left:auto;}
+.back-link:hover{color:var(--accent);}
+.sec-label{font-size:9px;font-weight:700;letter-spacing:2.5px;color:var(--text2);text-transform:uppercase;margin:20px 0 10px;}
+.line-btn{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:8px;text-decoration:none;transition:.15s;cursor:pointer;}
+.line-btn:active{opacity:.7;}
+.line-color{width:6px;height:44px;border-radius:3px;flex-shrink:0;}
+.line-info{flex:1;}
+.line-name{font-size:14px;font-weight:700;margin-bottom:2px;}
+.line-company{font-size:11px;color:var(--text2);}
+.line-arrow{font-size:14px;color:var(--text2);}
+.fav-section{margin-top:4px;}
+.add-row{display:flex;gap:8px;margin-bottom:16px;}
+.add-input{flex:1;background:var(--surface2);border:1px solid var(--border2);border-radius:10px;color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:13px;padding:9px 12px;outline:none;}
+.add-input:focus{border-color:var(--accent);}
+.add-btn{padding:9px 16px;background:var(--accent);border:none;border-radius:10px;color:#000;font-weight:700;font-size:13px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;white-space:nowrap;}
+.fav-item{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;}
+.fav-name{flex:1;font-size:14px;font-weight:700;}
+.fav-del{background:none;border:none;color:var(--text2);font-size:16px;cursor:pointer;}
+.yahoo-btn{display:block;width:100%;padding:13px;background:none;border:1px solid var(--border2);border-radius:var(--r);color:var(--yellow);font-size:13px;font-weight:700;text-align:center;text-decoration:none;margin-top:20px;font-family:'Noto Sans JP',sans-serif;}
+.yahoo-btn:active{opacity:.7;}
+.empty{font-size:12px;color:var(--text2);padding:10px 0;}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hd">
+    <div class="logo">&#x1F686; <em>Train Delay</em></div>
+    <a class="back-link" href="./index.html">&larr; Hub</a>
+  </div>
+
+  <div class="sec-label">お気に入り路線</div>
+  <div class="fav-section">
+    <div class="add-row">
+      <input class="add-input" id="fav-input" type="text" placeholder="路線名を追加（例: 山手線）" onkeydown="if(event.key==='Enter')addFav()">
+      <button class="add-btn" onclick="addFav()">追加</button>
+    </div>
+    <div id="fav-list"></div>
+  </div>
+
+  <div class="sec-label">JR東日本</div>
+  <a class="line-btn" href="https://traininfo.jreast.co.jp/train_info/" target="_blank">
+    <div class="line-color" style="background:#006400;"></div>
+    <div class="line-info"><div class="line-name">JR東日本 全線</div><div class="line-company">運行情報一覧</div></div>
+    <div class="line-arrow">&#x2197;</div>
+  </a>
+  <a class="line-btn" href="https://traininfo.jreast.co.jp/train_info/detail.aspx?gid=1&eid=c_y" target="_blank">
+    <div class="line-color" style="background:#006699;"></div>
+    <div class="line-info"><div class="line-name">山手線</div><div class="line-company">JR東日本</div></div>
+    <div class="line-arrow">&#x2197;</div>
+  </a>
+  <a class="line-btn" href="https://traininfo.jreast.co.jp/train_info/detail.aspx?gid=1&eid=c_jb" target="_blank">
+    <div class="line-color" style="background:#ff7f27;"></div>
+    <div class="line-info"><div class="line-name">中央・総武線</div><div class="line-company">JR東日本</div></div>
+    <div class="line-arrow">&#x2197;</div>
+  </a>
+  <a class="line-btn" href="https://traininfo.jreast.co.jp/train_info/detail.aspx?gid=1&eid=c_ka" target="_blank">
+    <div class="line-color" style="background:#ff4500;"></div>
+    <div class="line-info"><div class="line-name">京浜東北線</div><div class="line-company">JR東日本</div></div>
+    <div class="line-arrow">&#x2197;</div>
+  </a>
+
+  <div class="sec-label">東京メトロ・都営</div>
+  <a class="line-btn" href="https://www.tokyometro.jp/service/" target="_blank">
+    <div class="line-color" style="background:#149dd2;"></div>
+    <div class="line-info"><div class="line-name">東京メトロ 全線</div><div class="line-company">運行情報</div></div>
+    <div class="line-arrow">&#x2197;</div>
+  </a>
+  <a class="line-btn" href="https://www.kotsu.metro.tokyo.jp/subway/news/index.html" target="_blank">
+    <div class="line-color" style="background:#b5b5ac;"></div>
+    <div class="line-info"><div class="line-name">都営地下鉄 全線</div><div class="line-company">東京都交通局</div></div>
+    <div class="line-arrow">&#x2197;</div>
+  </a>
+
+  <div class="sec-label">私鉄</div>
+  <a class="line-btn" href="https://www.tokyu.co.jp/railway/support/" target="_blank">
+    <div class="line-color" style="background:#e60012;"></div>
+    <div class="line-info"><div class="line-name">東急線</div><div class="line-company">東急電鉄</div></div>
+    <div class="line-arrow">&#x2197;</div>
+  </a>
+  <a class="line-btn" href="https://www.odakyu.jp/service_information/" target="_blank">
+    <div class="line-color" style="background:#0066b3;"></div>
+    <div class="line-info"><div class="line-name">小田急線</div><div class="line-company">小田急電鉄</div></div>
+    <div class="line-arrow">&#x2197;</div>
+  </a>
+  <a class="line-btn" href="https://www.keikyu.co.jp/train/" target="_blank">
+    <div class="line-color" style="background:#cc0000;"></div>
+    <div class="line-info"><div class="line-name">京急線</div><div class="line-company">京浜急行電鉄</div></div>
+    <div class="line-arrow">&#x2197;</div>
+  </a>
+  <a class="line-btn" href="https://transfer.navitime.biz/hankyu/pc/route/RouteSearch" target="_blank">
+    <div class="line-color" style="background:#7b2c8b;"></div>
+    <div class="line-info"><div class="line-name">阪急線</div><div class="line-company">阪急電鉄</div></div>
+    <div class="line-arrow">&#x2197;</div>
+  </a>
+
+  <a class="yahoo-btn" href="https://transit.yahoo.co.jp/traininfo/area/4/" target="_blank">&#x1F50D; Yahoo! 路線 — 遅延情報一覧</a>
+</div>
+
+<script>
+const KEY = 'fav_trains';
+function loadFavs() { try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { return []; } }
+function saveFavs(d) { localStorage.setItem(KEY, JSON.stringify(d)); }
+
+function addFav() {
+  const input = document.getElementById('fav-input');
+  const name = input.value.trim();
+  if (!name) return;
+  const favs = loadFavs();
+  if (!favs.includes(name)) { favs.push(name); saveFavs(favs); }
+  input.value = '';
+  renderFavs();
+}
+
+function removeFav(name) {
+  saveFavs(loadFavs().filter(x => x !== name));
+  renderFavs();
+}
+
+function renderFavs() {
+  const favs = loadFavs();
+  const el = document.getElementById('fav-list');
+  if (!favs.length) { el.innerHTML = '<div class="empty">まだ登録がありません</div>'; return; }
+  el.innerHTML = favs.map(name => {
+    const q = encodeURIComponent(name + ' 遅延');
+    return `<div class="fav-item">
+      <div class="fav-name">&#x1F686; ${name}</div>
+      <a href="https://transit.yahoo.co.jp/traininfo/area/4/" target="_blank" style="font-size:11px;color:var(--accent);text-decoration:none;margin-right:8px;">確認</a>
+      <button class="fav-del" onclick="removeFav('${name.replace(/'/g,"\\'")}')">&#x2715;</button>
+    </div>`;
+  }).join('');
+}
+
+renderFavs();
+</script>
+</body>
+</html>

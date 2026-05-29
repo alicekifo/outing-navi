@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>&#x98F2;&#x307F;&#x7269;&#x30E1;&#x30E2;</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0c10;--surface:#161620;--surface2:#1e1e2c;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.15);--accent:#2dd4bf;--wine:#f472b6;--sake:#e8b84b;--text:#eeeef5;--text2:#8888a8;--r:14px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;padding:20px 16px 100px;}
+.page{max-width:540px;margin:0 auto;}
+.hd{display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+.logo{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;}
+.logo em{color:var(--accent);font-style:normal;}
+.back-link{font-size:11px;color:var(--text2);text-decoration:none;margin-left:auto;}
+.back-link:hover{color:var(--accent);}
+.tabs{display:flex;gap:6px;margin-bottom:20px;}
+.tab{flex:1;padding:9px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text2);font-size:13px;font-weight:700;cursor:pointer;font-family:'Noto Sans JP',sans-serif;text-align:center;transition:.15s;}
+.tab.active-wine{background:rgba(244,114,182,.15);color:var(--wine);border-color:rgba(244,114,182,.4);}
+.tab.active-sake{background:rgba(232,184,75,.15);color:var(--sake);border-color:rgba(232,184,75,.4);}
+.add-form{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:20px;}
+.form-row{margin-bottom:12px;}
+.form-label{font-size:10px;font-weight:700;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:5px;}
+input,textarea,select{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:13px;padding:9px 12px;outline:none;}
+input:focus,textarea:focus,select:focus{border-color:var(--accent);}
+textarea{height:70px;resize:vertical;}
+.stars{display:flex;gap:6px;margin-top:4px;}
+.star{font-size:22px;cursor:pointer;opacity:.35;transition:.1s;}
+.star.on{opacity:1;}
+.add-btn{width:100%;padding:12px;background:var(--accent);border:none;border-radius:10px;color:#000;font-weight:700;font-size:14px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;margin-top:4px;}
+.add-btn:active{opacity:.8;}
+.list-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.list-count{font-size:10px;color:var(--text2);}
+.export-btn{font-size:11px;color:var(--accent);background:none;border:1px solid rgba(45,212,191,.3);border-radius:8px;padding:4px 10px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;}
+.item-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:8px;}
+.item-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}
+.item-name{font-size:14px;font-weight:700;flex:1;}
+.item-del{background:none;border:none;color:var(--text2);font-size:16px;cursor:pointer;padding:0 4px;flex-shrink:0;}
+.item-meta{font-size:11px;color:var(--text2);margin-top:4px;}
+.item-stars{font-size:14px;margin-top:4px;}
+.item-note{font-size:12px;color:var(--text2);margin-top:6px;line-height:1.6;}
+.empty{text-align:center;font-size:13px;color:var(--text2);padding:30px 0;}
+.type-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:5px;margin-left:6px;vertical-align:middle;}
+.badge-wine{background:rgba(244,114,182,.15);color:var(--wine);}
+.badge-sake{background:rgba(232,184,75,.15);color:var(--sake);}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hd">
+    <div class="logo">&#x1F377; <em>Drink Memo</em></div>
+    <a class="back-link" href="./index.html">&larr; Hub</a>
+  </div>
+  <div class="tabs">
+    <button class="tab active-wine" id="tab-wine" onclick="setType('wine')">&#x1F377; ワイン</button>
+    <button class="tab" id="tab-sake" onclick="setType('sake')">&#x1F376; 日本酒</button>
+  </div>
+  <div class="add-form">
+    <div class="form-row">
+      <div class="form-label">品名</div>
+      <input id="f-name" type="text" placeholder="例: シャトー・マルゴー 2018">
+    </div>
+    <div class="form-row" id="row-vintage">
+      <div class="form-label">ヴィンテージ / 産地</div>
+      <input id="f-vintage" type="text" placeholder="例: 2018 / ボルドー">
+    </div>
+    <div class="form-row">
+      <div class="form-label">評価</div>
+      <div class="stars" id="stars">
+        <span class="star" data-v="1">&#x2605;</span>
+        <span class="star" data-v="2">&#x2605;</span>
+        <span class="star" data-v="3">&#x2605;</span>
+        <span class="star" data-v="4">&#x2605;</span>
+        <span class="star" data-v="5">&#x2605;</span>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-label">価格</div>
+      <input id="f-price" type="text" placeholder="例: 3,200円">
+    </div>
+    <div class="form-row">
+      <div class="form-label">メモ</div>
+      <textarea id="f-note" placeholder="味わい・香り・ペアリングなど"></textarea>
+    </div>
+    <button class="add-btn" id="add-btn" onclick="addEntry()">&#x2B;  追加</button>
+  </div>
+  <div class="list-header">
+    <div class="list-count" id="list-count"></div>
+    <button class="export-btn" onclick="exportMd()">&#x1F4CB; Markdown</button>
+  </div>
+  <div id="list"></div>
+</div>
+<script>
+const KEY = 'drink_memo_v1';
+let curType = 'wine';
+let curRating = 0;
+
+function setType(t) {
+  curType = t;
+  document.getElementById('tab-wine').className = 'tab' + (t==='wine' ? ' active-wine' : '');
+  document.getElementById('tab-sake').className = 'tab' + (t==='sake' ? ' active-sake' : '');
+  const vLabel = document.querySelector('#row-vintage .form-label');
+  const vInput = document.getElementById('f-vintage');
+  if (t === 'wine') {
+    vLabel.textContent = 'ヴィンテージ / 産地';
+    vInput.placeholder = '例: 2018 / ボルドー';
+  } else {
+    vLabel.textContent = '蔵元 / 産地';
+    vInput.placeholder = '例: 久保田 / 新潟';
+  }
+  document.getElementById('add-btn').textContent = t === 'wine' ? '＋ ワインを追加' : '＋ 日本酒を追加';
+  renderList();
+}
+
+document.querySelectorAll('.star').forEach(s => {
+  s.addEventListener('click', () => {
+    curRating = parseInt(s.dataset.v);
+    document.querySelectorAll('.star').forEach((x, i) => x.classList.toggle('on', i < curRating));
+  });
+});
+
+function load() { try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { return []; } }
+function save(d) { localStorage.setItem(KEY, JSON.stringify(d)); }
+
+function addEntry() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { document.getElementById('f-name').focus(); return; }
+  const entry = {
+    id: Date.now(),
+    type: curType,
+    name,
+    vintage: document.getElementById('f-vintage').value.trim(),
+    rating: curRating,
+    price: document.getElementById('f-price').value.trim(),
+    note: document.getElementById('f-note').value.trim(),
+    date: new Date().toISOString().slice(0,10)
+  };
+  const data = load();
+  data.unshift(entry);
+  save(data);
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-vintage').value = '';
+  document.getElementById('f-price').value = '';
+  document.getElementById('f-note').value = '';
+  curRating = 0;
+  document.querySelectorAll('.star').forEach(x => x.classList.remove('on'));
+  renderList();
+}
+
+function deleteEntry(id) {
+  save(load().filter(x => x.id !== id));
+  renderList();
+}
+
+function renderList() {
+  const data = load().filter(x => x.type === curType);
+  document.getElementById('list-count').textContent = data.length + '件';
+  if (!data.length) { document.getElementById('list').innerHTML = '<div class="empty">まだ記録がありません</div>'; return; }
+  document.getElementById('list').innerHTML = data.map(e => {
+    const stars = '&#x2605;'.repeat(e.rating) + '&#x2606;'.repeat(5 - e.rating);
+    return `<div class="item-card">
+      <div class="item-top">
+        <div class="item-name">${e.name}</div>
+        <button class="item-del" onclick="deleteEntry(${e.id})">&#x2715;</button>
+      </div>
+      ${e.vintage ? `<div class="item-meta">${e.vintage}</div>` : ''}
+      <div class="item-stars">${stars}</div>
+      ${e.price ? `<div class="item-meta">&#x1F4B4; ${e.price}</div>` : ''}
+      ${e.note ? `<div class="item-note">${e.note}</div>` : ''}
+      <div class="item-meta" style="margin-top:8px">&#x1F4C5; ${e.date}</div>
+    </div>`;
+  }).join('');
+}
+
+function exportMd() {
+  const data = load();
+  if (!data.length) { alert('記録がありません'); return; }
+  const lines = ['# 飲み物メモ', ''];
+  ['wine','sake'].forEach(t => {
+    const items = data.filter(x => x.type === t);
+    if (!items.length) return;
+    lines.push(`## ${t === 'wine' ? '🍷 ワイン' : '🍶 日本酒'}`, '');
+    items.forEach(e => {
+      lines.push(`### ${e.name}`);
+      if (e.vintage) lines.push(`- 産地/V: ${e.vintage}`);
+      if (e.rating) lines.push(`- 評価: ${'★'.repeat(e.rating)}${'☆'.repeat(5-e.rating)}`);
+      if (e.price) lines.push(`- 価格: ${e.price}`);
+      if (e.note) lines.push(`- メモ: ${e.note}`);
+      lines.push(`- 記録日: ${e.date}`, '');
+    });
+  });
+  navigator.clipboard.writeText(lines.join('\n')).then(() => alert('クリップボードにコピーしました'));
+}
+
+setType('wine');
+</script>
+</body>
+</html>

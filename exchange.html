@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>&#x70BA;&#x66FF;&#x30EC;&#x30FC;&#x30C8;</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0c10;--surface:#161620;--surface2:#1e1e2c;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.15);--accent:#6aadff;--green:#52d68a;--red:#f07070;--text:#eeeef5;--text2:#8888a8;--r:14px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;padding:20px 16px 60px;}
+.page{max-width:480px;margin:0 auto;}
+.hd{display:flex;align-items:center;gap:10px;margin-bottom:24px;}
+.logo{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;}
+.logo em{color:var(--accent);font-style:normal;}
+.back-link{font-size:11px;color:var(--text2);text-decoration:none;margin-left:auto;}
+.back-link:hover{color:var(--accent);}
+.updated{font-size:10px;color:var(--text2);margin-bottom:20px;}
+.rate-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;}
+.rate-flag{font-size:22px;margin-right:12px;}
+.rate-info{flex:1;}
+.rate-pair{font-size:11px;color:var(--text2);margin-bottom:3px;}
+.rate-val{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:var(--text);}
+.rate-val span{font-size:13px;font-weight:400;color:var(--text2);margin-left:4px;}
+.rate-change{font-size:11px;font-weight:700;}
+.rate-change.up{color:var(--red);}
+.rate-change.down{color:var(--green);}
+.section-label{font-size:9px;font-weight:700;letter-spacing:2.5px;color:var(--text2);margin:20px 0 10px;text-transform:uppercase;}
+.refresh-btn{width:100%;padding:12px;background:none;border:1px solid var(--border2);border-radius:var(--r);color:var(--accent);font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-top:16px;}
+.refresh-btn:active{opacity:.7;}
+.loading{text-align:center;font-size:13px;color:var(--text2);padding:40px 0;}
+.error{text-align:center;font-size:13px;color:var(--red);padding:30px 0;}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hd">
+    <div class="logo">&#x1F4B1; <em>Exchange</em></div>
+    <a class="back-link" href="./index.html">&larr; Hub</a>
+  </div>
+  <div class="updated" id="updated">取得中...</div>
+  <div class="section-label">主要通貨 → 円</div>
+  <div id="rates-main"><div class="loading">レートを取得中...</div></div>
+  <div class="section-label">アジア通貨 → 円</div>
+  <div id="rates-asia"></div>
+  <button class="refresh-btn" onclick="fetchRates()">&#x21BB; 更新</button>
+</div>
+<script>
+const PAIRS_MAIN = [
+  { code:'USD', flag:'&#x1F1FA;&#x1F1F8;', label:'米ドル' },
+  { code:'EUR', flag:'&#x1F1EA;&#x1F1FA;', label:'ユーロ' },
+  { code:'GBP', flag:'&#x1F1EC;&#x1F1E7;', label:'英ポンド' },
+];
+const PAIRS_ASIA = [
+  { code:'CNY', flag:'&#x1F1E8;&#x1F1F3;', label:'中国元' },
+  { code:'KRW', flag:'&#x1F1F0;&#x1F1F7;', label:'韓国ウォン' },
+  { code:'TWD', flag:'&#x1F1F9;&#x1F1FC;', label:'台湾ドル' },
+  { code:'HKD', flag:'&#x1F1ED;&#x1F1F0;', label:'香港ドル' },
+];
+
+let prevRates = JSON.parse(localStorage.getItem('exchange_prev') || '{}');
+
+function buildCard(item, jpyPer1) {
+  const prev = prevRates[item.code];
+  let changeTxt = '';
+  if (prev) {
+    const diff = jpyPer1 - prev;
+    const sign = diff >= 0 ? '+' : '';
+    const cls = diff >= 0 ? 'up' : 'down';
+    changeTxt = `<div class="rate-change ${cls}">${sign}${diff.toFixed(2)} 円</div>`;
+  }
+  return `<div class="rate-card">
+    <div class="rate-flag">${item.flag}</div>
+    <div class="rate-info">
+      <div class="rate-pair">1 ${item.code} =</div>
+      <div class="rate-val">${jpyPer1.toFixed(2)}<span>円</span></div>
+    </div>
+    ${changeTxt}
+  </div>`;
+}
+
+async function fetchRates() {
+  document.getElementById('updated').textContent = '取得中...';
+  try {
+    const res = await fetch('https://open.er-api.com/v6/latest/USD');
+    const data = await res.json();
+    if (data.result !== 'success') throw new Error('API error');
+    const jpyPerUsd = data.rates.JPY;
+    const newPrev = {};
+    function getJpy(code) {
+      if (code === 'JPY') return 1;
+      const rateToUsd = data.rates[code];
+      return jpyPerUsd / rateToUsd;
+    }
+    document.getElementById('rates-main').innerHTML =
+      PAIRS_MAIN.map(p => { const r = getJpy(p.code); newPrev[p.code] = r; return buildCard(p, r); }).join('');
+    document.getElementById('rates-asia').innerHTML =
+      PAIRS_ASIA.map(p => { const r = getJpy(p.code); newPrev[p.code] = r; return buildCard(p, r); }).join('');
+    const now = new Date();
+    document.getElementById('updated').textContent =
+      '最終更新: ' + now.getFullYear() + '/' + (now.getMonth()+1) + '/' + now.getDate() + ' ' +
+      String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+    prevRates = newPrev;
+    localStorage.setItem('exchange_prev', JSON.stringify(newPrev));
+  } catch(e) {
+    document.getElementById('rates-main').innerHTML = '<div class="error">取得失敗。ネットワークを確認してください。</div>';
+  }
+}
+
+fetchRates();
+</script>
+</body>
+</html>

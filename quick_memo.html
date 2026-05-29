@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>&#x30AF;&#x30A4;&#x30C3;&#x30AF;&#x30E1;&#x30E2;</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0c10;--surface:#161620;--surface2:#1e1e2c;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.15);--accent:#52d68a;--text:#eeeef5;--text2:#8888a8;--r:14px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;padding:20px 16px 100px;}
+.page{max-width:600px;margin:0 auto;}
+.hd{display:flex;align-items:center;gap:10px;margin-bottom:20px;}
+.logo{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;}
+.logo em{color:var(--accent);font-style:normal;}
+.back-link{font-size:11px;color:var(--text2);text-decoration:none;margin-left:auto;}
+.back-link:hover{color:var(--accent);}
+.editor{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:16px;}
+.form-label{font-size:10px;font-weight:700;color:var(--text2);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+input,textarea{width:100%;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:'Noto Sans JP',sans-serif;font-size:13px;padding:9px 12px;outline:none;margin-bottom:12px;}
+input:focus,textarea:focus{border-color:var(--accent);}
+#f-body{height:160px;resize:vertical;font-size:13px;line-height:1.7;}
+.btn-row{display:flex;gap:8px;}
+.btn{flex:1;padding:11px;border:none;border-radius:10px;font-weight:700;font-size:13px;cursor:pointer;font-family:'Noto Sans JP',sans-serif;}
+.btn-copy{background:var(--accent);color:#000;}
+.btn-save{background:var(--surface2);border:1px solid var(--border2);color:var(--text2);}
+.btn:active{opacity:.8;}
+.history-label{font-size:9px;font-weight:700;letter-spacing:2px;color:var(--text2);text-transform:uppercase;margin-bottom:10px;}
+.hist-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:.15s;}
+.hist-item:hover{border-color:var(--border2);}
+.hist-title{font-size:13px;font-weight:700;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.hist-preview{font-size:11px;color:var(--text2);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.5;}
+.hist-meta{font-size:10px;color:var(--text2);margin-top:6px;display:flex;justify-content:space-between;}
+.hist-del{background:none;border:none;color:var(--text2);font-size:13px;cursor:pointer;padding:0;}
+.empty{text-align:center;font-size:13px;color:var(--text2);padding:24px 0;}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);background:var(--accent);color:#000;font-size:12px;font-weight:700;padding:8px 20px;border-radius:20px;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hd">
+    <div class="logo">&#x1F4DD; <em>Quick Memo</em></div>
+    <a class="back-link" href="./index.html">&larr; Hub</a>
+  </div>
+  <div class="editor">
+    <div class="form-label">タイトル</div>
+    <input id="f-title" type="text" placeholder="メモのタイトル">
+    <div class="form-label">内容（Markdown対応）</div>
+    <textarea id="f-body" placeholder="ここにメモを書く..."></textarea>
+    <div class="btn-row">
+      <button class="btn btn-copy" onclick="copyMd()">&#x1F4CB; コピー（Vault用）</button>
+      <button class="btn btn-save" onclick="saveHistory()">&#x1F4BE; 保存</button>
+    </div>
+  </div>
+  <div class="history-label">履歴（直近10件）</div>
+  <div id="history-list"></div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const KEY = 'quick_memo_history';
+
+function load() { try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { return []; } }
+function save(d) { localStorage.setItem(KEY, JSON.stringify(d.slice(0, 10))); }
+
+function getMd() {
+  const title = document.getElementById('f-title').value.trim();
+  const body = document.getElementById('f-body').value.trim();
+  const date = new Date().toISOString().slice(0, 10);
+  const lines = [];
+  if (title) lines.push(`# ${title}`, `更新日：${date}`, '');
+  if (body) lines.push(body);
+  return lines.join('\n');
+}
+
+function copyMd() {
+  const md = getMd();
+  if (!md.trim()) { showToast('内容がありません'); return; }
+  navigator.clipboard.writeText(md).then(() => showToast('コピーしました！'));
+}
+
+function saveHistory() {
+  const title = document.getElementById('f-title').value.trim() || '無題';
+  const body = document.getElementById('f-body').value.trim();
+  if (!body) { showToast('内容がありません'); return; }
+  const data = load();
+  data.unshift({ id: Date.now(), title, body, date: new Date().toISOString().slice(0,10) });
+  save(data);
+  document.getElementById('f-title').value = '';
+  document.getElementById('f-body').value = '';
+  renderHistory();
+  showToast('保存しました');
+}
+
+function loadHist(item) {
+  document.getElementById('f-title').value = item.title;
+  document.getElementById('f-body').value = item.body;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function deleteHist(id) {
+  save(load().filter(x => x.id !== id));
+  renderHistory();
+}
+
+function renderHistory() {
+  const data = load();
+  const el = document.getElementById('history-list');
+  if (!data.length) { el.innerHTML = '<div class="empty">保存された履歴はありません</div>'; return; }
+  el.innerHTML = data.map(h => `
+    <div class="hist-item" onclick="loadHist(${JSON.stringify(h).replace(/"/g,'&quot;')})">
+      <div class="hist-title">${h.title}</div>
+      <div class="hist-preview">${h.body.replace(/[<>&]/g, c=>({'<':'&lt;','>':'&gt;','&':'&amp;'}[c]))}</div>
+      <div class="hist-meta">
+        <span>&#x1F4C5; ${h.date}</span>
+        <button class="hist-del" onclick="event.stopPropagation();deleteHist(${h.id})">&#x1F5D1;</button>
+      </div>
+    </div>`).join('');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+renderHistory();
+</script>
+</body>
+</html>

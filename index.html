@@ -10,7 +10,7 @@
   --bg:#0c0c10;--surface:#161620;--surface2:#1e1e2c;
   --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.15);
   --accent:#e8b84b;--purple:#a78bfa;--blue:#6aadff;--green:#52d68a;
-  --red:#f07070;--pink:#f472b6;--orange:#fb923c;
+  --red:#f07070;--pink:#f472b6;--orange:#fb923c;--teal:#2dd4bf;
   --text:#eeeef5;--text2:#8888a8;--r:14px;
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -51,6 +51,9 @@ body{padding:20px 16px 60px;}
 .badge-smoke{background:rgba(240,112,112,.12);color:var(--red);border:1px solid rgba(240,112,112,.25);}
 .badge-exhibition{background:rgba(244,114,182,.12);color:var(--pink);border:1px solid rgba(244,114,182,.25);}
 .badge-weekly{background:rgba(251,146,60,.12);color:var(--orange);border:1px solid rgba(251,146,60,.25);}
+.badge-ent{background:rgba(82,214,138,.12);color:var(--green);border:1px solid rgba(82,214,138,.25);}
+.badge-life{background:rgba(45,212,191,.12);color:var(--teal);border:1px solid rgba(45,212,191,.25);}
+.card.accent-teal{border-left:3px solid var(--teal);}
 
 /* hidden card (edit mode) */
 .card.card-hidden{opacity:.35;}
@@ -128,8 +131,14 @@ const CARD_DEFS = [
   { id:'gourmet',    section:'DAILY NEWS', icon:'&#x1F374;', title:'話題グルメ',    desc:'バズり食べも・新規オープン・ミシュラン・期間限定', badge:'毎週金 07:30', badgeCls:'badge-weekly', href:'./gourmet.html', accent:'accent-orange' },
   { id:'ai_news',    section:'DAILY NEWS', icon:'&#x1F9E0;', title:'AIニュース・論文', desc:'AI動向・認知科学・行動経済学・心理学 の注目論文を毎日生成', badge:'毎日 08:00', badgeCls:'badge-daily', href:'./ai_news.html', accent:'accent-purple' },
   { id:'soccer',     section:'DAILY NEWS', icon:'&#x26BD;',  title:'サッカー移籍情報', desc:'海外サッカーの最新移籍・Here We Go・日本人選手動向', badge:'毎日 07:30', badgeCls:'badge-daily', href:'./soccer.html', accent:'accent-yellow' },
+  { id:'entertainment', section:'WEEKLY',   icon:'&#x1F3AC;', title:'エンタメ週報',    desc:'映画公開・ゲーム新作・アニメ・ストリーミング新着を毎週まとめ', badge:'毎週土更新', badgeCls:'badge-ent',  href:'./entertainment.html', accent:'accent-green' },
+  { id:'lifestyle',    section:'WEEKLY',   icon:'&#x1F377;', title:'ライフスタイル週報', desc:'ワイン・日本酒・ガジェット・テックニュース', badge:'毎週日更新', badgeCls:'badge-life', href:'./lifestyle.html',     accent:'accent-teal' },
   { id:'outing',     section:'APP',        icon:'&#x1F5FA;', title:'おでかけナビ', desc:'辺りのお店・イベント検索、行った場所の記録・AIおすすめ', badge:'GPS・記録・AI', badgeCls:'badge-app', href:'./outing-app.html', accent:'accent-blue' },
   { id:'smoking',    section:'APP',        icon:'&#x1F6AC;', title:'辺りの喫煙所',  desc:'タップして現在地周辺の喫煙所を探す', badge:'クイック検索', badgeCls:'badge-smoke', onclick:'openSmokingFinder()', accent:'accent-red' },
+  { id:'exchange',   section:'APP',        icon:'&#x1F4B1;', title:'為替レート',    desc:'USD・EUR・GBP・CNY・KRW の対円レートをリアルタイム表示', badge:'リアルタイム', badgeCls:'badge-app', href:'./exchange.html',    accent:'accent-blue' },
+  { id:'trains',     section:'APP',        icon:'&#x1F686;', title:'電車遅延チェック', desc:'よく使う路線の運行状況をすばやく確認', badge:'運行情報', badgeCls:'badge-app', href:'./trains.html',      accent:'accent-blue' },
+  { id:'drink_memo', section:'APP',        icon:'&#x1F377;', title:'飲み物メモ',    desc:'ワイン・日本酒の記録。品名・評価・メモを手軽に保存', badge:'ローカル保存', badgeCls:'badge-life', href:'./drink_memo.html',  accent:'accent-teal' },
+  { id:'quick_memo', section:'APP',        icon:'&#x1F4DD;', title:'クイックメモ',  desc:'Vault用Markdownをすばやく作成してクリップボードにコピー', badge:'クリップボード', badgeCls:'badge-ent', href:'./quick_memo.html',  accent:'accent-green' },
 ];
 
 const PREF_KEY = 'nexus_prefs';
@@ -156,7 +165,7 @@ function setPref(id, key, val) {
 }
 
 // ── Render ────────────────────────────────────────────────────
-const NEWS_IDS = ['exhibition','gourmet','ai_news','soccer'];
+const NEWS_IDS = ['exhibition','gourmet','ai_news','soccer','entertainment','lifestyle'];
 let modelMode = localStorage.getItem('nexus_model') || 'sonnet';
 let editMode = false;
 
