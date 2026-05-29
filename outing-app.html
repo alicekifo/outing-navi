@@ -917,28 +917,30 @@ function filterFood(btn,type){
   else loadNearbyPlaces(type);
 }
 
-async function loadSmokingAreas(){
+function loadSmokingAreas(){
   if(!currentLat){showToast('📍 まず現在地を取得してください');return;}
   const list=document.getElementById('home-rest-list');
-  if(!serverOnline){list.innerHTML=`<div class="loading-card">⚠️ サーバーがオフラインです</div>`;return;}
-  list.innerHTML=`<div class="loading-card"><span class="spinner"></span>近くの喫煙所を検索中...</div>`;
-  const places=await fetchPlacesByQuery('喫煙所',currentLat,currentLng);
-  if(!places.length){
-    list.innerHTML=`<div class="loading-card">🚬 近くに喫煙所が見つかりませんでした<br><span style="font-size:11px;color:var(--text2);display:block;margin-top:4px;">検索範囲を広げて再試行してみてください</span></div>`;
-    return;
-  }
-  list.innerHTML=places.map((p,i)=>{
-    const addr=p.formatted_address||p.vicinity||'';
-    const rating=p.rating?`<span style="color:var(--accent)">★${p.rating}</span>`:'';
-    const mapsUrl=`https://www.google.com/maps/search/?api=1&query_place_id=${p.place_id}`;
-    return `<div class="rest-card" onclick="window.open('${mapsUrl}','_blank')" style="border-left:3px solid #f07070;">
-      <div class="rest-thumb" style="background:rgba(240,112,112,.1);font-size:26px;">🚬</div>
-      <div class="rest-info">
-        <div class="rest-name">${p.name}</div>
-        <div class="rest-meta">${rating}<span class="rest-dist">${addr}</span></div>
-      </div>
+  const gmapsUrl=`https://www.google.com/maps/search/喫煙所/@${currentLat},${currentLng},17z`;
+  const enmaru=`https://enmaru.net/`;
+  list.innerHTML=`
+    <div style="display:flex;flex-direction:column;gap:10px;padding:4px 0;">
+      <a href="${gmapsUrl}" target="_blank" style="display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--border);border-left:3px solid #4285f4;border-radius:14px;padding:16px;text-decoration:none;transition:.2s;" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
+        <div style="font-size:28px;width:44px;height:44px;background:rgba(66,133,244,.12);border-radius:12px;display:flex;align-items:center;justify-content:center;">🗺</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px;">Google Maps で探す</div>
+          <div style="font-size:11px;color:var(--text2);">現在地周辺の喫煙所を地図表示</div>
+        </div>
+        <div style="margin-left:auto;font-size:16px;color:var(--text2);">›</div>
+      </a>
+      <a href="${enmaru}" target="_blank" style="display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--border);border-left:3px solid #f07070;border-radius:14px;padding:16px;text-decoration:none;transition:.2s;" ontouchstart="this.style.opacity='.7'" ontouchend="this.style.opacity='1'">
+        <div style="font-size:28px;width:44px;height:44px;background:rgba(240,112,112,.12);border-radius:12px;display:flex;align-items:center;justify-content:center;">🚬</div>
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:3px;">えんまる で探す</div>
+          <div style="font-size:11px;color:var(--text2);">喫煙所専門サイト・データ量が多い</div>
+        </div>
+        <div style="margin-left:auto;font-size:16px;color:var(--text2);">›</div>
+      </a>
     </div>`;
-  }).join('');
 }
 
 // ===== WEATHER =====
