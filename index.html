@@ -244,7 +244,7 @@ function setPref(id, key, val) {
 }
 
 // ── Theme ─────────────────────────────────────────────────────
-let themeMode = localStorage.getItem(THEME_KEY) || 'dark';
+let themeMode = localStorage.getItem(THEME_KEY) || 'light';
 function applyTheme() {
   document.documentElement.classList.toggle('light', themeMode === 'light');
   document.getElementById('theme-btn').textContent = themeMode === 'light' ? '🌙' : '☀️';

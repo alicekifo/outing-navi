@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>おでかけナビ</title>
-<script>(function(){if(localStorage.getItem('nexus_theme')==='light')document.documentElement.classList.add('light');})()</script>
+<script>(function(){const _t=localStorage.getItem('nexus_theme');if(_t==='dark')document.documentElement.classList.add('dark');else document.documentElement.classList.remove('dark');})()</script>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--bg:#0c0c10;--surface:#161620;--surface2:#1e1e2c;--surface3:#252535;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--accent:#e8b84b;--accent-dim:rgba(232,184,75,0.13);--blue:#6aadff;--blue-dim:rgba(106,173,255,0.12);--green:#52d68a;--green-dim:rgba(82,214,138,0.12);--purple:#a78bfa;--purple-dim:rgba(167,139,250,0.12);--red:#f07070;--text:#eeeef5;--text2:#8888a8;--text3:#44445a;--r:14px;--r-lg:20px;}
-html.light{--bg:#f5f5f7;--surface:#ffffff;--surface2:#f0f0f2;--surface3:#e8e8ed;--border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.16);--text:#1d1d1f;--text2:rgba(60,60,67,0.75);--text3:rgba(60,60,67,0.35);}
+:root{--bg:#f5f5f7;--surface:#ffffff;--surface2:#f0f0f2;--surface3:#e8e8ed;--border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.16);--accent:#e8b84b;--accent-dim:rgba(232,184,75,0.13);--blue:#5b96e0;--blue-dim:rgba(91,150,224,0.12);--green:#28a745;--green-dim:rgba(40,167,69,0.12);--purple:#7c5cbf;--purple-dim:rgba(124,92,191,0.12);--red:#dc3545;--text:#1d1d1f;--text2:rgba(60,60,67,0.75);--text3:rgba(60,60,67,0.35);--r:14px;--r-lg:20px;}
+html.dark{--bg:#0c0c10;--surface:#161620;--surface2:#1e1e2c;--surface3:#252535;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--blue:#6aadff;--blue-dim:rgba(106,173,255,0.12);--green:#52d68a;--green-dim:rgba(82,214,138,0.12);--purple:#a78bfa;--purple-dim:rgba(167,139,250,0.12);--red:#f07070;--text:#eeeef5;--text2:#8888a8;--text3:#44445a;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto Sans JP',sans-serif;overflow:hidden;}
 .screen{position:absolute;inset:0;display:flex;flex-direction:column;opacity:0;pointer-events:none;transition:opacity .25s;}
@@ -681,6 +681,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
       <input class="hist-form-input" id="cfg-anthropic" type="password" placeholder="gsk_...">
     </div>
     <button class="hist-form-btn" onclick="saveSettings()">💾 保存する</button>
+    <button class="hist-form-btn" id="theme-toggle-btn" onclick="toggleTheme()" style="margin-top:8px;background:var(--surface2);color:var(--text);border:1px solid var(--border2);">🌙 ダークモード切替</button>
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -1415,9 +1416,18 @@ function saveSettings(){
     if(serverOnline&&currentLat)loadNearbyPlaces(currentFoodType);
   });
 }
+function toggleTheme(){
+  const isDark = document.documentElement.classList.toggle('dark');
+  localStorage.setItem('nexus_theme', isDark ? 'dark' : 'light');
+  const btn = document.getElementById('theme-toggle-btn');
+  if(btn) btn.textContent = isDark ? '☀️ ライトモード切替' : '🌙 ダークモード切替';
+}
 function openSettingsModal(){
   document.getElementById('cfg-server').value=localStorage.getItem('outing_server')||SERVER;
   document.getElementById('cfg-anthropic').value=localStorage.getItem('outing_groq')||'';
+  const isDark = document.documentElement.classList.contains('dark');
+  const btn = document.getElementById('theme-toggle-btn');
+  if(btn) btn.textContent = isDark ? '☀️ ライトモード切替' : '🌙 ダークモード切替';
   openModal('settings-modal');
 }
 function showToast(msg){

@@ -1,0 +1,120 @@
+﻿[03:00:01] ===== Man United news start (2026-06-01) =====
+[03:00:01] Running Claude... (1/3)
+[03:00:57] Claude done (in:723 cache_r:82935 cache_c:11812 out:2079 cost:$0.238586 54.6s)
+[03:00:57] Session limit. Waiting 300s...
+[03:05:57] Running Claude... (2/3)
+[03:05:58] Claude done (in:0 cache_r:0 cache_c:0 out:0 cost:$0 0.5s)
+[03:05:58] Session limit. Waiting 300s...
+[03:10:58] Running Claude... (3/3)
+[03:10:59] Claude done (in:0 cache_r:0 cache_c:0 out:0 cost:$0 0.5s)
+[03:10:59] Session limit. Waiting 300s...
+[03:10:59] ERROR: All attempts failed.
+[07:11:57] ===== Man United news start (2026-06-01) =====
+[07:11:57] Running Claude... (1/3)
+[07:13:42] Claude done (in:8 cache_r:93899 cache_c:15524 out:4360 cost:$0.280736 104.4s)
+[07:13:42] Vault saved: C:\Users\ash08\codex\Vault\news\manu\2026-06-01.md
+[07:13:42] HTML saved: C:\Users\ash08\outing-navi-repo\manu.html
+[07:13:42] iCloud synced
+[07:14:34] Pushing to GitHub...
+[07:14:36] Push done
+[07:14:36] ===== Complete =====
+[03:00:01] ===== Man United news start (2026-06-02) =====
+[03:00:01] Running Claude... (1/3)
+[03:02:19] Claude done (in:793 cache_r:96077 cache_c:8353 out:4770 cost:$0.362021 137s)
+[03:02:19] Vault saved: C:\Users\ash08\codex\Vault\news\manu\2026-06-02.md
+[03:02:19] HTML saved: C:\Users\ash08\outing-navi-repo\manu.html
+[03:02:19] iCloud synced
+[03:04:07] Pushing to GitHub...
+[03:04:09] Push done
+[03:04:09] ===== Complete =====
+[03:00:01] ===== Man United news start (2026-06-03) =====
+[03:00:01] Running Claude... (1/5)
+[03:02:03] Claude done (in:1321 cache_r:108660 cache_c:13613 out:5545 cost:$0.343673 120.4s)
+[03:02:03] Vault saved: C:\Users\ash08\codex\Vault\news\manu\2026-06-03.md
+[03:02:03] HTML saved: C:\Users\ash08\outing-navi-repo\manu.html
+[03:02:03] iCloud synced
+[03:04:22] Pushing to GitHub...
+[03:04:24] Push done
+[03:04:24] ===== Complete =====
+[03:00:01] ===== Man United news start (2026-06-04) =====
+[03:00:01] Running Claude... (1/5)
+[03:01:36] Claude done (in:8 cache_r:82837 cache_c:12239 out:4254 cost:$0.265054 93.5s)
+[03:01:36] Vault saved: C:\Users\ash08\codex\Vault\news\manu\2026-06-04.md
+[03:01:36] HTML saved: C:\Users\ash08\outing-navi-repo\manu.html
+[03:01:36] iCloud synced
+[03:03:18] Pushing to GitHub...
+[03:03:20] Push done
+[03:03:20] ===== Complete =====
+[03:00:02] ===== Man United news start (2026-06-05) =====
+[03:00:02] Running Claude... (1/5)
+[03:02:05] Claude done (in:2254 cache_r:108596 cache_c:14836 out:5424 cost:$0.373265 122.4s)
+[03:02:05] Vault saved: C:\Users\ash08\codex\Vault\news\manu\2026-06-05.md
+[03:02:05] HTML saved: C:\Users\ash08\outing-navi-repo\manu.html
+[03:02:05] iCloud synced
+[03:03:42] Pushing to GitHub...
+[03:03:44] Push done
+[03:03:44] ===== Complete =====
+[03:00:01] ===== Man United news start (2026-06-06) =====
+[03:00:01] Running Claude... (1/5)
+[03:01:58] Claude done (in:1156 cache_r:109048 cache_c:13432 out:5170 cost:$0.336223 115.7s)
+[03:01:58] Vault saved: C:\Users\ash08\codex\Vault\news\manu\2026-06-06.md
+[03:01:58] HTML saved: C:\Users\ash08\outing-navi-repo\manu.html
+[03:01:58] iCloud synced
+[03:04:14] Pushing to GitHub...
+[03:04:16] Push done
+[03:04:16] ===== Complete =====
+[03:00:02] ===== Man United news start (2026-06-07) =====
+[03:00:02] Running Claude... (1/5)
+[03:02:46] Claude done (in:4174 cache_r:167005 cache_c:16445 out:6314 cost:$0.467997 162.7s)
+[03:02:46] Vault saved: C:\Users\ash08\codex\Vault\news\manu\2026-06-07.md
+[03:02:46] HTML saved: C:\Users\ash08\outing-navi-repo\manu.html
+[03:02:46] iCloud synced
+[03:03:19] Pushing to GitHub...
+[03:03:21] Push done
+[03:03:21] ===== Complete =====
+[03:00:01] ===== Man United news start (2026-06-08) =====
+[03:00:01] Running Claude... (1/5)
+[03:01:54] Claude done (in:2167 cache_r:108223 cache_c:13843 out:4889 cost:$0.357698 110.5s)
+[03:01:54] Vault saved: C:\Users\ash08\codex\Vault\news\manu\2026-06-08.md
+[03:01:54] HTML saved: C:\Users\ash08\outing-navi-repo\manu.html
+[03:01:54] iCloud synced
+[03:04:00] Pushing to GitHub...
+[03:04:06] Push done
+[03:04:06] ===== Complete =====
+[03:00:02] ===== Man United news start (2026-06-09) =====
+[03:00:02] Running Claude... (1/5)
+[03:02:32] Claude done (in:2782 cache_r:107465 cache_c:14282 out:7705 cost:$0.386975 149.1s)
+[03:02:32] Vault saved: C:\Users\ash08\codex\Vault\news\manu\2026-06-09.md
+[03:02:32] HTML saved: C:\Users\ash08\outing-navi-repo\manu.html
+[03:02:32] Archived: C:\Users\ash08\outing-navi-repo\manu_2026-06-09.html
+[03:02:32] iCloud synced
+[03:03:48] Pushing to GitHub...
+[03:03:50] Push done
+[03:03:50] ===== Complete =====
+[03:00:01] ===== Man United news start (2026-06-11) =====
+[03:00:01] Running Claude... (1/5)
+[03:00:03] Claude done (in:0 cache_r:0 cache_c:0 out:0 cost:$0 0.6s)
+[03:00:03] Session limit. Waiting 300s...
+[03:05:03] Running Claude... (2/5)
+[03:05:05] Claude done (in:0 cache_r:0 cache_c:0 out:0 cost:$0 0.5s)
+[03:05:05] Session limit. Waiting 300s...
+[03:10:05] Running Claude... (3/5)
+[03:10:06] Claude done (in:0 cache_r:0 cache_c:0 out:0 cost:$0 0.5s)
+[03:10:06] Session limit. Waiting 300s...
+[03:15:06] Running Claude... (4/5)
+[03:15:08] Claude done (in:0 cache_r:0 cache_c:0 out:0 cost:$0 0.4s)
+[03:15:08] Session limit. Waiting 300s...
+[03:20:08] Running Claude... (5/5)
+[03:20:09] Claude done (in:0 cache_r:0 cache_c:0 out:0 cost:$0 0.5s)
+[03:20:09] Session limit. Waiting 300s...
+[03:20:09] ERROR: All attempts failed.
+[03:00:01] ===== Man United news start (2026-06-12) =====
+[03:00:01] Running Claude... (1/5)
+[03:01:38] Claude done (in:696 cache_r:83598 cache_c:12585 out:4395 cost:$0.298244 95.4s)
+[03:01:38] Vault saved: C:\Users\ash08\codex\Vault\news\manu\2026-06-12.md
+[03:01:38] HTML saved: C:\Users\ash08\codex\outing-navi-repo\manu.html
+[03:01:38] Archived: C:\Users\ash08\codex\outing-navi-repo\manu_2026-06-12.html
+[03:01:38] iCloud synced
+[03:05:45] Pushing to GitHub...
+[03:05:47] Push done
+[03:05:47] ===== Complete =====
