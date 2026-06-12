@@ -110,7 +110,16 @@ body{background:#000;color:#fff;font-family:-apple-system,'Noto Sans JP',sans-se
 </div>
 
 <script>
-const TOPIC = 'ash08-outing-gm-7h3r9';
+// セキュリティ: トピック名はページに埋め込まず、初回アクセス時に入力してもらい
+// localStorage に保存する（このページは公開リポジトリにあるため）
+const TOPIC = (function() {
+  let t = localStorage.getItem('gc_topic') || '';
+  if (!t) {
+    t = (prompt('🔑 制御トピック名を入力してください（初回のみ）') || '').trim();
+    if (t) localStorage.setItem('gc_topic', t);
+  }
+  return t;
+})();
 let taskStatus = null;
 
 const TASK_ORDER = {
