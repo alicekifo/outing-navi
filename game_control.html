@@ -194,10 +194,10 @@ async function runTask(key) {
 
   try {
     const label = TASK_LABELS[key] ?? key;
-    await fetch('https://ntfy.sh/' + TOPIC, {
+    await fetch('https://ntfy.sh', {
       method: 'POST',
-      headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Title': '📤 手動実行: ' + label },
-      body: 'run:' + key
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic: TOPIC, message: 'run:' + key, title: '手動実行: ' + label })
     });
     setFeedback('📤 送信しました。PCが最大2分以内に処理します。');
     btn.textContent = '送信済';
@@ -261,11 +261,11 @@ async function sendMode(mode) {
   document.getElementById('btn-normal').disabled = true;
   setFeedback('送信中...', 0);
   try {
-    const modeTitle = mode === 'gaming' ? '🎮 ゲームモード ON' : '✅ 通常モードに復帰';
-    await fetch('https://ntfy.sh/' + TOPIC, {
+    const modeTitle = mode === 'gaming' ? 'Game Mode ON' : 'Normal Mode';
+    await fetch('https://ntfy.sh', {
       method: 'POST',
-      headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Title': modeTitle },
-      body: mode
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ topic: TOPIC, message: mode, title: modeTitle })
     });
     setFeedback('✅ 送信しました（PCに反映まで最大2分）');
     await fetchStatus();
