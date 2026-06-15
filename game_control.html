@@ -3,7 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>Game Mode Control</title>
+<script>
+// ホーム追加時のキャッシュ対策: 起動のたびに最新版を取得する
+(function(){
+  const key = 'gc_loaded';
+  if (!sessionStorage.getItem(key)) {
+    sessionStorage.setItem(key, '1');
+    location.replace(location.pathname + '?_=' + Date.now());
+  }
+})();
+</script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:#000;color:#fff;font-family:-apple-system,'Noto Sans JP',sans-serif;
