@@ -72,7 +72,6 @@ html.light .badge-weekly     {background:rgba(200,88,0,0.12);     color:var(--or
 html.light .badge-ent        {background:rgba(26,138,58,0.12);    color:var(--green);}
 html.light .badge-life       {background:rgba(0,118,168,0.12);    color:var(--teal);}
 
-html.light .mtgl-btn.on{box-shadow:var(--seg-on-shadow);}
 html.light .smoke-sheet{background:#ffffff;}
 html.light .smoke-btn{background:var(--surface);}
 
@@ -94,11 +93,6 @@ body{padding:20px 16px 72px;}
 .edit-btn.active{background:var(--yellow);color:#000;border-color:var(--yellow);}
 
 /* model toggle — Apple segmented control */
-.model-toggle{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
-.model-lbl{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--text3);text-transform:uppercase;}
-.mtgl-seg{background:var(--surface);border-radius:10px;padding:3px;display:inline-flex;gap:2px;}
-.mtgl-btn{font-size:12px;font-weight:600;padding:6px 18px;border-radius:8px;background:transparent;border:none;color:var(--text2);cursor:pointer;font-family:-apple-system,'Noto Sans JP',sans-serif;transition:.15s;}
-.mtgl-btn.on{background:var(--surface2);color:var(--text);}
 
 /* section label */
 .sec-label{font-size:10px;font-weight:700;letter-spacing:2.5px;color:var(--text3);margin-bottom:10px;margin-top:4px;text-transform:uppercase;}
@@ -172,13 +166,6 @@ body{padding:20px 16px 72px;}
     <div class="hd-right">
       <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">&#x2600;&#xFE0F;</button>
       <button class="edit-btn" id="edit-btn" onclick="toggleEdit()">&#x270F; 編集</button>
-    </div>
-  </div>
-  <div class="model-toggle">
-    <span class="model-lbl">MODEL</span>
-    <div class="mtgl-seg">
-      <button class="mtgl-btn on" id="tbtn-s" onclick="setModel('sonnet')">Sonnet</button>
-      <button class="mtgl-btn" id="tbtn-o" onclick="setModel('opus')">Opus</button>
     </div>
   </div>
   <div id="cards-root"></div>
@@ -257,8 +244,6 @@ function toggleTheme() {
 }
 
 // ── Render ────────────────────────────────────────────────────
-const NEWS_IDS = ['exhibition','gourmet','ai_news','soccer','entertainment','lifestyle'];
-let modelMode = localStorage.getItem('nexus_model') || 'sonnet';
 let editMode = false;
 
 function render() {
@@ -275,9 +260,7 @@ function render() {
     }
     const hiddenCls = c.visible ? '' : ' card-hidden';
     const tag = c.href ? 'a' : 'div';
-    const resolvedHref = c.href && NEWS_IDS.includes(c.id) && modelMode === 'opus'
-      ? c.href.replace('.html', '_opus.html') : c.href;
-    const hrefAttr = resolvedHref ? `href="${resolvedHref}"` : '';
+    const hrefAttr = c.href ? `href="${c.href}"` : '';
     const onclickAttr = c.onclick ? `onclick="${c.onclick}"` : '';
     html += `<${tag} class="card ${c.accent}${hiddenCls}" ${hrefAttr} ${onclickAttr}>
       <div class="card-ico">${c.icon}</div>
@@ -335,14 +318,6 @@ function toggleVisible(id) {
   render();
 }
 
-function setModel(m) {
-  modelMode = m;
-  localStorage.setItem('nexus_model', m);
-  document.getElementById('tbtn-s').classList.toggle('on', m === 'sonnet');
-  document.getElementById('tbtn-o').classList.toggle('on', m === 'opus');
-  render();
-}
-
 // ── Smoking sheet ─────────────────────────────────────────────
 function openSmokingFinder() {
   if (editMode) return;
@@ -374,8 +349,6 @@ const w = ['日','月','火','水','木','金','土'];
 document.getElementById('hd-date').textContent =
   d.getFullYear() + '/' + (d.getMonth()+1) + '/' + d.getDate() + ' (' + w[d.getDay()] + ')';
 
-document.getElementById('tbtn-s').classList.toggle('on', modelMode === 'sonnet');
-document.getElementById('tbtn-o').classList.toggle('on', modelMode === 'opus');
 applyTheme();
 render();
 </script>
