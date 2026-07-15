@@ -690,7 +690,6 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Noto S
 // ===== CONFIG =====
 const SUPA_URL='https://hcwyuxrsyvhffdspiipz.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhjd3l1eHJzeXZoZmZkc3BpaXB6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3NTY3NzksImV4cCI6MjA5NTMzMjc3OX0.WMS1Q4wJ5f2vnBqUpk7p96_TrsdidTOOQUiohsl5e9U';
-const WEATHER_KEY='80794671a5885cfca96929620e89a5da';
 let SERVER=localStorage.getItem('outing_server')||'https://phoney-panoramic-hypocrite.ngrok-free.dev';
 let GROQ_KEY=localStorage.getItem('outing_groq')||'';
 
@@ -974,7 +973,7 @@ function weatherIcon(code){
 
 async function fetchWeather(lat,lng){
   try{
-    const res=await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lng}&appid=${WEATHER_KEY}&units=metric&lang=ja&cnt=40`);
+    const res=await fetch(`${SERVER}/api/weather/raw?lat=${lat}&lon=${lng}`,{headers:{'ngrok-skip-browser-warning':'true'}});
     const data=await res.json();
     if(data.cod!=='200')throw new Error();
     return data;
